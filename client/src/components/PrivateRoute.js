@@ -5,7 +5,7 @@ import { navigate } from 'gatsby'
 
 const PrivateRoute = ({ component: Component, auth, ...rest }) => {
   if (!auth.isAuthenticated) {
-    navigate(`./app/login`)
+    navigate(`/app/login`)
     return null
   }
 

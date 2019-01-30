@@ -1,105 +1,116 @@
-import React from "react"
-import { navigate} from "@reach/router"
-import { Link } from 'gatsby'
+import React from 'react'
+import { Link, navigate } from 'gatsby'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { registerUser, clearErrors } from '../actions/authActions'
 
 const initialState = {
-  username: ``,
-  password: ``,
+  name: ``,
   email: '',
-  phone_number: '',
-  authCode: '',
-  stage: 0
+  password: ``,
+  password2: ``,
+  errors: {},
 }
-
 
 class SignUp extends React.Component {
   state = initialState
 
-  handleUpdate = (event) => {
+  componentDidMount() {
+    // If logged in and user navigates to SignUp page, should redirect them to Home
+    if (this.props.auth.isAuthenticated) {
+      navigate('/app/home')
+    }
+    this.props.clearErrors()
+  }
+
+  handleUpdate = event => {
     this.setState({
       [event.target.name]: event.target.value,
     })
   }
 
-  signUp = async() => {
-    // const { username, password, email, phone_number } = this.state
-    try {
-      // await Auth.signUp({ username, password, attributes: { email, phone_number }})
-      this.setState({ stage: 1 })
-    } catch (err) {
-      console.log('error signing up...', err)
+  static getDerivedStateFromProps(nextProps) {
+    if (nextProps.errors) {
+      return {
+        errors: nextProps.errors,
+      }
     }
   }
 
-  confirmSignUp = async() => {
-    // const { username, authCode } = this.state
-    try {
-      // await Auth.confirmSignUp(username, authCode)
-      alert('Successfully signed up!')
-      navigate("/app/login")
-    } catch (err) {
-      console.log('error confirming signing up...', err)
+  signUp = e => {
+    e.preventDefault()
+
+    const newUser = {
+      name: this.state.name,
+      email: this.state.email,
+      password: this.state.password,
+      password2: this.state.password2,
     }
+
+    this.props.registerUser(newUser)
   }
 
   render() {
+    const { errors } = this.state
+
     return (
       <div>
         <h1>Sign Up</h1>
-        {
-          this.state.stage === 0 && (
-            <div style={styles.formContainer}>
-              <input
-                onChange={this.handleUpdate}
-                placeholder='Username'
-                name='username'
-                value={this.state.username}
-                style={styles.input}
-              />
-              <input
-                onChange={this.handleUpdate}
-                placeholder='Password'
-                name='password'
-                value={this.state.password}
-                type='password'
-                style={styles.input}
-              />
-              <input
-                onChange={this.handleUpdate}
-                placeholder='Email'
-                name='email'
-                value={this.state.email}
-                style={styles.input}
-              />
-              <input
-                onChange={this.handleUpdate}
-                placeholder='Phone Number'
-                name='phone_number'
-                value={this.state.phone_number}
-                style={styles.input}
-              />
-              <div style={styles.button} onClick={this.signUp}>
-                <span style={styles.buttonText}>Sign Up</span>
-              </div>
-            </div>
-          )
-        }
-        {
-          this.state.stage === 1 && (
-            <div style={styles.formContainer}>
-              <input
-                onChange={this.handleUpdate}
-                placeholder='Authorization Code'
-                name='authCode'
-                value={this.state.authCode}
-                style={styles.input}
-              />
-              <div style={styles.button} onClick={this.confirmSignUp}>
-                <span style={styles.buttonText}>Confirm Sign Up</span>
-              </div>
-            </div>
-          )
-        }
+        <form noValidate onSubmit={this.signUp} style={styles.formContainer}>
+          <label htmlFor="name">
+            Name
+            <span style={styles.error}>{errors.name}</span>
+          </label>
+          <input
+            onChange={this.handleUpdate}
+            name="name"
+            id="name"
+            value={this.state.name}
+            style={styles.input}
+          />
+
+          <label htmlFor="email">
+            Email
+            <span style={styles.error}>{errors.email}</span>
+          </label>
+          <input
+            onChange={this.handleUpdate}
+            name="email"
+            id="email"
+            value={this.state.email}
+            style={styles.input}
+          />
+          <label htmlFor="password">
+            Password
+            <span style={styles.error}>{errors.password}</span>
+          </label>
+          <input
+            onChange={this.handleUpdate}
+            name="password"
+            id="password"
+            value={this.state.password}
+            type="password"
+            autoComplete=""
+            style={styles.input}
+          />
+          <label htmlFor="password2">
+            Confirm Password
+            <span style={styles.error}>{errors.password2}</span>
+          </label>
+          <input
+            onChange={this.handleUpdate}
+            name="password2"
+            id="password2"
+            value={this.state.password2}
+            type="password"
+            autoComplete=""
+            style={styles.input}
+          />
+          <div style={styles.button} onClick={this.signUp}>
+            <span style={styles.buttonText}>Sign Up</span>
+          </div>
+        </form>
+
         <Link to="/app/login">Sign In</Link>
       </div>
     )
@@ -108,17 +119,44 @@ class SignUp extends React.Component {
 
 const styles = {
   input: {
-    height: 40, margin: '10px 0px', padding: 7
+    height: 40,
+    margin: '10px 0px',
+    padding: 7,
   },
   formContainer: {
-    display: 'flex', flexDirection: 'column'
+    display: 'flex',
+    flexDirection: 'column',
   },
   button: {
-    backgroundColor: 'royalblue', padding: '15px 7px', cursor: 'pointer', textAlign: 'center', marginBottom: 10
+    backgroundColor: 'royalblue',
+    padding: '15px 7px',
+    cursor: 'pointer',
+    textAlign: 'center',
+    marginBottom: 10,
   },
   buttonText: {
-    color: 'white'
-  }
+    color: 'white',
+  },
+  error: {
+    color: 'red',
+    fontSize: '0.7em',
+    float: 'right',
+  },
 }
 
-export default SignUp
+SignUp.propTypes = {
+  registerUser: PropTypes.func.isRequired,
+  clearErrors: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+}
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors,
+})
+
+export default connect(
+  mapStateToProps,
+  { registerUser, clearErrors }
+)(SignUp)

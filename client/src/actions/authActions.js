@@ -15,7 +15,7 @@ export const registerUser = userData => dispatch => {
   axios
     .post('/api/users/register', userData)
     .then(() => {
-      navigate(`/login`) // re-direct to login on successful register
+      navigate(`/app/login`) // re-direct to login on successful register
     })
     .catch(err =>
       dispatch({

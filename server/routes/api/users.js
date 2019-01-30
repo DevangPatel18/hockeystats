@@ -17,11 +17,11 @@ router.post('/register', (req, res) => {
     return res.status(400).json(errors);
   }
 
-  User.findOne({ email: req.body.email }).then(user => {
-    if (user) {
-      return res.status(400).json({ email: 'Email already exists' });
-    }
-  });
+  let userA = User.findOne({ email: req.body.email });
+
+  if (userA) {
+    return res.status(400).json({ email: 'Email already exists' });
+  }
 
   const newUser = new User({
     name: req.body.name,
