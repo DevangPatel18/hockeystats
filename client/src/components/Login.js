@@ -84,6 +84,8 @@ class Login extends React.Component {
         </form>
         <Link to="/app/signup">Sign Up</Link>
         <br />
+        <Link to="/app/requestreset">Forgot password?</Link>
+        <br />
       </div>
     )
   }

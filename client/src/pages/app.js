@@ -6,6 +6,7 @@ import Home from '../components/Home'
 import Login from '../components/Login'
 import SignUp from '../components/SignUp'
 import PrivateRoute from '../components/PrivateRoute'
+import RequestReset from '../components/RequestReset'
 
 const App = () => (
   <Layout>
@@ -14,6 +15,7 @@ const App = () => (
       <PrivateRoute path="/app/profile" component={Details} />
       <Login path="/app/login" />
       <SignUp path="/app/signup" />
+      <RequestReset path="/app/requestreset" />
     </Router>
   </Layout>
 )
