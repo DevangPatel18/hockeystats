@@ -8,7 +8,7 @@ import {
   SEND_EMAIL,
   PASSWORD_RESET,
 } from './types'
-import { navigate } from '@reach/router'
+import { navigate } from 'gatsby'
 
 // Register User
 export const registerUser = userData => dispatch => {

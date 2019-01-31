@@ -20,6 +20,9 @@ class Login extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      navigate('/app/home')
+    }
     if (nextProps.errors) {
       return {
         errors: nextProps.errors,
