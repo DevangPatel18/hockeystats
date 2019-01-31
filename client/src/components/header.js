@@ -27,16 +27,18 @@ class Header extends React.Component {
             </Link>
           </h1>
 
-          {this.props.auth.isAuthenticated && (
-            <p
-              onClick={() => {
-                this.props.logoutUser()
-              }}
-              style={styles.link}
-            >
-              Sign Out
-            </p>
-          )}
+          <div style={styles.navLinks}>
+            {this.props.auth.isAuthenticated && (
+              <p
+                onClick={() => {
+                  this.props.logoutUser()
+                }}
+                style={styles.link}
+              >
+                Sign Out
+              </p>
+            )}
+          </div>
         </div>
       </div>
     )
@@ -53,6 +55,10 @@ const styles = {
     color: 'white',
     textDecoration: 'underline',
     textAlign: 'right',
+  },
+  navLinks: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
 }
 
