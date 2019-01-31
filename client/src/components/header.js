@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, navigate } from 'gatsby'
+import { Link } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { logoutUser } from '../actions/authActions'
@@ -31,7 +31,6 @@ class Header extends React.Component {
             <p
               onClick={() => {
                 this.props.logoutUser()
-                navigate('/')
               }}
               style={styles.link}
             >
