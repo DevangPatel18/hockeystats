@@ -30,10 +30,10 @@ router.put('/:tokenUrl', async (req, res, next) => {
     }
 
     bcrypt.genSalt(10, (err, salt) => {
-      bcrypt.hash(password2, salt, (err, hash) => {
+      bcrypt.hash(password2, salt, async (err, hash) => {
         if (err) throw err;
 
-        UserReset.updateOne({
+        await UserReset.updateOne({
           password: hash,
           resetPasswordToken: null,
           resetPasswordExpires: null,
