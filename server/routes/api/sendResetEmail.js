@@ -9,7 +9,7 @@ router.post('/', async (req, res, next) => {
   try {
     let { email } = req.body;
 
-    let UserReset = await Users.findOne(req.body);
+    let UserReset = await Users.findOne({ email });
 
     if (!UserReset) {
       return res.status(400).json({ message: 'Email not found.' });
@@ -17,27 +17,28 @@ router.post('/', async (req, res, next) => {
 
     const token = crypto.randomBytes(20).toString('hex');
 
-    UserReset.updateOne({
+    await UserReset.updateOne({
       resetPasswordToken: token,
       resetPasswordExpires: Date.now() + 3600000,
     });
 
     const transporter = await nodemail.createTransport({
-      service: 'gmail',
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
       auth: {
-        user: `${process.env.EMAIL_ADDRESS}`,
-        pass: `${process.env.EMAIL_PASSWORD}`,
+        user: process.env.EMAIL_ADDRESS,
+        pass: process.env.EMAIL_PASSWORD,
       },
       tls: { rejectUnauthorized: false },
     });
 
     const mailOptions = {
-      from: `${process.env.EMAIL_ADDRESS}`,
-      to: `${email}`,
+      from: process.env.EMAIL_ADDRESS,
+      to: email,
       subject: `Password Reset Request`,
       text:
         `Hello, this email was sent because a request was made from your account to reset the password. Please follow the link below to reset your password within 1 hour, at which point the link will expire.\n\n` +
-        `http://localhost:8000/passwordreset/${token}\n\n` +
+        `${process.env.FRONTEND_URL}/passwordreset/${token}\n\n` +
         `If you did not request this, please ignore this message and your password will remain the same.`,
     };
 
