@@ -10,16 +10,16 @@ const validateLoginInput = require('../../validation/login');
 const User = require('../../models/User');
 
 // @route POST api/users/register
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   const { errors, isValid } = validateRegisterInput(req.body);
 
   if (!isValid) {
     return res.status(400).json(errors);
   }
 
-  let userA = User.findOne({ email: req.body.email });
+  let userCheck = await User.findOne({ email: req.body.email });
 
-  if (userA) {
+  if (userCheck) {
     return res.status(400).json({ email: 'Email already exists' });
   }
 
