@@ -8,6 +8,7 @@ import SignUp from '../components/SignUp'
 import PrivateRoute from '../components/PrivateRoute'
 import RequestReset from '../components/RequestReset'
 import PasswordReset from '../components/PasswordReset'
+import PlayerStats from '../components/PlayerStats'
 
 const App = () => (
   <Layout>
@@ -18,6 +19,7 @@ const App = () => (
       <SignUp path="/app/signup" />
       <RequestReset path="/app/requestreset" />
       <PasswordReset path="/app/passwordreset/:resetToken" />
+      <PlayerStats path="/app/playerstats" />
     </Router>
   </Layout>
 )
