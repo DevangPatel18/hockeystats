@@ -61,6 +61,7 @@ class PlayerStats extends Component {
     super()
     this.state = {
       stats: [],
+      position: 'LRCD',
       yearStart: '20182019',
       yearEnd: '20182019',
       columns: [],
@@ -89,7 +90,7 @@ class PlayerStats extends Component {
     const { yearStart, yearEnd } = this.state
 
     configure().then(async api => {
-      const nhlData = await api
+      const stats = await api
         .put('/api/statistics', { data: { yearStart, yearEnd } })
         .then(res => res.data)
         .catch(err => {
@@ -98,12 +99,12 @@ class PlayerStats extends Component {
 
       console.log(`Received data from ${yearStart} to ${yearEnd} seasons`)
 
-      this.setState({ stats: nhlData })
+      this.setState({ stats })
     })
   }
 
   render() {
-    const { yearStart } = this.state
+    const { stats, yearStart, position } = this.state
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
     let optionsStart = []
     let optionsEnd = []
@@ -121,6 +122,10 @@ class PlayerStats extends Component {
           1}`}</option>
       )
     }
+
+    const dataDisplay = stats.filter(obj =>
+      position.includes(obj.playerPositionCode)
+    )
 
     return (
       <div style={{ fontFamily: 'Arial' }}>
@@ -158,6 +163,23 @@ class PlayerStats extends Component {
               </NativeSelect>
             </FormControl>
           </div>
+          <div>
+            <FormControl>
+              <InputLabel htmlFor="position">Position</InputLabel>
+              <NativeSelect
+                value={this.state.position}
+                onChange={this.handleChange('position')}
+                input={<Input name="position" id="position" />}
+              >
+                <option value={'LRCD'}>All Skaters</option>
+                <option value={'LRC'}>Forwards</option>
+                <option value={'L'}>Left Wing</option>
+                <option value={'R'}>Right Wing</option>
+                <option value={'C'}>Center</option>
+                <option value={'D'}>Defensemen</option>
+              </NativeSelect>
+            </FormControl>
+          </div>
           <Button
             color="primary"
             variant="contained"
@@ -169,7 +191,7 @@ class PlayerStats extends Component {
         </div>
         <ReactTabulator
           columns={columns}
-          data={this.state.stats}
+          data={dataDisplay}
           options={{
             pagination: 'local',
             paginationSize: 20,
