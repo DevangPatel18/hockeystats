@@ -66,19 +66,28 @@ class PlayerStats extends Component {
       yearEnd: '20182019',
       columns: [],
     }
+
+    this._isMounted = false
   }
 
-  async componentDidMount() {
-    configure().then(async api => {
-      const nhlData = await api
+  componentDidMount() {
+    this._isMounted = true
+    configure().then(api => {
+      api
         .get('/api/statistics')
-        .then(res => res.data)
+        .then(res => {
+          if (this._isMounted) {
+            this.setState({ stats: res.data })
+          }
+        })
         .catch(err => {
           console.log(err)
         })
-
-      this.setState({ stats: nhlData })
     })
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false
   }
 
   handleChange = name => event => {
