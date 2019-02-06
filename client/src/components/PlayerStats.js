@@ -65,9 +65,13 @@ class PlayerStats extends Component {
       yearStart: '20182019',
       yearEnd: '20182019',
       columns: [],
+      selectedPlayers: [],
     }
 
     this._isMounted = false
+
+    this.rowSelection = this.rowSelection.bind(this)
+    this.rowColor = this.rowColor.bind(this)
   }
 
   componentDidMount() {
@@ -110,6 +114,27 @@ class PlayerStats extends Component {
 
       this.setState({ stats })
     })
+  }
+
+  rowSelection(row) {
+    const newTrackedPlayers = this.state.selectedPlayers.slice()
+    const index = newTrackedPlayers.indexOf(row._row.data.playerId)
+
+    if (index === -1) {
+      newTrackedPlayers.push(row._row.data.playerId)
+      row.select()
+    } else {
+      newTrackedPlayers.splice(index, 1)
+    }
+
+    this.setState({ selectedPlayers: newTrackedPlayers })
+  }
+
+  rowColor(row) {
+    const { selectedPlayers } = this.state
+    if (selectedPlayers.includes(row._row.data.playerId)) {
+      row.getElement().style.backgroundColor = 'rgba(255,228,85,0.75)'
+    }
   }
 
   render() {
@@ -198,6 +223,30 @@ class PlayerStats extends Component {
             generate data
           </Button>
         </div>
+        <div
+          style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '1rem' }}
+        >
+          {this.state.selectedPlayers.map(idx => {
+            let name = this.state.stats.find(obj => obj.playerId === idx)
+              .playerName
+            return (
+              <span
+                style={{
+                  backgroundColor: '#4169e1',
+                  color: 'white',
+                  margin: '.5rem',
+                  borderRadius: '1.5rem',
+                  padding: '0.5rem 0.75rem',
+                  fontSize: '0.75rem',
+                  fontWeight: 'bolder',
+                }}
+                key={idx}
+              >
+                {name}
+              </span>
+            )
+          })}
+        </div>
         <ReactTabulator
           columns={columns}
           data={dataDisplay}
@@ -205,6 +254,9 @@ class PlayerStats extends Component {
             pagination: 'local',
             paginationSize: 20,
             layout: 'fitDataFill',
+            selectable: true,
+            rowSelected: this.rowSelection,
+            rowFormatter: this.rowColor,
           }}
         />
         <Link
