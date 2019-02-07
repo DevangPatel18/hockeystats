@@ -44,7 +44,7 @@ app.use('/api/passwordReset', passwordReset);
 
 app.use('/api/statistics', statistics);
 
-app.use('/api/playerList', playerList);
+app.use('/api/playerList', loginRequired, playerList);
 
 const port = process.env.PORT || 5000;
 

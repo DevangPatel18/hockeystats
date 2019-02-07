@@ -7,10 +7,13 @@ import {
   NativeSelect,
   Button,
 } from '@material-ui/core'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import 'react-tabulator/lib/styles.css' // required styles
 import 'react-tabulator/lib/css/tabulator.min.css' // theme
 import configure from '../utils/configLocalforage'
 import { ReactTabulator } from 'react-tabulator' // for React 15.x, use import { React15Tabulator }
+import { getPlayerList } from '../actions/statActions'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -88,6 +91,10 @@ class PlayerStats extends Component {
           console.log(err)
         })
     })
+
+    if (this.props.auth.isAuthenticated) {
+      this.props.getPlayerList(this.props.auth.user.id)
+    }
   }
 
   componentWillUnmount() {
@@ -167,6 +174,7 @@ class PlayerStats extends Component {
     const dataDisplay = stats.filter(obj =>
       position.includes(obj.playerPositionCode)
     )
+    console.log(this.props.stats)
 
     return (
       <div style={{ fontFamily: 'Arial' }}>
@@ -280,4 +288,19 @@ class PlayerStats extends Component {
   }
 }
 
-export default PlayerStats
+PlayerStats.propTypes = {
+  getPlayerList: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  errors: PropTypes.object.isRequired,
+}
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+  errors: state.errors,
+  stats: state.stats,
+})
+
+export default connect(
+  mapStateToProps,
+  { getPlayerList }
+)(PlayerStats)
