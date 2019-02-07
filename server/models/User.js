@@ -18,6 +18,9 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  playerList: {
+    type: Array,
+  },
   resetPasswordToken: {
     type: String,
   },

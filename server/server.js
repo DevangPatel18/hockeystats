@@ -12,6 +12,7 @@ const sendResetEmail = require('./routes/api/sendResetEmail');
 const resetUrlStatus = require('./routes/api/resetUrlStatus');
 const passwordReset = require('./routes/api/passwordReset');
 const statistics = require('./routes/api/statistics');
+const playerList = require('./routes/api/playerList');
 const app = express();
 
 app.use(
@@ -25,10 +26,7 @@ app.use(bodyParser.json());
 const db = require('./config/keys').MONGODB_URI;
 
 mongoose
-  .connect(
-    db,
-    { useNewUrlParser: true }
-  )
+  .connect(db, { useNewUrlParser: true })
   .then(() => console.log('MongoDB successully'))
   .catch(err => console.log(err));
 
@@ -45,6 +43,8 @@ app.use('/api/resetUrlStatus', resetUrlStatus);
 app.use('/api/passwordReset', passwordReset);
 
 app.use('/api/statistics', statistics);
+
+app.use('/api/playerList', playerList);
 
 const port = process.env.PORT || 5000;
 
