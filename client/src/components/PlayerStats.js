@@ -95,7 +95,10 @@ class PlayerStats extends Component {
   }
 
   handleChange = name => event => {
-    this.setState({ [name]: event.target.value })
+    const scroll = window.scrollY
+    this.setState({ [name]: event.target.value }, () => {
+      window.scrollTo(0, scroll)
+    })
   }
 
   submitQuery = e => {
@@ -127,7 +130,11 @@ class PlayerStats extends Component {
       newTrackedPlayers.splice(index, 1)
     }
 
-    this.setState({ selectedPlayers: newTrackedPlayers })
+    const scroll = window.scrollY
+
+    this.setState({ selectedPlayers: newTrackedPlayers }, () => {
+      window.scrollTo(0, scroll)
+    })
   }
 
   rowColor(row) {
