@@ -266,8 +266,9 @@ class PlayerStats extends Component {
           style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '1rem' }}
         >
           {this.state.selectedPlayers.map(idx => {
-            let name = this.state.stats.find(obj => obj.playerId === idx)
-              .playerName
+            let playerObj = this.state.stats.find(obj => obj.playerId === idx)
+            if (!playerObj) return null
+            const { playerName } = playerObj
             return (
               <span
                 style={{
@@ -281,7 +282,7 @@ class PlayerStats extends Component {
                 }}
                 key={idx}
               >
-                {name}
+                {playerName}
               </span>
             )
           })}
