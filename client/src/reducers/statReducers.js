@@ -10,6 +10,18 @@ export default function(state = initialState, action) {
         ...state,
         selectedPlayers: action.payload,
       }
+    case ADD_PLAYER:
+      return {
+        ...state,
+        selectedPlayers: [...state.selectedPlayers, action.payload],
+      }
+    case REMOVE_PLAYER:
+      const selectedPlayers = [...state.selectedPlayers]
+      selectedPlayers.splice(selectedPlayers.indexOf(action.payload), 1)
+      return {
+        ...state,
+        selectedPlayers,
+      }
     default:
       return state
   }

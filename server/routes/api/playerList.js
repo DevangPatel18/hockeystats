@@ -16,13 +16,12 @@ router.get('/:userId', async (req, res) => {
 });
 
 // Adding player ids to playerList
-router.put('/:userId', async (req, res) => {
+router.put('/:userId/:playerId', async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { playerId } = req.body;
+    const { userId, playerId } = req.params;
 
     await Users.findByIdAndUpdate(userId, {
-      $addToSet: { playerList: playerId },
+      $addToSet: { playerList: parseInt(playerId) },
     });
     return res.status(200).json({ message: 'Player added to list!' });
   } catch (err) {
@@ -31,13 +30,12 @@ router.put('/:userId', async (req, res) => {
 });
 
 // Removing player ids from playerList
-router.delete('/:userId', async (req, res) => {
+router.delete('/:userId/:playerId', async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { playerId } = req.body;
+    const { userId, playerId } = req.params;
 
     await Users.findByIdAndUpdate(userId, {
-      $pull: { playerList: playerId },
+      $pull: { playerList: parseInt(playerId) },
     });
     return res.status(200).json({ message: 'Player removed from list!' });
   } catch (err) {

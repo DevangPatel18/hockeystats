@@ -13,7 +13,11 @@ import 'react-tabulator/lib/styles.css' // required styles
 import 'react-tabulator/lib/css/tabulator.min.css' // theme
 import configure from '../utils/configLocalforage'
 import { ReactTabulator } from 'react-tabulator' // for React 15.x, use import { React15Tabulator }
-import { getPlayerList } from '../actions/statActions'
+import {
+  getPlayerList,
+  addPlayerList,
+  removePlayerList,
+} from '../actions/statActions'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -97,6 +101,15 @@ class PlayerStats extends Component {
     }
   }
 
+  static getDerivedStateFromProps(nextProps) {
+    if (nextProps.auth.isAuthenticated) {
+      return {
+        selectedPlayers: [...nextProps.stats.selectedPlayers],
+      }
+    }
+    return null
+  }
+
   componentWillUnmount() {
     this._isMounted = false
   }
@@ -129,19 +142,31 @@ class PlayerStats extends Component {
   rowSelection(row) {
     const newTrackedPlayers = this.state.selectedPlayers.slice()
     const index = newTrackedPlayers.indexOf(row._row.data.playerId)
-
-    if (index === -1) {
-      newTrackedPlayers.push(row._row.data.playerId)
-      row.select()
-    } else {
-      newTrackedPlayers.splice(index, 1)
+    const dispatchArgs = {
+      userId: this.props.auth.user.id,
+      playerId: row._row.data.playerId,
     }
 
-    const scroll = window.scrollY
+    if (this.props.auth.isAuthenticated) {
+      if (index === -1) {
+        this.props.addPlayerList(dispatchArgs)
+      } else {
+        this.props.removePlayerList(dispatchArgs)
+      }
+    } else {
+      if (index === -1) {
+        newTrackedPlayers.push(row._row.data.playerId)
+        row.select()
+      } else {
+        newTrackedPlayers.splice(index, 1)
+      }
 
-    this.setState({ selectedPlayers: newTrackedPlayers }, () => {
-      window.scrollTo(0, scroll)
-    })
+      const scroll = window.scrollY
+
+      this.setState({ selectedPlayers: newTrackedPlayers }, () => {
+        window.scrollTo(0, scroll)
+      })
+    }
   }
 
   rowColor(row) {
@@ -174,7 +199,6 @@ class PlayerStats extends Component {
     const dataDisplay = stats.filter(obj =>
       position.includes(obj.playerPositionCode)
     )
-    console.log(this.props.stats)
 
     return (
       <div style={{ fontFamily: 'Arial' }}>
@@ -290,6 +314,8 @@ class PlayerStats extends Component {
 
 PlayerStats.propTypes = {
   getPlayerList: PropTypes.func.isRequired,
+  addPlayerList: PropTypes.func.isRequired,
+  removePlayerList: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
 }
@@ -302,5 +328,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getPlayerList }
+  { getPlayerList, addPlayerList, removePlayerList }
 )(PlayerStats)
