@@ -98,7 +98,21 @@ class PlayerStats extends Component {
 
     if (this.props.auth.isAuthenticated) {
       this.props.getPlayerList(this.props.auth.user.id)
+    } else {
+      if (localStorage.hasOwnProperty('players')) {
+        this.setState({
+          selectedPlayers: JSON.parse(localStorage.getItem('players')),
+        })
+        window.addEventListener(
+          'beforeunload',
+          this.playersToLocalStorage.bind(this)
+        )
+      }
     }
+  }
+
+  playersToLocalStorage() {
+    localStorage.setItem('players', JSON.stringify(this.state.selectedPlayers))
   }
 
   static getDerivedStateFromProps(nextProps) {
@@ -112,6 +126,14 @@ class PlayerStats extends Component {
 
   componentWillUnmount() {
     this._isMounted = false
+
+    if (!this.props.auth.isAuthenticated) {
+      window.removeEventListener(
+        'beforeunload',
+        this.playersToLocalStorage.bind(this)
+      )
+      this.playersToLocalStorage()
+    }
   }
 
   handleChange = name => event => {
