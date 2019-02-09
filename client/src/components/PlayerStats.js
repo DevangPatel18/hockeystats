@@ -127,7 +127,7 @@ class PlayerStats extends Component {
   componentWillUnmount() {
     this._isMounted = false
 
-    if (!this.props.auth.isAuthenticated) {
+    if (!this.props.auth.isAuthenticated && !this.props.auth.loading) {
       window.removeEventListener(
         'beforeunload',
         this.playersToLocalStorage.bind(this)
