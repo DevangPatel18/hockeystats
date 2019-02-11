@@ -9,10 +9,15 @@ import {
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import 'react-tabulator/lib/styles.css' // required styles
-import 'react-tabulator/lib/css/tabulator.min.css' // theme
 import configure from '../utils/configLocalforage'
-import { ReactTabulator } from 'react-tabulator' // for React 15.x, use import { React15Tabulator }
+import { PagingState, IntegratedPaging } from '@devexpress/dx-react-grid'
+import {
+  Grid,
+  Table,
+  TableHeaderRow,
+  PagingPanel,
+} from '@devexpress/dx-react-grid-material-ui'
+import Paper from '@material-ui/core/Paper'
 import {
   getPlayerList,
   addPlayerList,
@@ -37,6 +42,8 @@ const yearFormatter = cell => {
   return yearsFormat
 }
 
+const getRowId = row => row.playerId
+
 const columns = [
   { title: 'Name', field: 'playerName', width: 200, frozen: true },
   { title: 'Season', field: 'seasonId', formatter: yearFormatter },
@@ -55,13 +62,19 @@ const columns = [
   { title: '+/-', field: 'plusMinus' },
   { title: 'P/G', field: 'pointsPerGame' },
   { title: 'PPG', field: 'ppGoals' },
-  { title: 'PPP', field: 'ppGoals' },
+  { title: 'PPP', field: 'ppPoints' },
   { title: 'SHG', field: 'shGoals' },
   { title: 'SHP', field: 'shPoints' },
-  { title: 'Shifts/G', field: 'shPoints' },
+  { title: 'Shifts/G', field: 'shiftsPerGame' },
   { title: 'S%', field: 'shootingPctg' },
   { title: 'TOI/G', field: 'timeOnIcePerGame' },
 ]
+
+const newCol = columns.map(obj => ({
+  name: `${obj.field}`,
+  title: `${obj.title}`,
+  getCellValue: row => row[obj.field],
+}))
 
 class PlayerStats extends Component {
   constructor() {
@@ -309,18 +322,20 @@ class PlayerStats extends Component {
             )
           })}
         </div>
-        <ReactTabulator
-          columns={columns}
-          data={dataDisplay}
-          options={{
-            pagination: 'local',
-            paginationSize: 20,
-            layout: 'fitDataFill',
-            selectable: true,
-            rowSelected: this.rowSelection,
-            rowFormatter: this.rowColor,
-          }}
-        />
+        <Paper>
+          <Grid
+            rows={stats}
+            columns={newCol}
+            getRowId={getRowId}
+            style={{ height: '100%' }}
+          >
+            <PagingState defaultCurrentPage={0} defaultPageSize={10} />
+            <IntegratedPaging />
+            <Table />
+            <TableHeaderRow />
+            <PagingPanel pageSizes={[10, 25, 50, 100]} />
+          </Grid>
+        </Paper>
         <Link
           to="/"
           style={{
