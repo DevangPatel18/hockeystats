@@ -1,6 +1,6 @@
 import { GET_PLAYER_LIST, ADD_PLAYER, REMOVE_PLAYER } from '../actions/types'
 const initialState = {
-  selectedPlayers: [],
+  trackedPlayers: [],
 }
 
 export default function(state = initialState, action) {
@@ -8,19 +8,19 @@ export default function(state = initialState, action) {
     case GET_PLAYER_LIST:
       return {
         ...state,
-        selectedPlayers: action.payload,
+        trackedPlayers: action.payload,
       }
     case ADD_PLAYER:
       return {
         ...state,
-        selectedPlayers: [...state.selectedPlayers, action.payload],
+        trackedPlayers: [...state.trackedPlayers, action.payload],
       }
     case REMOVE_PLAYER:
-      const selectedPlayers = [...state.selectedPlayers]
-      selectedPlayers.splice(selectedPlayers.indexOf(action.payload), 1)
+      const trackedPlayers = [...state.trackedPlayers]
+      trackedPlayers.splice(trackedPlayers.indexOf(action.payload), 1)
       return {
         ...state,
-        selectedPlayers,
+        trackedPlayers,
       }
     default:
       return state

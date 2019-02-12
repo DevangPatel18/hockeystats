@@ -10,11 +10,16 @@ import {
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../utils/configLocalforage'
-import { PagingState, IntegratedPaging } from '@devexpress/dx-react-grid'
+import {
+  PagingState,
+  IntegratedPaging,
+  SelectionState,
+} from '@devexpress/dx-react-grid'
 import {
   Grid,
   Table,
   TableHeaderRow,
+  TableSelection,
   PagingPanel,
 } from '@devexpress/dx-react-grid-material-ui'
 import Paper from '@material-ui/core/Paper'
@@ -85,13 +90,14 @@ class PlayerStats extends Component {
       yearStart: '20182019',
       yearEnd: '20182019',
       columns: [],
+      trackedPlayers: [],
       selectedPlayers: [],
     }
 
     this._isMounted = false
 
-    this.rowSelection = this.rowSelection.bind(this)
-    this.rowColor = this.rowColor.bind(this)
+    this.rowSelection = selectedPlayers => this.setState({ selectedPlayers })
+    this.updateTrackedPlayers = this.updateTrackedPlayers.bind(this)
   }
 
   componentDidMount() {
@@ -114,7 +120,7 @@ class PlayerStats extends Component {
     } else {
       if (localStorage.hasOwnProperty('players')) {
         this.setState({
-          selectedPlayers: JSON.parse(localStorage.getItem('players')),
+          trackedPlayers: JSON.parse(localStorage.getItem('players')),
         })
         window.addEventListener(
           'beforeunload',
@@ -125,13 +131,13 @@ class PlayerStats extends Component {
   }
 
   playersToLocalStorage() {
-    localStorage.setItem('players', JSON.stringify(this.state.selectedPlayers))
+    localStorage.setItem('players', JSON.stringify(this.state.trackedPlayers))
   }
 
   static getDerivedStateFromProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
       return {
-        selectedPlayers: [...nextProps.stats.selectedPlayers],
+        trackedPlayers: [...nextProps.stats.trackedPlayers],
       }
     }
     return null
@@ -174,12 +180,12 @@ class PlayerStats extends Component {
     })
   }
 
-  rowSelection(row) {
-    const newTrackedPlayers = this.state.selectedPlayers.slice()
-    const index = newTrackedPlayers.indexOf(row._row.data.playerId)
+  updateTrackedPlayers(playerId) {
+    const newTrackedPlayers = this.state.trackedPlayers.slice()
+    const index = newTrackedPlayers.indexOf(playerId)
     const dispatchArgs = {
       userId: this.props.auth.user.id,
-      playerId: row._row.data.playerId,
+      playerId,
     }
 
     if (this.props.auth.isAuthenticated) {
@@ -190,29 +196,17 @@ class PlayerStats extends Component {
       }
     } else {
       if (index === -1) {
-        newTrackedPlayers.push(row._row.data.playerId)
-        row.select()
+        newTrackedPlayers.push(playerId)
       } else {
         newTrackedPlayers.splice(index, 1)
       }
 
-      const scroll = window.scrollY
-
-      this.setState({ selectedPlayers: newTrackedPlayers }, () => {
-        window.scrollTo(0, scroll)
-      })
-    }
-  }
-
-  rowColor(row) {
-    const { selectedPlayers } = this.state
-    if (selectedPlayers.includes(row._row.data.playerId)) {
-      row.getElement().style.backgroundColor = 'rgba(255,228,85,0.75)'
+      this.setState({ trackedPlayers: newTrackedPlayers })
     }
   }
 
   render() {
-    const { stats, yearStart, position } = this.state
+    const { stats, yearStart, position, selectedPlayers } = this.state
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
     let optionsStart = []
     let optionsEnd = []
@@ -234,6 +228,7 @@ class PlayerStats extends Component {
     const dataDisplay = stats.filter(obj =>
       position.includes(obj.playerPositionCode)
     )
+    console.log(selectedPlayers)
 
     return (
       <div style={{ fontFamily: 'Arial' }}>
@@ -329,10 +324,19 @@ class PlayerStats extends Component {
             getRowId={getRowId}
             style={{ height: '100%' }}
           >
+            <SelectionState
+              selection={selectedPlayers}
+              onSelectionChange={this.rowSelection}
+            />
             <PagingState defaultCurrentPage={0} defaultPageSize={10} />
             <IntegratedPaging />
             <Table />
             <TableHeaderRow />
+            <TableSelection
+              selectByRowClick
+              highlightRow
+              showSelectionColumn={false}
+            />
             <PagingPanel pageSizes={[10, 25, 50, 100]} />
           </Grid>
         </Paper>
