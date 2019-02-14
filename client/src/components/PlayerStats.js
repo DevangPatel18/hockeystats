@@ -13,6 +13,7 @@ import {
   TableHead,
   TableRow,
   TableFooter,
+  TablePagination,
   Paper,
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
@@ -23,6 +24,7 @@ import {
   addPlayerList,
   removePlayerList,
 } from '../actions/statActions'
+import TablePaginationActions from './TablePaginationActions'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -85,6 +87,8 @@ class PlayerStats extends Component {
       columns: [],
       trackedPlayers: [],
       selectedPlayers: [],
+      page: 0,
+      rowsPerPage: 25,
     }
 
     this._isMounted = false
@@ -152,6 +156,14 @@ class PlayerStats extends Component {
     this.setState({ [name]: event.target.value })
   }
 
+  handleChangePage = (event, page) => {
+    this.setState({ page })
+  }
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ page: 0, rowsPerPage: parseInt(event.target.value) })
+  }
+
   submitQuery = e => {
     e.preventDefault()
     const { yearStart, yearEnd } = this.state
@@ -205,6 +217,8 @@ class PlayerStats extends Component {
       position,
       selectedPlayers,
       trackedPlayers,
+      rowsPerPage,
+      page,
     } = this.state
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
     let optionsStart = []
@@ -329,26 +343,40 @@ class PlayerStats extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {stats.map((row, i) => {
-                if (i < 10) {
-                  return (
-                    <TableRow key={row.playerId}>
-                      {newCol.map(col => {
-                        return (
-                          <TableCell
-                            // align="center"
-                            key={`${row.playerId}-${col.title}`}
-                          >
-                            {row[col.name]}
-                          </TableCell>
-                        )
-                      })}
-                    </TableRow>
-                  )
-                }
-              })}
+              {stats
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map(row => (
+                  <TableRow key={row.playerId}>
+                    {newCol.map(col => {
+                      return (
+                        <TableCell
+                          // align="center"
+                          key={`${row.playerId}-${col.title}`}
+                        >
+                          {row[col.name]}
+                        </TableCell>
+                      )
+                    })}
+                  </TableRow>
+                ))}
             </TableBody>
-            <TableFooter />
+            <TableFooter>
+              <TableRow>
+                <TablePagination
+                  rowsPerPageOptions={[5, 10, 25, 50]}
+                  colSpan={3}
+                  count={stats.length}
+                  rowsPerPage={rowsPerPage}
+                  page={page}
+                  SelectProps={{
+                    native: true,
+                  }}
+                  onChangePage={this.handleChangePage}
+                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
+                  ActionsComponent={TablePaginationActions}
+                />
+              </TableRow>
+            </TableFooter>
           </Table>
         </Paper>
         <Link
