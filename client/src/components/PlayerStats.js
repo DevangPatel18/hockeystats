@@ -6,23 +6,18 @@ import {
   Input,
   NativeSelect,
   Button,
+  Checkbox,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TableFooter,
+  Paper,
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../utils/configLocalforage'
-import {
-  PagingState,
-  IntegratedPaging,
-  SelectionState,
-} from '@devexpress/dx-react-grid'
-import {
-  Grid,
-  Table,
-  TableHeaderRow,
-  TableSelection,
-  PagingPanel,
-} from '@devexpress/dx-react-grid-material-ui'
-import Paper from '@material-ui/core/Paper'
 import {
   getPlayerList,
   addPlayerList,
@@ -46,8 +41,6 @@ const yearFormatter = cell => {
 
   return yearsFormat
 }
-
-const getRowId = row => row.playerId
 
 const columns = [
   { title: 'Name', field: 'playerName', width: 200, frozen: true },
@@ -156,10 +149,7 @@ class PlayerStats extends Component {
   }
 
   handleChange = name => event => {
-    const scroll = window.scrollY
-    this.setState({ [name]: event.target.value }, () => {
-      window.scrollTo(0, scroll)
-    })
+    this.setState({ [name]: event.target.value })
   }
 
   submitQuery = e => {
@@ -201,12 +191,21 @@ class PlayerStats extends Component {
         newTrackedPlayers.splice(index, 1)
       }
 
-      this.setState({ trackedPlayers: newTrackedPlayers })
+      this.setState({
+        trackedPlayers: newTrackedPlayers,
+        [playerId]: !this.state[playerId],
+      })
     }
   }
 
   render() {
-    const { stats, yearStart, position, selectedPlayers } = this.state
+    const {
+      stats,
+      yearStart,
+      position,
+      selectedPlayers,
+      trackedPlayers,
+    } = this.state
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
     let optionsStart = []
     let optionsEnd = []
@@ -228,7 +227,8 @@ class PlayerStats extends Component {
     const dataDisplay = stats.filter(obj =>
       position.includes(obj.playerPositionCode)
     )
-    console.log(selectedPlayers)
+    console.log('selectedPlayers:', selectedPlayers)
+    console.log('trackedPlayers:', trackedPlayers)
 
     return (
       <div style={{ fontFamily: 'Arial' }}>
@@ -317,28 +317,39 @@ class PlayerStats extends Component {
             )
           })}
         </div>
-        <Paper>
-          <Grid
-            rows={stats}
-            columns={newCol}
-            getRowId={getRowId}
-            style={{ height: '100%' }}
-          >
-            <SelectionState
-              selection={selectedPlayers}
-              onSelectionChange={this.rowSelection}
-            />
-            <PagingState defaultCurrentPage={0} defaultPageSize={10} />
-            <IntegratedPaging />
-            <Table />
-            <TableHeaderRow />
-            <TableSelection
-              selectByRowClick
-              highlightRow
-              showSelectionColumn={false}
-            />
-            <PagingPanel pageSizes={[10, 25, 50, 100]} />
-          </Grid>
+        <Paper style={{ width: '100%', overflowX: 'auto' }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                {newCol.map(col => (
+                  <TableCell align="center" key={col.title}>
+                    {col.title}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {stats.map((row, i) => {
+                if (i < 10) {
+                  return (
+                    <TableRow key={row.playerId}>
+                      {newCol.map(col => {
+                        return (
+                          <TableCell
+                            // align="center"
+                            key={`${row.playerId}-${col.title}`}
+                          >
+                            {row[col.name]}
+                          </TableCell>
+                        )
+                      })}
+                    </TableRow>
+                  )
+                }
+              })}
+            </TableBody>
+            <TableFooter />
+          </Table>
         </Paper>
         <Link
           to="/"
