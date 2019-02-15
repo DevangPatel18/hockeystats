@@ -45,8 +45,8 @@ const yearFormatter = cell => {
 }
 
 const columns = [
-  { title: 'Name', field: 'playerName', width: 200, frozen: true },
-  { title: 'Season', field: 'seasonId', formatter: yearFormatter },
+  { title: 'Name', field: 'playerName' },
+  { title: 'Season', field: 'seasonId' },
   { title: 'Team', field: 'playerTeamsPlayedFor' },
   { title: 'G', field: 'goals' },
   { title: 'A', field: 'assists' },
@@ -88,7 +88,7 @@ class PlayerStats extends Component {
       trackedPlayers: [],
       selectedPlayers: [],
       page: 0,
-      rowsPerPage: 25,
+      rowsPerPage: 10,
     }
 
     this._isMounted = false
@@ -331,12 +331,32 @@ class PlayerStats extends Component {
             )
           })}
         </div>
-        <Paper style={{ width: '100%', overflowX: 'auto' }}>
-          <Table>
+        <Paper style={{ overflowX: 'auto' }}>
+          <Table padding="checkbox">
             <TableHead>
-              <TableRow>
-                {newCol.map(col => (
-                  <TableCell align="center" key={col.title}>
+              <TableRow style={{ borderColor: 'none' }}>
+                <TableCell
+                  component="th"
+                  style={{
+                    paddingLeft: '24px',
+                    color: 'white',
+                    background: '#000000',
+                    background: 'linear-gradient(to top, #434343, #000000)',
+                  }}
+                >
+                  {newCol[0].title}
+                </TableCell>
+                {newCol.slice(1).map(col => (
+                  <TableCell
+                    align="center"
+                    key={col.title}
+                    style={{
+                      color: 'white',
+                      whiteSpace: 'nowrap',
+                      background: '#000000',
+                      background: 'linear-gradient(to top, #434343, #000000)',
+                    }}
+                  >
                     {col.title}
                   </TableCell>
                 ))}
@@ -346,17 +366,26 @@ class PlayerStats extends Component {
               {stats
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => (
-                  <TableRow key={row.playerId}>
-                    {newCol.map(col => {
-                      return (
-                        <TableCell
-                          // align="center"
-                          key={`${row.playerId}-${col.title}`}
-                        >
-                          {row[col.name]}
-                        </TableCell>
-                      )
-                    })}
+                  <TableRow key={row.playerId} style={{ height: 'auto' }}>
+                    <TableCell
+                      component="th"
+                      style={{
+                        paddingLeft: '24px',
+                        whiteSpace: 'nowrap',
+                        width: '300px',
+                      }}
+                    >
+                      {row[newCol[0].name]}
+                    </TableCell>
+                    {newCol.slice(1).map(col => (
+                      <TableCell
+                        key={`${row.playerId}-${col.title}`}
+                        style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
+                        align="center"
+                      >
+                        {row[col.name]}
+                      </TableCell>
+                    ))}
                   </TableRow>
                 ))}
             </TableBody>
@@ -379,14 +408,15 @@ class PlayerStats extends Component {
             </TableFooter>
           </Table>
         </Paper>
-        <Link
-          to="/"
-          style={{
-            borderRadius: '3px',
-            letterSpacing: '1.5px',
-          }}
-        >
-          Back to Home
+        <br />
+        <Link to="/">
+          <span
+            style={{
+              marginTop: '1rem',
+            }}
+          >
+            Back to Home
+          </span>
         </Link>
       </div>
     )

@@ -29,8 +29,6 @@ class TablePaginationActions extends Component {
   render() {
     const { count, page } = this.props
     const rowsPerPage = parseInt(this.props.rowsPerPage)
-    console.log(rowsPerPage)
-    console.log(typeof rowsPerPage)
 
     return (
       <div style={{ flexShrink: '0' }}>
