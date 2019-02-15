@@ -320,7 +320,12 @@ class PlayerStats extends Component {
           </Button>
         </div>
         <div
-          style={{ display: 'flex', flexWrap: 'wrap', marginBottom: '1rem' }}
+          style={{
+            display: 'flex',
+            marginBottom: '1rem',
+            overflowX: 'auto',
+            width: '100%',
+          }}
         >
           {this.state.selectedPlayers.map(idx => {
             let playerObj = this.state.stats.find(obj => obj.playerId === idx)
@@ -336,6 +341,7 @@ class PlayerStats extends Component {
                   padding: '0.5rem 0.75rem',
                   fontSize: '0.75rem',
                   fontWeight: 'bolder',
+                  whiteSpace: 'nowrap',
                 }}
                 key={idx}
               >
