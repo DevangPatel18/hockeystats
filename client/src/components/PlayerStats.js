@@ -93,8 +93,8 @@ class PlayerStats extends Component {
 
     this._isMounted = false
 
-    this.rowSelection = selectedPlayers => this.setState({ selectedPlayers })
     this.updateTrackedPlayers = this.updateTrackedPlayers.bind(this)
+    this.handleRowClick = this.handleRowClick.bind(this)
   }
 
   componentDidMount() {
@@ -158,6 +158,19 @@ class PlayerStats extends Component {
 
   handleChangePage = (event, page) => {
     this.setState({ page })
+  }
+
+  handleRowClick = (event, playerId) => {
+    let newSelectedPlayers = this.state.selectedPlayers.slice()
+    const selectedIndex = newSelectedPlayers.indexOf(playerId)
+
+    console.log('newSelectedPlayers ', newSelectedPlayers)
+    if (selectedIndex === -1) {
+      newSelectedPlayers.push(playerId)
+    } else {
+      newSelectedPlayers.splice(selectedIndex, 1)
+    }
+    this.setState({ selectedPlayers: newSelectedPlayers })
   }
 
   handleChangeRowsPerPage = event => {
@@ -366,7 +379,12 @@ class PlayerStats extends Component {
               {stats
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => (
-                  <TableRow key={row.playerId} style={{ height: 'auto' }}>
+                  <TableRow
+                    key={row.playerId}
+                    style={{ height: 'auto' }}
+                    selected={selectedPlayers.includes(row.playerId)}
+                    onClick={event => this.handleRowClick(event, row.playerId)}
+                  >
                     <TableCell
                       component="th"
                       style={{
