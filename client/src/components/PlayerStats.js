@@ -27,6 +27,7 @@ import {
   removePlayerList,
 } from '../actions/statActions'
 import TablePaginationActions from './TablePaginationActions'
+import { columns } from '../helper/columnLabels'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -49,38 +50,6 @@ const yearFormatter = cell => {
 const stopPropagation = event => {
   event.stopPropagation()
 }
-
-const columns = [
-  { title: 'Name', field: 'playerName' },
-  { title: 'Season', field: 'seasonId' },
-  { title: 'Track', field: 'track' },
-  { title: 'Team', field: 'playerTeamsPlayedFor' },
-  { title: 'G', field: 'goals' },
-  { title: 'A', field: 'assists' },
-  { title: 'P', field: 'points' },
-  { title: 'Height', field: 'playerHeight' },
-  { title: 'GP', field: 'gamesPlayed' },
-  { title: 'Country', field: 'playerBirthCountry' },
-  { title: 'DOB', field: 'playerBirthDate' },
-  { title: 'Draft #', field: 'playerDraftOverallPickNo' },
-  { title: 'Draft Year', field: 'playerDraftYear' },
-  { title: 'Pos', field: 'playerPositionCode' },
-  { title: 'Weight', field: 'playerWeight' },
-  { title: '+/-', field: 'plusMinus' },
-  { title: 'P/G', field: 'pointsPerGame' },
-  { title: 'PPG', field: 'ppGoals' },
-  { title: 'PPP', field: 'ppPoints' },
-  { title: 'SHG', field: 'shGoals' },
-  { title: 'SHP', field: 'shPoints' },
-  { title: 'Shifts/G', field: 'shiftsPerGame' },
-  { title: 'S%', field: 'shootingPctg' },
-  { title: 'TOI/G', field: 'timeOnIcePerGame' },
-]
-
-const newCol = columns.map(obj => ({
-  name: `${obj.field}`,
-  title: `${obj.title}`,
-}))
 
 class PlayerStats extends Component {
   constructor() {
@@ -369,9 +338,9 @@ class PlayerStats extends Component {
                     background: 'linear-gradient(to top, #434343, #000000)',
                   }}
                 >
-                  {newCol[0].title}
+                  {columns[0].title}
                 </TableCell>
-                {newCol.slice(1).map(col => (
+                {columns.slice(1).map(col => (
                   <TableCell
                     align="center"
                     key={col.title}
@@ -405,16 +374,16 @@ class PlayerStats extends Component {
                         width: '300px',
                       }}
                     >
-                      {row[newCol[0].name]}
+                      {row[columns[0].id]}
                     </TableCell>
-                    {newCol.slice(1).map(col => (
+                    {columns.slice(1).map(col => (
                       <TableCell
                         key={`${row.playerId}-${col.title}`}
                         style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
                         align="center"
                       >
-                        {row[col.name]}
-                        {col.name === 'track' && (
+                        {row[col.id]}
+                        {col.id === 'track' && (
                           <Checkbox
                             icon={<FavoriteBorder />}
                             checkedIcon={<Favorite />}
