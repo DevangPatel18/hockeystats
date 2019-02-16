@@ -16,6 +16,8 @@ import {
   TablePagination,
   Paper,
 } from '@material-ui/core'
+import Favorite from '@material-ui/icons/Favorite'
+import FavoriteBorder from '@material-ui/icons/FavoriteBorder'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../utils/configLocalforage'
@@ -44,9 +46,14 @@ const yearFormatter = cell => {
   return yearsFormat
 }
 
+const stopPropagation = event => {
+  event.stopPropagation()
+}
+
 const columns = [
   { title: 'Name', field: 'playerName' },
   { title: 'Season', field: 'seasonId' },
+  { title: 'Track', field: 'track' },
   { title: 'Team', field: 'playerTeamsPlayedFor' },
   { title: 'G', field: 'goals' },
   { title: 'A', field: 'assists' },
@@ -73,7 +80,6 @@ const columns = [
 const newCol = columns.map(obj => ({
   name: `${obj.field}`,
   title: `${obj.title}`,
-  getCellValue: row => row[obj.field],
 }))
 
 class PlayerStats extends Component {
@@ -408,6 +414,19 @@ class PlayerStats extends Component {
                         align="center"
                       >
                         {row[col.name]}
+                        {col.name === 'track' && (
+                          <Checkbox
+                            icon={<FavoriteBorder />}
+                            checkedIcon={<Favorite />}
+                            checked={this.state.trackedPlayers.includes(
+                              row.playerId
+                            )}
+                            onChange={() =>
+                              this.updateTrackedPlayers(row.playerId)
+                            }
+                            onClick={stopPropagation}
+                          />
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
