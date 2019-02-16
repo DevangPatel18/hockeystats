@@ -24,3 +24,14 @@ export const columns = [
   { title: 'S%', id: 'shootingPctg' },
   { title: 'TOI/G', id: 'timeOnIcePerGame' },
 ]
+
+export const yearFormatter = cell => {
+  let yearsFormat = cell
+    .toString()
+    .slice()
+    .split('')
+  yearsFormat.splice(4, 2, '-')
+  yearsFormat = yearsFormat.join('')
+
+  return yearsFormat
+}

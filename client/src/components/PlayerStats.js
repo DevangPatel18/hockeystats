@@ -27,25 +27,13 @@ import {
   removePlayerList,
 } from '../actions/statActions'
 import TablePaginationActions from './TablePaginationActions'
-import { columns } from '../helper/columnLabels'
+import { columns, yearFormatter } from '../helper/columnLabels'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
 
 // Configure 'localforage' and instantiate 'axios' with 'axios-cache-adapter'
 configure()
-
-const yearFormatter = cell => {
-  let yearsFormat = cell
-    .getValue()
-    .toString()
-    .slice()
-    .split('')
-  yearsFormat.splice(4, 2, '-')
-  yearsFormat = yearsFormat.join('')
-
-  return yearsFormat
-}
 
 const stopPropagation = event => {
   event.stopPropagation()
@@ -376,7 +364,16 @@ class PlayerStats extends Component {
                     >
                       {row[columns[0].id]}
                     </TableCell>
-                    {columns.slice(1).map(col => (
+                    <TableCell
+                      style={{
+                        paddingLeft: '24px',
+                        whiteSpace: 'nowrap',
+                        width: '300px',
+                      }}
+                    >
+                      {yearFormatter(row[columns[1].id])}
+                    </TableCell>
+                    {columns.slice(2).map(col => (
                       <TableCell
                         key={`${row.playerId}-${col.title}`}
                         style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
