@@ -28,6 +28,7 @@ import {
 } from '../actions/statActions'
 import TablePaginationActions from './TablePaginationActions'
 import { columns, yearFormatter } from '../helper/columnLabels'
+import StatsFilterPanel from './StatsFilterPanel'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -190,29 +191,13 @@ class PlayerStats extends Component {
     const {
       stats,
       yearStart,
+      yearEnd,
       position,
       selectedPlayers,
       trackedPlayers,
       rowsPerPage,
       page,
     } = this.state
-    const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
-    let optionsStart = []
-    let optionsEnd = []
-
-    for (let i = 1917; i < 2019; i++) {
-      optionsStart.push(
-        <option value={`${i}${i + 1}`} key={`${i}-start`}>{`${i}-${i +
-          1}`}</option>
-      )
-    }
-
-    for (let i = yearCutoff; i < 2019; i++) {
-      optionsEnd.push(
-        <option value={`${i}${i + 1}`} key={`${i}-end`}>{`${i}-${i +
-          1}`}</option>
-      )
-    }
 
     const dataDisplay = stats.filter(obj =>
       position.includes(obj.playerPositionCode)
@@ -223,65 +208,13 @@ class PlayerStats extends Component {
     return (
       <div style={{ fontFamily: 'Arial' }}>
         <h1>Player Statistics</h1>
-        <div style={{ margin: '2rem 0' }}>
-          <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-            <span
-              style={{
-                paddingRight: '1rem',
-                fontWeight: 'bolder',
-                height: '100%',
-              }}
-            >
-              Season Range
-            </span>
-            <FormControl>
-              <InputLabel htmlFor="yearStart" />
-              <NativeSelect
-                value={this.state.yearStart}
-                onChange={this.handleChange('yearStart')}
-                input={<Input name="yearStart" id="yearStart" />}
-              >
-                {optionsStart.map(option => option)}
-              </NativeSelect>
-            </FormControl>
-            <span style={{ padding: '0 1rem' }}> to </span>
-            <FormControl>
-              <InputLabel htmlFor="yearEnd" />
-              <NativeSelect
-                value={this.state.yearEnd}
-                onChange={this.handleChange('yearEnd')}
-                input={<Input name="yearEnd" id="yearEnd" />}
-              >
-                {optionsEnd.map(option => option)}
-              </NativeSelect>
-            </FormControl>
-          </div>
-          <div>
-            <FormControl>
-              <InputLabel htmlFor="position">Position</InputLabel>
-              <NativeSelect
-                value={this.state.position}
-                onChange={this.handleChange('position')}
-                input={<Input name="position" id="position" />}
-              >
-                <option value={'LRCD'}>All Skaters</option>
-                <option value={'LRC'}>Forwards</option>
-                <option value={'L'}>Left Wing</option>
-                <option value={'R'}>Right Wing</option>
-                <option value={'C'}>Center</option>
-                <option value={'D'}>Defensemen</option>
-              </NativeSelect>
-            </FormControl>
-          </div>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={this.submitQuery}
-            style={{ marginTop: '2rem' }}
-          >
-            generate data
-          </Button>
-        </div>
+        <StatsFilterPanel
+          yearStart={yearStart}
+          yearEnd={yearEnd}
+          position={position}
+          handleChange={x => this.handleChange(x)}
+          submitQuery={this.submitQuery}
+        />
         <div
           style={{
             display: 'flex',
@@ -345,7 +278,7 @@ class PlayerStats extends Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {stats
+              {dataDisplay
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => (
                   <TableRow
