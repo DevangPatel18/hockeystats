@@ -6,12 +6,23 @@ import {
   TableCell,
   TableRow,
 } from '@material-ui/core'
-import Favorite from '@material-ui/icons/Favorite'
-import FavoriteBorder from '@material-ui/icons/FavoriteBorder'
+import { Star, StarBorder } from '@material-ui/icons'
+import { amber, grey } from '@material-ui/core/colors'
+import { withStyles } from '@material-ui/core/styles'
 import { columns, yearFormatter } from '../helper/columnLabels'
 
 const stopPropagation = event => {
   event.stopPropagation()
+}
+
+const styles = {
+  root: {
+    color: grey[500],
+    '&$checked': {
+      color: amber[600],
+    },
+  },
+  checked: {},
 }
 
 const TableData = props => {
@@ -23,7 +34,9 @@ const TableData = props => {
     selectedPlayers,
     handleRowClick,
     updateTrackedPlayers,
+    classes,
   } = props
+
   return (
     <>
       <TableHead>
@@ -97,13 +110,17 @@ const TableData = props => {
                   {row[col.id]}
                   {col.id === 'track' && (
                     <Checkbox
-                      icon={<FavoriteBorder />}
-                      checkedIcon={<Favorite />}
+                      icon={<StarBorder />}
+                      checkedIcon={<Star />}
                       checked={trackedPlayers.includes(row.playerId)}
                       onChange={() =>
                         updateTrackedPlayers(row.playerId, row.seasonId)
                       }
                       onClick={stopPropagation}
+                      classes={{
+                        root: classes.root,
+                        checked: classes.checked,
+                      }}
                     />
                   )}
                 </TableCell>
@@ -115,4 +132,4 @@ const TableData = props => {
   )
 }
 
-export default TableData
+export default withStyles(styles)(TableData)
