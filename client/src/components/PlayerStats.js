@@ -124,13 +124,13 @@ class PlayerStats extends Component {
     this.setState({ page })
   }
 
-  handleRowClick = (event, playerId) => {
+  handleRowClick = (event, playerSeasonId) => {
     let newSelectedPlayers = this.state.selectedPlayers.slice()
-    const selectedIndex = newSelectedPlayers.indexOf(playerId)
+    const selectedIndex = newSelectedPlayers.indexOf(playerSeasonId)
 
     console.log('newSelectedPlayers ', newSelectedPlayers)
     if (selectedIndex === -1) {
-      newSelectedPlayers.push(playerId)
+      newSelectedPlayers.push(playerSeasonId)
     } else {
       newSelectedPlayers.splice(selectedIndex, 1)
     }
@@ -282,10 +282,17 @@ class PlayerStats extends Component {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map(row => (
                   <TableRow
-                    key={row.playerId}
+                    key={`${row.playerId}-${row.seasonId}`}
                     style={{ height: 'auto' }}
-                    selected={selectedPlayers.includes(row.playerId)}
-                    onClick={event => this.handleRowClick(event, row.playerId)}
+                    selected={selectedPlayers.includes(
+                      [row.playerId, row.seasonId].join('-')
+                    )}
+                    onClick={event =>
+                      this.handleRowClick(
+                        event,
+                        [row.playerId, row.seasonId].join('-')
+                      )
+                    }
                   >
                     <TableCell
                       component="th"
