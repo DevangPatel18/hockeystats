@@ -143,7 +143,7 @@ class PlayerStats extends Component {
     })
   }
 
-  updateTrackedPlayers(playerId) {
+  updateTrackedPlayers(playerId, seasonId) {
     const newTrackedPlayers = this.state.trackedPlayers.slice()
     const index = newTrackedPlayers.indexOf(playerId)
     const dispatchArgs = {
@@ -151,23 +151,25 @@ class PlayerStats extends Component {
       playerId,
     }
 
-    if (this.props.auth.isAuthenticated) {
-      if (index === -1) {
-        this.props.addPlayerList(dispatchArgs)
+    if (seasonId === 20182019) {
+      if (this.props.auth.isAuthenticated) {
+        if (index === -1) {
+          this.props.addPlayerList(dispatchArgs)
+        } else {
+          this.props.removePlayerList(dispatchArgs)
+        }
       } else {
-        this.props.removePlayerList(dispatchArgs)
-      }
-    } else {
-      if (index === -1) {
-        newTrackedPlayers.push(playerId)
-      } else {
-        newTrackedPlayers.splice(index, 1)
-      }
+        if (index === -1) {
+          newTrackedPlayers.push(playerId)
+        } else {
+          newTrackedPlayers.splice(index, 1)
+        }
 
-      this.setState({
-        trackedPlayers: newTrackedPlayers,
-        [playerId]: !this.state[playerId],
-      })
+        this.setState({
+          trackedPlayers: newTrackedPlayers,
+          [playerId]: !this.state[playerId],
+        })
+      }
     }
   }
 
@@ -239,7 +241,7 @@ class PlayerStats extends Component {
               trackedPlayers={trackedPlayers}
               selectedPlayers={selectedPlayers}
               handleRowClick={(event, x) => this.handleRowClick(event, x)}
-              updateTrackedPlayers={x => this.updateTrackedPlayers(x)}
+              updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
             />
             <TableFooter>
               <TableRow>

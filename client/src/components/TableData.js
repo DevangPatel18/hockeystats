@@ -100,7 +100,9 @@ const TableData = props => {
                       icon={<FavoriteBorder />}
                       checkedIcon={<Favorite />}
                       checked={trackedPlayers.includes(row.playerId)}
-                      onChange={() => updateTrackedPlayers(row.playerId)}
+                      onChange={() =>
+                        updateTrackedPlayers(row.playerId, row.seasonId)
+                      }
                       onClick={stopPropagation}
                     />
                   )}
