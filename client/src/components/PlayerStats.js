@@ -125,6 +125,17 @@ class PlayerStats extends Component {
     this.setState({ page: 0, rowsPerPage: parseInt(event.target.value) })
   }
 
+  handleRequestSort = (event, property) => {
+    const orderBy = property
+    let order = 'desc'
+
+    if (this.state.orderBy === property && this.state.order === 'desc') {
+      order = 'asc'
+    }
+
+    this.setState({ order, orderBy })
+  }
+
   submitQuery = e => {
     e.preventDefault()
     const { yearStart, yearEnd } = this.state
@@ -183,6 +194,8 @@ class PlayerStats extends Component {
       trackedPlayers,
       rowsPerPage,
       page,
+      order,
+      orderBy,
     } = this.state
 
     const dataDisplay = stats.filter(obj =>
@@ -237,11 +250,16 @@ class PlayerStats extends Component {
             <TableData
               dataDisplay={dataDisplay}
               page={page}
+              order={order}
+              orderBy={orderBy}
               rowsPerPage={rowsPerPage}
               trackedPlayers={trackedPlayers}
               selectedPlayers={selectedPlayers}
               handleRowClick={(event, x) => this.handleRowClick(event, x)}
               updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
+              handleRequestSort={(event, position) =>
+                this.handleRequestSort(event, position)
+              }
             />
             <TableFooter>
               <TableRow>

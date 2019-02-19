@@ -5,15 +5,20 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  TableSortLabel,
 } from '@material-ui/core'
 import { Star, StarBorder } from '@material-ui/icons'
 import { amber, grey } from '@material-ui/core/colors'
 import { withStyles } from '@material-ui/core/styles'
-import { columns, yearFormatter } from '../helper/columnLabels'
-
-const stopPropagation = event => {
-  event.stopPropagation()
-}
+import {
+  columns,
+  yearFormatter,
+  stopPropagation,
+  desc,
+  stableSort,
+  getSorting,
+} from '../helper/columnLabels'
+import Tooltip from '@material-ui/core/Tooltip'
 
 const styles = {
   root: {
@@ -31,12 +36,15 @@ const TableData = props => {
   const {
     dataDisplay,
     page,
+    order,
+    orderBy,
     rowsPerPage,
     trackedPlayers,
     selectedPlayers,
     handleRowClick,
     updateTrackedPlayers,
     classes,
+    handleRequestSort,
   } = props
 
   return (
@@ -51,6 +59,7 @@ const TableData = props => {
               background: '#000000',
               background: 'linear-gradient(to top, #434343, #000000)',
             }}
+            sortDirection={orderBy === columns[0].id ? order : false}
           >
             {columns[0].title}
           </TableCell>
@@ -64,14 +73,26 @@ const TableData = props => {
                 background: '#000000',
                 background: 'linear-gradient(to top, #434343, #000000)',
               }}
+              sortDirection={orderBy === col.id ? order : false}
             >
-              {col.title}
+              <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
+                <TableSortLabel
+                  active={orderBy === col.id}
+                  direction={order}
+                  onClick={event => handleRequestSort(event, col.id)}
+                  style={{
+                    color: 'white',
+                  }}
+                >
+                  {col.title}
+                </TableSortLabel>
+              </Tooltip>
             </TableCell>
           ))}
         </TableRow>
       </TableHead>
       <TableBody>
-        {dataDisplay
+        {stableSort(dataDisplay, getSorting(order, orderBy))
           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
           .map(row => (
             <TableRow
