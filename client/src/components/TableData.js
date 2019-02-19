@@ -21,6 +21,8 @@ const styles = {
     '&$checked': {
       color: amber[600],
     },
+    padding: 0,
+    transform: 'scale(0.8)',
   },
   checked: {},
 }
