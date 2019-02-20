@@ -6,6 +6,7 @@ import {
   TableFooter,
   TablePagination,
   Paper,
+  Button,
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -215,6 +216,20 @@ class PlayerStats extends Component {
           handleChange={x => this.handleChange(x)}
           submitQuery={this.submitQuery}
         />
+        {this.state.selectedPlayers.length !== 0 && (
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={() => {
+              console.log('open modal')
+            }}
+            style={{
+              fontWeight: 'bolder',
+            }}
+          >
+            <span>compare selected</span>
+          </Button>
+        )}
         <div
           style={{
             display: 'flex',
