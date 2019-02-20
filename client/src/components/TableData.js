@@ -51,6 +51,12 @@ const TableData = props => {
       <TableHead>
         <TableRow style={{ borderColor: 'none' }}>
           <TableCell
+            style={{
+              background: '#000000',
+              background: 'linear-gradient(to top, #434343, #000000)',
+            }}
+          />
+          <TableCell
             component="th"
             style={{
               paddingLeft: '24px',
@@ -93,7 +99,7 @@ const TableData = props => {
       <TableBody>
         {stableSort(dataDisplay, getSorting(order, orderBy))
           .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-          .map(row => (
+          .map((row, i) => (
             <TableRow
               key={`${row.playerId}-${row.seasonId}`}
               style={{ height: 'auto' }}
@@ -105,20 +111,25 @@ const TableData = props => {
               }
             >
               <TableCell
+                style={{
+                  padding: '0 5px',
+                  margin: '0',
+                }}
+              >
+                {i + 1 + page * rowsPerPage}
+              </TableCell>
+              <TableCell
                 component="th"
                 style={{
                   paddingLeft: '24px',
                   whiteSpace: 'nowrap',
-                  width: '300px',
                 }}
               >
                 {row[columns[0].id]}
               </TableCell>
               <TableCell
                 style={{
-                  paddingLeft: '24px',
                   whiteSpace: 'nowrap',
-                  width: '300px',
                 }}
               >
                 {yearFormatter(row[columns[1].id])}
