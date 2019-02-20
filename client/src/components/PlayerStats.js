@@ -18,6 +18,7 @@ import {
 import TablePaginationActions from './TablePaginationActions'
 import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
+import { yearFormatter } from '../helper/columnLabels'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -223,25 +224,44 @@ class PlayerStats extends Component {
           }}
         >
           {this.state.selectedPlayers.map(idx => {
-            let playerObj = this.state.stats.find(obj => obj.playerId === idx)
+            const [playerId, seasonId] = idx.split('-')
+            const playerObj = this.state.stats.find(
+              obj => obj.playerId === parseInt(playerId)
+            )
             if (!playerObj) return null
             const { playerName } = playerObj
             return (
-              <span
+              <div
                 style={{
                   backgroundColor: '#4169e1',
                   color: 'white',
                   margin: '.5rem',
                   borderRadius: '1.5rem',
-                  padding: '0.5rem 0.75rem',
-                  fontSize: '0.75rem',
-                  fontWeight: 'bolder',
-                  whiteSpace: 'nowrap',
+                  padding: '0.4rem 0.75rem',
+                  lineHeight: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
                 }}
                 key={idx}
               >
-                {playerName}
-              </span>
+                <span
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 'bolder',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {playerName}
+                </span>
+                <span
+                  style={{
+                    fontSize: '0.6rem',
+                    textAlign: 'right',
+                  }}
+                >
+                  {yearFormatter(seasonId)}
+                </span>
+              </div>
             )
           })}
         </div>

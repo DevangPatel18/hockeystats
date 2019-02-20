@@ -14,7 +14,6 @@ import {
   columns,
   yearFormatter,
   stopPropagation,
-  desc,
   stableSort,
   getSorting,
 } from '../helper/columnLabels'
