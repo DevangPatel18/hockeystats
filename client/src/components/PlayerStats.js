@@ -7,6 +7,7 @@ import {
   TablePagination,
   Paper,
   Button,
+  Modal,
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -39,6 +40,7 @@ class PlayerStats extends Component {
       selectedPlayers: [],
       page: 0,
       rowsPerPage: 10,
+      modal: false,
     }
 
     this._isMounted = false
@@ -114,7 +116,6 @@ class PlayerStats extends Component {
     let newSelectedPlayers = this.state.selectedPlayers.slice()
     const selectedIndex = newSelectedPlayers.indexOf(playerSeasonId)
 
-    console.log('newSelectedPlayers ', newSelectedPlayers)
     if (selectedIndex === -1) {
       newSelectedPlayers.push(playerSeasonId)
     } else {
@@ -136,6 +137,14 @@ class PlayerStats extends Component {
     }
 
     this.setState({ order, orderBy })
+  }
+
+  handleModalOpen = () => {
+    this.setState({ modal: true })
+  }
+
+  handleModalClose = () => {
+    this.setState({ modal: false })
   }
 
   submitQuery = e => {
@@ -220,14 +229,12 @@ class PlayerStats extends Component {
           <Button
             variant="outlined"
             size="small"
-            onClick={() => {
-              console.log('open modal')
-            }}
+            onClick={this.handleModalOpen}
             style={{
               fontWeight: 'bolder',
             }}
           >
-            <span>compare selected</span>
+            compare selected
           </Button>
         )}
         <div
@@ -325,6 +332,18 @@ class PlayerStats extends Component {
             Back to Home
           </span>
         </Link>
+        <Modal open={this.state.modal} onClose={this.handleModalClose}>
+          <Paper
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            Player comparison data
+          </Paper>
+        </Modal>
       </div>
     )
   }
