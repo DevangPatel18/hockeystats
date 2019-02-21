@@ -21,6 +21,7 @@ import TablePaginationActions from './TablePaginationActions'
 import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
 import { yearFormatter } from '../helper/columnLabels'
+import PlayerComparison from './PlayerComparison'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -225,7 +226,7 @@ class PlayerStats extends Component {
           handleChange={x => this.handleChange(x)}
           submitQuery={this.submitQuery}
         />
-        {this.state.selectedPlayers.length !== 0 && (
+        {selectedPlayers.length !== 0 && (
           <Button
             variant="outlined"
             size="small"
@@ -245,7 +246,7 @@ class PlayerStats extends Component {
             width: '100%',
           }}
         >
-          {this.state.selectedPlayers.map(idx => {
+          {selectedPlayers.map(idx => {
             const [playerId, seasonId] = idx.split('-')
             const playerObj = this.state.stats.find(
               obj => obj.playerId === parseInt(playerId)
@@ -332,16 +333,17 @@ class PlayerStats extends Component {
             Back to Home
           </span>
         </Link>
-        <Modal open={this.state.modal} onClose={this.handleModalClose}>
-          <Paper
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-            }}
-          >
-            Player comparison data
+        <Modal
+          open={this.state.modal}
+          onClose={this.handleModalClose}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Paper>
+            <PlayerComparison players={selectedPlayers} data={dataDisplay} />
           </Paper>
         </Modal>
       </div>
