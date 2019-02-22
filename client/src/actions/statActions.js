@@ -1,5 +1,11 @@
 import axios from 'axios'
-import { GET_PLAYER_LIST, ADD_PLAYER, REMOVE_PLAYER } from './types'
+import {
+  GET_PLAYER_LIST,
+  ADD_PLAYER,
+  REMOVE_PLAYER,
+  DATA_LOADING,
+  DATA_LOADED,
+} from './types'
 
 export const getPlayerList = userId => dispatch => {
   axios
@@ -35,4 +41,15 @@ export const removePlayerList = userData => dispatch => {
     .catch(err => {
       console.log(err)
     })
+}
+
+export const startLoad = event => dispatch => {
+  console.log('start loading from dfunction');
+  
+  dispatch({ type: DATA_LOADING })
+}
+
+export const stopLoad = event => dispatch => {
+  console.log('stop loading from dfunction');
+  dispatch({ type: DATA_LOADED })
 }

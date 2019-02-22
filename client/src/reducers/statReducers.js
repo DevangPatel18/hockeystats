@@ -1,6 +1,13 @@
-import { GET_PLAYER_LIST, ADD_PLAYER, REMOVE_PLAYER } from '../actions/types'
+import {
+  GET_PLAYER_LIST,
+  ADD_PLAYER,
+  REMOVE_PLAYER,
+  DATA_LOADING,
+  DATA_LOADED,
+} from '../actions/types'
 const initialState = {
   trackedPlayers: [],
+  dataLoad: false,
 }
 
 export default function(state = initialState, action) {
@@ -21,6 +28,16 @@ export default function(state = initialState, action) {
       return {
         ...state,
         trackedPlayers,
+      }
+    case DATA_LOADING:
+      return {
+        ...state,
+        dataLoad: true,
+      }
+    case DATA_LOADED:
+      return {
+        ...state,
+        dataLoad: false,
       }
     default:
       return state

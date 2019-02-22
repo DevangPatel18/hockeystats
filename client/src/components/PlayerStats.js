@@ -8,6 +8,7 @@ import {
   Paper,
   Button,
   Modal,
+  LinearProgress,
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -16,6 +17,8 @@ import {
   getPlayerList,
   addPlayerList,
   removePlayerList,
+  startLoad,
+  stopLoad,
 } from '../actions/statActions'
 import TablePaginationActions from './TablePaginationActions'
 import StatsFilterPanel from './StatsFilterPanel'
@@ -164,6 +167,7 @@ class PlayerStats extends Component {
     e.preventDefault()
     const { yearStart, yearEnd } = this.state
 
+    this.props.startLoad()
     configure().then(async api => {
       const stats = await api
         .put('/api/statistics', { data: { yearStart, yearEnd } })
@@ -174,7 +178,10 @@ class PlayerStats extends Component {
 
       console.log(`Received data from ${yearStart} to ${yearEnd} seasons`)
 
-      this.setState({ stats })
+      this.props.stopLoad()
+      if (stats) {
+        this.setState({ stats })
+      }
     })
   }
 
@@ -221,6 +228,7 @@ class PlayerStats extends Component {
       order,
       orderBy,
     } = this.state
+    const { dataLoad } = this.props.stats
 
     const dataDisplay = stats.filter(obj =>
       position.includes(obj.playerPositionCode)
@@ -251,6 +259,13 @@ class PlayerStats extends Component {
           </Button>
         )}
         <PlayerTags selectedPlayers={selectedPlayers} stats={dataDisplay} />
+        <LinearProgress
+          color="secondary"
+          style={{
+            opacity: dataLoad ? '1' : '0',
+            transition: 'all 0.5s',
+          }}
+        />
         <Paper style={{ overflowX: 'auto' }}>
           <Table padding="checkbox">
             <TableData
@@ -318,6 +333,8 @@ PlayerStats.propTypes = {
   getPlayerList: PropTypes.func.isRequired,
   addPlayerList: PropTypes.func.isRequired,
   removePlayerList: PropTypes.func.isRequired,
+  startLoad: PropTypes.func.isRequired,
+  stopLoad: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
 }
@@ -330,5 +347,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getPlayerList, addPlayerList, removePlayerList }
+  { getPlayerList, addPlayerList, removePlayerList, startLoad, stopLoad }
 )(PlayerStats)
