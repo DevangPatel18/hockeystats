@@ -22,6 +22,7 @@ import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
 import { yearFormatter } from '../helper/columnLabels'
 import PlayerComparison from './PlayerComparison'
+import PlayerTags from './PlayerTags'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -249,56 +250,7 @@ class PlayerStats extends Component {
             compare selected
           </Button>
         )}
-        <div
-          style={{
-            display: 'flex',
-            marginBottom: '1rem',
-            overflowX: 'auto',
-            width: '100%',
-          }}
-        >
-          {selectedPlayers.map(idx => {
-            const [playerId, seasonId] = idx.split('-')
-            const playerObj = this.state.stats.find(
-              obj => obj.playerId === parseInt(playerId)
-            )
-            if (!playerObj) return null
-            const { playerName } = playerObj
-            return (
-              <div
-                style={{
-                  backgroundColor: '#4169e1',
-                  color: 'white',
-                  margin: '.5rem',
-                  borderRadius: '1.5rem',
-                  padding: '0.4rem 0.75rem',
-                  lineHeight: '12px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                }}
-                key={idx}
-              >
-                <span
-                  style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 'bolder',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {playerName}
-                </span>
-                <span
-                  style={{
-                    fontSize: '0.6rem',
-                    textAlign: 'right',
-                  }}
-                >
-                  {yearFormatter(seasonId)}
-                </span>
-              </div>
-            )
-          })}
-        </div>
+        <PlayerTags selectedPlayers={selectedPlayers} stats={dataDisplay} />
         <Paper style={{ overflowX: 'auto' }}>
           <Table padding="checkbox">
             <TableData
