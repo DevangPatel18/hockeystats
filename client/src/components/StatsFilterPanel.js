@@ -8,7 +8,7 @@ import {
 } from '@material-ui/core'
 
 const StatsFilterPanel = props => {
-  const { yearStart, yearEnd, position, handleChange, submitQuery } = props
+  const { yearStart, yearEnd, position, handleSeasonChange, submitQuery } = props
 
   const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
   let optionsStart = []
@@ -43,7 +43,7 @@ const StatsFilterPanel = props => {
           <InputLabel htmlFor="yearStart" />
           <NativeSelect
             value={yearStart}
-            onChange={handleChange('yearStart')}
+            onChange={handleSeasonChange('yearStart')}
             input={<Input name="yearStart" id="yearStart" />}
           >
             {optionsStart.map(option => option)}
@@ -54,7 +54,7 @@ const StatsFilterPanel = props => {
           <InputLabel htmlFor="yearEnd" />
           <NativeSelect
             value={yearEnd}
-            onChange={handleChange('yearEnd')}
+            onChange={handleSeasonChange('yearEnd')}
             input={<Input name="yearEnd" id="yearEnd" />}
           >
             {optionsEnd.map(option => option)}
@@ -66,7 +66,7 @@ const StatsFilterPanel = props => {
           <InputLabel htmlFor="position">Position</InputLabel>
           <NativeSelect
             value={position}
-            onChange={handleChange('position')}
+            onChange={handleSeasonChange('position')}
             input={<Input name="position" id="position" />}
           >
             <option value={'LRCD'}>All Skaters</option>

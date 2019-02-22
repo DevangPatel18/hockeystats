@@ -109,6 +109,17 @@ class PlayerStats extends Component {
     this.setState({ [name]: event.target.value })
   }
 
+  handleSeasonChange = name => event => {
+    if (name === 'yearStart' && event.target.value > this.state.yearEnd) {
+      this.setState({
+        yearStart: event.target.value,
+        yearEnd: event.target.value,
+      })
+    } else {
+      this.setState({ [name]: event.target.value })
+    }
+  }
+
   handleChangePage = (event, page) => {
     this.setState({ page })
   }
@@ -223,7 +234,7 @@ class PlayerStats extends Component {
           yearStart={yearStart}
           yearEnd={yearEnd}
           position={position}
-          handleChange={x => this.handleChange(x)}
+          handleSeasonChange={x => this.handleSeasonChange(x)}
           submitQuery={this.submitQuery}
         />
         {selectedPlayers.length !== 0 && (
