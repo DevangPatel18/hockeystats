@@ -9,7 +9,6 @@ const trackIdx = columnsMin.findIndex(obj => obj.title === 'Track')
 columnsMin.splice(trackIdx, 1)
 
 const PlayerComparison = ({ players, data }) => {
-  console.log(trackIdx)
   const playersObj = players.map(playerStr => {
     const [playerId, seasonId] = playerStr.split('-')
     const playerObj = data.find(
@@ -26,14 +25,13 @@ const PlayerComparison = ({ players, data }) => {
     return newplayerObj
   })
 
-  console.log(playersObj)
   return (
     <Table padding="checkbox">
       <TableBody>
         <TableRow>
           <TableCell />
           {playersObj.map(obj => (
-            <TableCell key={obj.playerId}>
+            <TableCell key={`${obj.playerId}-${obj.seasonId}-img`}>
               <img
                 src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${
                   obj.playerId
@@ -55,7 +53,10 @@ const PlayerComparison = ({ players, data }) => {
               {colObj.title}
             </TableCell>
             {playersObj.map(obj => (
-              <TableCell align="center" key={`${obj.playerId}-${colObj.id}`}>
+              <TableCell
+                align="center"
+                key={`${obj.playerId}-${obj.seasonId}-${colObj.id}`}
+              >
                 {obj[colObj.id]}
               </TableCell>
             ))}
