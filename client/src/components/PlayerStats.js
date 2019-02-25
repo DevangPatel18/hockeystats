@@ -243,21 +243,11 @@ class PlayerStats extends Component {
           yearStart={yearStart}
           yearEnd={yearEnd}
           position={position}
+          selectedPlayers={selectedPlayers}
           handleSeasonChange={x => this.handleSeasonChange(x)}
           submitQuery={this.submitQuery}
+          handleModalOpen={this.handleModalOpen}
         />
-        {selectedPlayers.length !== 0 && (
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={this.handleModalOpen}
-            style={{
-              fontWeight: 'bolder',
-            }}
-          >
-            compare selected
-          </Button>
-        )}
         <PlayerTags selectedPlayers={selectedPlayers} stats={dataDisplay} />
         <LinearProgress
           color="secondary"

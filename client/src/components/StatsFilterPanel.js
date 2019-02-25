@@ -8,7 +8,15 @@ import {
 } from '@material-ui/core'
 
 const StatsFilterPanel = props => {
-  const { yearStart, yearEnd, position, handleSeasonChange, submitQuery } = props
+  const {
+    yearStart,
+    yearEnd,
+    position,
+    handleSeasonChange,
+    submitQuery,
+    selectedPlayers,
+    handleModalOpen,
+  } = props
 
   const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
   let optionsStart = []
@@ -28,7 +36,7 @@ const StatsFilterPanel = props => {
   }
 
   return (
-    <div style={{ margin: '2rem 0' }}>
+    <div style={{ margin: '2rem 0 1rem' }}>
       <div style={{ display: 'flex', alignItems: 'flex-end' }}>
         <span
           style={{
@@ -78,14 +86,28 @@ const StatsFilterPanel = props => {
           </NativeSelect>
         </FormControl>
       </div>
-      <Button
-        color="primary"
-        variant="contained"
-        onClick={submitQuery}
-        style={{ marginTop: '2rem' }}
+      <div
+        style={{
+          marginTop: '1rem',
+        }}
       >
-        generate data
-      </Button>
+        <Button color="primary" variant="contained" onClick={submitQuery}>
+          generate data
+        </Button>
+        {selectedPlayers.length !== 0 && (
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={handleModalOpen}
+            style={{
+              fontWeight: 'bolder',
+              marginLeft: '1rem',
+            }}
+          >
+            compare selected
+          </Button>
+        )}
+      </div>
     </div>
   )
 }

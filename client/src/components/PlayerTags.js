@@ -6,12 +6,13 @@ const PlayerTagContainerStyles = styled.div`
   display: flex;
   margin-bottom: 1rem;
   overflow-x: auto;
+  height: 57px;
 `
 
 const PlayerTagStyles = styled.div`
   background-color: #4169e1;
   color: white;
-  margin: 0.5rem;
+  margin: 0.5rem 1rem 0.5rem 0;
   border-radius: 1.5rem;
   padding: 0.4rem 0.75rem;
   line-height: 12px;
