@@ -1,17 +1,21 @@
 import React from 'react'
 import {
   FormControl,
+  FormControlLabel,
   InputLabel,
   Input,
   NativeSelect,
   Button,
+  Switch,
 } from '@material-ui/core'
 
 const StatsFilterPanel = props => {
   const {
+    isAggregate,
     yearStart,
     yearEnd,
     position,
+    handleSwitchChange,
     handleSeasonChange,
     submitQuery,
     selectedPlayers,
@@ -69,6 +73,15 @@ const StatsFilterPanel = props => {
           </NativeSelect>
         </FormControl>
       </div>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={isAggregate}
+            onChange={handleSwitchChange('isAggregate')}
+          />
+        }
+        label="Sum Results"
+      />
       <div>
         <FormControl>
           <InputLabel htmlFor="position">Position</InputLabel>

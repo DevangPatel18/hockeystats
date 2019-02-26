@@ -37,6 +37,7 @@ class PlayerStats extends Component {
     this.state = {
       stats: [],
       position: 'LRCD',
+      isAggregate: false,
       yearStart: '20182019',
       yearEnd: '20182019',
       trackedPlayers: [],
@@ -49,7 +50,6 @@ class PlayerStats extends Component {
     this._isMounted = false
 
     this.updateTrackedPlayers = this.updateTrackedPlayers.bind(this)
-    this.handleRowClick = this.handleRowClick.bind(this)
   }
 
   componentDidMount() {
@@ -110,6 +110,10 @@ class PlayerStats extends Component {
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value })
+  }
+
+  handleSwitchChange = name => event => {
+    this.setState({ [name]: event.target.checked })
   }
 
   handleSeasonChange = name => event => {
@@ -217,6 +221,7 @@ class PlayerStats extends Component {
   render() {
     const {
       stats,
+      isAggregate,
       yearStart,
       yearEnd,
       position,
@@ -234,16 +239,17 @@ class PlayerStats extends Component {
     )
     console.log('selectedPlayers:', selectedPlayers)
     console.log('trackedPlayers:', trackedPlayers)
-
     return (
       <div style={{ fontFamily: 'Arial' }}>
         <h1>Player Statistics</h1>
         <StatsFilterPanel
+          isAggregate={isAggregate}
           yearStart={yearStart}
           yearEnd={yearEnd}
           position={position}
           selectedPlayers={selectedPlayers}
-          handleSeasonChange={x => this.handleSeasonChange(x)}
+          handleSwitchChange={this.handleSwitchChange}
+          handleSeasonChange={this.handleSeasonChange}
           submitQuery={this.submitQuery}
           handleModalOpen={this.handleModalOpen}
         />
@@ -265,6 +271,7 @@ class PlayerStats extends Component {
               rowsPerPage={rowsPerPage}
               trackedPlayers={trackedPlayers}
               selectedPlayers={selectedPlayers}
+              isAggregate={isAggregate}
               handleRowClick={(event, x) => this.handleRowClick(event, x)}
               updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
               handleRequestSort={(event, position) =>
