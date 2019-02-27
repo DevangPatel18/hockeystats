@@ -15,7 +15,7 @@ const PlayerTagStyles = styled.div`
   margin: 0.5rem 1rem 0.5rem 0;
   border-radius: 1.5rem;
   padding: 0.4rem 0.75rem;
-  line-height: 12px;
+  line-height: ${props => (props.seasonId ? '12px' : '')};
   display: flex;
   flex-direction: column;
 `
@@ -27,6 +27,7 @@ const PlayerTagNameStyles = styled.span`
 `
 
 const PlayerTagYearStyles = styled.span`
+  width: 100%;
   font-size: 0.6rem;
   text-align: right;
 `
@@ -40,9 +41,13 @@ const PlayerTags = ({ selectedPlayers, stats }) => {
         if (!playerObj) return null
         const { playerName } = playerObj
         return (
-          <PlayerTagStyles key={idx}>
+          <PlayerTagStyles key={idx} seasonId={seasonId}>
             <PlayerTagNameStyles>{playerName}</PlayerTagNameStyles>
-            <PlayerTagYearStyles>{yearFormatter(seasonId)}</PlayerTagYearStyles>
+            {seasonId && (
+              <PlayerTagYearStyles>
+                {yearFormatter(seasonId)}
+              </PlayerTagYearStyles>
+            )}
           </PlayerTagStyles>
         )
       })}

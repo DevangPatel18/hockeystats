@@ -14,12 +14,17 @@ const PlayerComparison = ({ players, data }) => {
     const playerObj = data.find(
       obj =>
         obj.playerId === parseInt(playerId) &&
-        obj.seasonId === parseInt(seasonId)
+        (!seasonId || obj.seasonId === parseInt(seasonId))
     )
 
-    const newplayerObj = {
-      ...playerObj,
-      seasonId: yearFormatter(playerObj.seasonId),
+    let newplayerObj
+    if (seasonId) {
+      newplayerObj = {
+        ...playerObj,
+        seasonId: yearFormatter(playerObj.seasonId),
+      }
+    } else {
+      newplayerObj = { ...playerObj }
     }
 
     return newplayerObj
@@ -47,21 +52,27 @@ const PlayerComparison = ({ players, data }) => {
             </TableCell>
           ))}
         </TableRow>
-        {columnsMin.map(colObj => (
-          <TableRow key={colObj.title} style={{ height: '27px' }}>
-            <TableCell style={{ fontWeight: 'bolder', paddingLeft: '10px' }}>
-              {colObj.title}
-            </TableCell>
-            {playersObj.map(obj => (
-              <TableCell
-                align="center"
-                key={`${obj.playerId}-${obj.seasonId}-${colObj.id}`}
-              >
-                {obj[colObj.id]}
+        {columnsMin
+          .filter(
+            colObj =>
+              playersObj[0].seasonId ||
+              !['seasonId', 'playerTeamsPlayedFor'].includes(colObj.id)
+          )
+          .map(colObj => (
+            <TableRow key={colObj.title} style={{ height: '27px' }}>
+              <TableCell style={{ fontWeight: 'bolder', paddingLeft: '10px' }}>
+                {colObj.title}
               </TableCell>
-            ))}
-          </TableRow>
-        ))}
+              {playersObj.map(obj => (
+                <TableCell
+                  align="center"
+                  key={`${obj.playerId}-${obj.seasonId}-${colObj.id}`}
+                >
+                  {obj[colObj.id]}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
       </TableBody>
     </Table>
   )

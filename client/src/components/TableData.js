@@ -116,12 +116,17 @@ const TableData = props => {
             <TableRow
               key={`${row.playerId}-${row.seasonId}`}
               style={{ height: 'auto' }}
-              selected={selectedPlayers.includes(
-                [row.playerId, row.seasonId].join('-')
-              )}
-              onClick={event =>
-                handleRowClick(event, [row.playerId, row.seasonId].join('-'))
+              selected={
+                selectedPlayers.includes(
+                  [row.playerId, row.seasonId].join('-')
+                ) || selectedPlayers.includes(row.playerId.toString())
               }
+              onClick={event => {
+                const tagEntry = aggregateTable
+                  ? `${row.playerId}`
+                  : `${row.playerId}-${row.seasonId}`
+                return handleRowClick(event, tagEntry)
+              }}
             >
               <TableCell
                 style={{
