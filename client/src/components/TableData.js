@@ -46,6 +46,10 @@ const TableData = props => {
     handleRequestSort,
   } = props
 
+  const aggregateTable = !(dataDisplay[0]
+    ? Object.keys(dataDisplay[0]).includes('seasonId')
+    : false)
+
   return (
     <>
       <TableHead>
@@ -68,32 +72,41 @@ const TableData = props => {
           >
             {columns[0].title}
           </TableCell>
-          {columns.slice(1).map(col => (
-            <TableCell
-              align="center"
-              key={col.title}
-              style={{
-                color: 'white',
-                whiteSpace: 'nowrap',
-                background: '#000000',
-                background: 'linear-gradient(to top, #434343, #000000)',
-              }}
-              sortDirection={orderBy === col.id ? order : false}
-            >
-              <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
-                <TableSortLabel
-                  active={orderBy === col.id}
-                  direction={order}
-                  onClick={event => handleRequestSort(event, col.id)}
-                  style={{
-                    color: 'white',
-                  }}
-                >
-                  {col.title}
-                </TableSortLabel>
-              </Tooltip>
-            </TableCell>
-          ))}
+          {columns
+            .slice(1)
+            .filter(
+              colObj =>
+                !aggregateTable ||
+                !['seasonId', 'track', 'playerTeamsPlayedFor'].includes(
+                  colObj.id
+                )
+            )
+            .map(col => (
+              <TableCell
+                align="center"
+                key={col.title}
+                style={{
+                  color: 'white',
+                  whiteSpace: 'nowrap',
+                  background: '#000000',
+                  background: 'linear-gradient(to top, #434343, #000000)',
+                }}
+                sortDirection={orderBy === col.id ? order : false}
+              >
+                <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
+                  <TableSortLabel
+                    active={orderBy === col.id}
+                    direction={order}
+                    onClick={event => handleRequestSort(event, col.id)}
+                    style={{
+                      color: 'white',
+                    }}
+                  >
+                    {col.title}
+                  </TableSortLabel>
+                </Tooltip>
+              </TableCell>
+            ))}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -127,37 +140,48 @@ const TableData = props => {
               >
                 {row[columns[0].id]}
               </TableCell>
-              <TableCell
-                style={{
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {yearFormatter(row[columns[1].id])}
-              </TableCell>
-              {columns.slice(2).map(col => (
+              {!aggregateTable && (
                 <TableCell
-                  key={`${row.playerId}-${col.title}`}
-                  style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
-                  align="center"
+                  style={{
+                    whiteSpace: 'nowrap',
+                  }}
                 >
-                  {row[col.id]}
-                  {col.id === 'track' && (
-                    <Checkbox
-                      icon={<StarBorder />}
-                      checkedIcon={<Star />}
-                      checked={trackedPlayers.includes(row.playerId)}
-                      onChange={() =>
-                        updateTrackedPlayers(row.playerId, row.seasonId)
-                      }
-                      onClick={stopPropagation}
-                      classes={{
-                        root: classes.root,
-                        checked: classes.checked,
-                      }}
-                    />
-                  )}
+                  {yearFormatter(row[columns[1].id])}
                 </TableCell>
-              ))}
+              )}
+              {columns
+                .slice(2)
+                .filter(
+                  colObj =>
+                    !aggregateTable ||
+                    !['seasonId', 'track', 'playerTeamsPlayedFor'].includes(
+                      colObj.id
+                    )
+                )
+                .map(col => (
+                  <TableCell
+                    key={`${row.playerId}-${col.title}`}
+                    style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
+                    align="center"
+                  >
+                    {row[col.id]}
+                    {col.id === 'track' && (
+                      <Checkbox
+                        icon={<StarBorder />}
+                        checkedIcon={<Star />}
+                        checked={trackedPlayers.includes(row.playerId)}
+                        onChange={() =>
+                          updateTrackedPlayers(row.playerId, row.seasonId)
+                        }
+                        onClick={stopPropagation}
+                        classes={{
+                          root: classes.root,
+                          checked: classes.checked,
+                        }}
+                      />
+                    )}
+                  </TableCell>
+                ))}
             </TableRow>
           ))}
       </TableBody>

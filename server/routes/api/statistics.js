@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
-router.get('/:yearStart/:yearEnd', async (req, res, next) => {
+router.get('/:isAggregate/:yearStart/:yearEnd', async (req, res, next) => {
   try {
     console.log('Requesting data from api...');
-    const { yearStart, yearEnd } = req.params;
+    const { isAggregate, yearStart, yearEnd } = req.params;
 
     let data = await axios
       .get(
-        `http://www.nhl.com/stats/rest/skaters?isAggregate=false&reportType=basic&isGame=false&reportName=skatersummary&sort=%5B%7B%22property%22:%22points%22,%22direction%22:%22DESC%22%7D,%7B%22property%22:%22goals%22,%22direction%22:%22DESC%22%7D,%7B%22property%22:%22assists%22,%22direction%22:%22DESC%22%7D%5D&cayenneExp=gameTypeId=2%20and%20seasonId%3E=${yearStart}%20and%20seasonId%3C=${yearEnd}`
+        `http://www.nhl.com/stats/rest/skaters?isAggregate=${isAggregate}&reportType=basic&isGame=false&reportName=skatersummary&sort=%5B%7B%22property%22:%22points%22,%22direction%22:%22DESC%22%7D,%7B%22property%22:%22goals%22,%22direction%22:%22DESC%22%7D,%7B%22property%22:%22assists%22,%22direction%22:%22DESC%22%7D%5D&cayenneExp=gameTypeId=2%20and%20seasonId%3E=${yearStart}%20and%20seasonId%3C=${yearEnd}`
       )
       .then(res => {
         return res.data.data;

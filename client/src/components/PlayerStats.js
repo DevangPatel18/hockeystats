@@ -53,11 +53,13 @@ class PlayerStats extends Component {
   }
 
   componentDidMount() {
-    const { yearStart, yearEnd } = this.state
+    const { isAggregate, yearStart, yearEnd } = this.state
     this._isMounted = true
     configure().then(api => {
       api
-        .get(`/api/statistics/${yearStart}/${yearEnd}`)
+        .get(
+          `/api/statistics/${isAggregate.toString()}/${yearStart}/${yearEnd}`
+        )
         .then(res => {
           if (this._isMounted) {
             this.setState({ stats: res.data })
@@ -168,12 +170,14 @@ class PlayerStats extends Component {
 
   submitQuery = e => {
     e.preventDefault()
-    const { yearStart, yearEnd } = this.state
+    const { isAggregate, yearStart, yearEnd } = this.state
 
     this.props.startLoad()
     configure().then(async api => {
       const stats = await api
-        .get(`/api/statistics/${yearStart}/${yearEnd}`)
+        .get(
+          `/api/statistics/${isAggregate.toString()}/${yearStart}/${yearEnd}`
+        )
         .then(res => res.data)
         .catch(err => {
           console.log(err)
