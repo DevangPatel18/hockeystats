@@ -14,7 +14,8 @@ const StatsFilterPanel = props => {
     isAggregate,
     yearStart,
     yearEnd,
-    position,
+    playerPositionCode,
+    handleRowFilter,
     handleSwitchChange,
     handleSeasonChange,
     submitQuery,
@@ -84,11 +85,11 @@ const StatsFilterPanel = props => {
       />
       <div>
         <FormControl>
-          <InputLabel htmlFor="position">Position</InputLabel>
+          <InputLabel htmlFor="playerPositionCode">Position</InputLabel>
           <NativeSelect
-            value={position}
-            onChange={handleSeasonChange('position')}
-            input={<Input name="position" id="position" />}
+            value={playerPositionCode}
+            onChange={handleRowFilter('playerPositionCode')}
+            input={<Input name="playerPositionCode" id="playerPositionCode" />}
           >
             <option value={'LRCD'}>All Skaters</option>
             <option value={'LRC'}>Forwards</option>

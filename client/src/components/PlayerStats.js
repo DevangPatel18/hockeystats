@@ -36,7 +36,7 @@ class PlayerStats extends Component {
     super()
     this.state = {
       stats: [],
-      position: 'LRCD',
+      playerPositionCode: 'LRCD',
       isAggregate: false,
       yearStart: '20182019',
       yearEnd: '20182019',
@@ -112,6 +112,20 @@ class PlayerStats extends Component {
 
   handleChange = name => event => {
     this.setState({ [name]: event.target.value })
+  }
+
+  handleRowFilter = name => event => {
+    const { stats } = this.state
+    const selectedPlayers = this.state.selectedPlayers.filter(playerStr => {
+      const [playerId, seasonId] = playerStr.split('-')
+      const playerObj = stats.find(
+        obj =>
+          obj.playerId === parseInt(playerId) &&
+          (!seasonId || obj.seasonId === parseInt(seasonId))
+      )
+      return event.target.value.includes(playerObj[name])
+    })
+    this.setState({ [name]: event.target.value, selectedPlayers })
   }
 
   handleSwitchChange = name => event => {
@@ -228,7 +242,7 @@ class PlayerStats extends Component {
       isAggregate,
       yearStart,
       yearEnd,
-      position,
+      playerPositionCode,
       selectedPlayers,
       trackedPlayers,
       rowsPerPage,
@@ -239,7 +253,7 @@ class PlayerStats extends Component {
     const { dataLoad } = this.props.stats
 
     const dataDisplay = stats.filter(obj =>
-      position.includes(obj.playerPositionCode)
+      playerPositionCode.includes(obj.playerPositionCode)
     )
     console.log('selectedPlayers:', selectedPlayers)
     console.log('trackedPlayers:', trackedPlayers)
@@ -250,8 +264,9 @@ class PlayerStats extends Component {
           isAggregate={isAggregate}
           yearStart={yearStart}
           yearEnd={yearEnd}
-          position={position}
+          playerPositionCode={playerPositionCode}
           selectedPlayers={selectedPlayers}
+          handleRowFilter={this.handleRowFilter}
           handleSwitchChange={this.handleSwitchChange}
           handleSeasonChange={this.handleSeasonChange}
           submitQuery={this.submitQuery}
@@ -278,8 +293,8 @@ class PlayerStats extends Component {
               isAggregate={isAggregate}
               handleRowClick={(event, x) => this.handleRowClick(event, x)}
               updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
-              handleRequestSort={(event, position) =>
-                this.handleRequestSort(event, position)
+              handleRequestSort={(event, property) =>
+                this.handleRequestSort(event, property)
               }
             />
             <TableFooter>
