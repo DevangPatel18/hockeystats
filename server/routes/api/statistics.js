@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 
+// Retrieve dataset
 router.get(
   '/:isAggregate/:reportName/:yearStart/:yearEnd',
   async (req, res, next) => {
@@ -23,5 +24,24 @@ router.get(
     }
   }
 );
+
+// Retrieve columns for dataset
+router.get('/:reportName', async (req, res, next) => {
+  try {
+    const { reportName } = req.params;
+
+    let columns = await axios
+      .get(
+        `https://assets.nhle.com/projects/ice3-stats/utility/locales/en_US/reports/players/${reportName}.json`
+      )
+      .then(res => {
+        return res.data.data;
+      });
+
+    return res.status(200).json(columns);
+  } catch (err) {
+    return next(err);
+  }
+});
 
 module.exports = router;
