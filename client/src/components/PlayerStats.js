@@ -241,6 +241,7 @@ class PlayerStats extends Component {
     const {
       stats,
       isAggregate,
+      reportName,
       yearStart,
       yearEnd,
       playerPositionCode,
@@ -263,10 +264,12 @@ class PlayerStats extends Component {
         <h1>Player Statistics</h1>
         <StatsFilterPanel
           isAggregate={isAggregate}
+          reportName={reportName}
           yearStart={yearStart}
           yearEnd={yearEnd}
           playerPositionCode={playerPositionCode}
           selectedPlayers={selectedPlayers}
+          handleChange={this.handleChange}
           handleRowFilter={this.handleRowFilter}
           handleSwitchChange={this.handleSwitchChange}
           handleSeasonChange={this.handleSeasonChange}

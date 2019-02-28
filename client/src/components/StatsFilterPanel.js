@@ -12,9 +12,11 @@ import {
 const StatsFilterPanel = props => {
   const {
     isAggregate,
+    reportName,
     yearStart,
     yearEnd,
     playerPositionCode,
+    handleChange,
     handleRowFilter,
     handleSwitchChange,
     handleSeasonChange,
@@ -74,6 +76,20 @@ const StatsFilterPanel = props => {
           </NativeSelect>
         </FormControl>
       </div>
+      <FormControl>
+        <InputLabel htmlFor="reportName">Report Type</InputLabel>
+        <NativeSelect
+          value={reportName}
+          onChange={handleChange('reportName')}
+          input={<Input name="reportName" id="reportName" />}
+          displayEmpty
+          name="reportName"
+        >
+          <option value="skatersummary">Skaters</option>
+          <option value="goaliesummary">Goaltenders</option>
+        </NativeSelect>
+      </FormControl>
+      <br />
       <FormControlLabel
         control={
           <Switch
