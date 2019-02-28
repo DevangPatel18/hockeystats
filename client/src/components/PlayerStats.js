@@ -38,6 +38,7 @@ class PlayerStats extends Component {
       stats: [],
       playerPositionCode: 'LRCD',
       isAggregate: false,
+      reportName: 'skatersummary',
       yearStart: '20182019',
       yearEnd: '20182019',
       trackedPlayers: [],
@@ -53,12 +54,12 @@ class PlayerStats extends Component {
   }
 
   componentDidMount() {
-    const { isAggregate, yearStart, yearEnd } = this.state
+    const { isAggregate, reportName, yearStart, yearEnd } = this.state
     this._isMounted = true
     configure().then(api => {
       api
         .get(
-          `/api/statistics/${isAggregate.toString()}/${yearStart}/${yearEnd}`
+          `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}`
         )
         .then(res => {
           if (this._isMounted) {
@@ -184,13 +185,13 @@ class PlayerStats extends Component {
 
   submitQuery = e => {
     e.preventDefault()
-    const { isAggregate, yearStart, yearEnd } = this.state
+    const { isAggregate, reportName, yearStart, yearEnd } = this.state
 
     this.props.startLoad()
     configure().then(async api => {
       const stats = await api
         .get(
-          `/api/statistics/${isAggregate.toString()}/${yearStart}/${yearEnd}`
+          `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}`
         )
         .then(res => res.data)
         .catch(err => {
