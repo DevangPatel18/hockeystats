@@ -201,7 +201,7 @@ class PlayerStats extends Component {
 
       this.props.stopLoad()
       if (stats) {
-        this.setState({ stats })
+        this.setState({ stats, selectedPlayers: [] })
       }
     })
   }
