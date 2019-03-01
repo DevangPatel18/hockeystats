@@ -70,8 +70,7 @@ const TableData = props => {
         <TableRow style={{ borderColor: 'none' }}>
           <TableCell
             style={{
-              background: '#000000',
-              background: 'linear-gradient(to top, #434343, #000000)',
+              background: 'linear-gradient(to top, #535353, #000000)',
             }}
           />
           <TableCell
@@ -79,8 +78,9 @@ const TableData = props => {
             style={{
               paddingLeft: '24px',
               color: 'white',
-              background: '#000000',
-              background: 'linear-gradient(to top, #434343, #000000)',
+              fontWeight: 'bolder',
+              letterSpacing: '1px',
+              background: 'linear-gradient(to top, #535353, #000000)',
             }}
             sortDirection={orderBy === columns[0].id ? order : false}
           >
@@ -93,8 +93,9 @@ const TableData = props => {
               style={{
                 color: 'white',
                 whiteSpace: 'nowrap',
-                background: '#000000',
-                background: 'linear-gradient(to top, #434343, #000000)',
+                fontWeight: 'bolder',
+                letterSpacing: '1px',
+                background: 'linear-gradient(to top, #535353, #000000)',
               }}
               sortDirection={orderBy === col.id ? order : false}
             >
