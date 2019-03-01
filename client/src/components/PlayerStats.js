@@ -254,9 +254,11 @@ class PlayerStats extends Component {
     } = this.state
     const { dataLoad } = this.props.stats
 
-    const dataDisplay = stats.filter(obj =>
-      playerPositionCode.includes(obj.playerPositionCode)
-    )
+    const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
+    const dataDisplay = isSkaters
+      ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
+      : stats
+
     console.log('selectedPlayers:', selectedPlayers)
     console.log('trackedPlayers:', trackedPlayers)
     return (

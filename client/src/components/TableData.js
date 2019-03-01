@@ -19,6 +19,7 @@ import {
   skaterStatsCol,
   bioCol,
   draftCol,
+  goalieStatsCol,
 } from '../helper/columnLabels'
 import Tooltip from '@material-ui/core/Tooltip'
 
@@ -53,9 +54,15 @@ const TableData = props => {
     ? Object.keys(dataDisplay[0]).includes('seasonId')
     : false)
 
+  const isSkaters = dataDisplay[0]
+    ? dataDisplay[0]['playerPositionCode'] !== 'G'
+    : true
+
+  const playerStatsCol = isSkaters ? skaterStatsCol : goalieStatsCol
+
   const columns = aggregateTable
-    ? [].concat(skaterStatsCol, bioCol, draftCol)
-    : [].concat(seasonCol, skaterStatsCol, bioCol, draftCol)
+    ? [].concat(playerStatsCol, bioCol, draftCol)
+    : [].concat(seasonCol, playerStatsCol, bioCol, draftCol)
 
   return (
     <>

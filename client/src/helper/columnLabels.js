@@ -21,6 +21,22 @@ export const skaterStatsCol = [
   { title: 'TOI/G', id: 'timeOnIcePerGame' },
 ]
 
+export const goalieStatsCol = [
+  { title: 'GP', id: 'gamesPlayed' },
+  { title: 'GS', id: 'gamesStarted' },
+  { title: 'W', id: 'wins' },
+  { title: 'L', id: 'losses' },
+  { title: 'T', id: 'ties' },
+  { title: 'OT', id: 'otLosses' },
+  { title: 'SA', id: 'shotsAgainst' },
+  { title: 'Svs', id: 'saves' },
+  { title: 'GA', id: 'goalsAgainst' },
+  { title: 'Sv%', id: 'savePctg' },
+  { title: 'GAA', id: 'goalsAgainstAverage' },
+  { title: 'TOI', id: 'timeOnIce' },
+  { title: 'SO', id: 'shutouts' },
+]
+
 export const bioCol = [
   { title: 'Country', id: 'playerBirthCountry' },
   { title: 'DOB', id: 'playerBirthDate' },
