@@ -82,7 +82,6 @@ const StatsFilterPanel = props => {
           value={reportName}
           onChange={handleChange('reportName')}
           input={<Input name="reportName" id="reportName" />}
-          displayEmpty
           name="reportName"
         >
           <option value="skatersummary">Skaters</option>

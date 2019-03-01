@@ -1,28 +1,37 @@
-export const columns = [
-  { title: 'Name', id: 'playerName' },
+export const seasonCol = [
   { title: 'Season', id: 'seasonId' },
-  { title: 'Track', id: 'track' },
+  { title: 'Track', id: 'track' }, // For adding current season players to dashboard
   { title: 'Team', id: 'playerTeamsPlayedFor' },
+]
+
+export const skaterStatsCol = [
+  { title: 'Pos', id: 'playerPositionCode' },
+  { title: 'GP', id: 'gamesPlayed' },
   { title: 'G', id: 'goals' },
   { title: 'A', id: 'assists' },
   { title: 'P', id: 'points' },
-  { title: 'Height', id: 'playerHeight' },
-  { title: 'GP', id: 'gamesPlayed' },
-  { title: 'Country', id: 'playerBirthCountry' },
-  { title: 'DOB', id: 'playerBirthDate' },
-  { title: 'Draft #', id: 'playerDraftOverallPickNo' },
-  { title: 'Draft Year', id: 'playerDraftYear' },
-  { title: 'Pos', id: 'playerPositionCode' },
-  { title: 'Weight', id: 'playerWeight' },
   { title: '+/-', id: 'plusMinus' },
-  { title: 'P/G', id: 'pointsPerGame' },
   { title: 'PPG', id: 'ppGoals' },
   { title: 'PPP', id: 'ppPoints' },
   { title: 'SHG', id: 'shGoals' },
   { title: 'SHP', id: 'shPoints' },
+  { title: 'P/G', id: 'pointsPerGame' },
   { title: 'Shifts/G', id: 'shiftsPerGame' },
   { title: 'S%', id: 'shootingPctg' },
   { title: 'TOI/G', id: 'timeOnIcePerGame' },
+]
+
+export const bioCol = [
+  { title: 'Country', id: 'playerBirthCountry' },
+  { title: 'DOB', id: 'playerBirthDate' },
+  { title: 'Height', id: 'playerHeight' },
+  { title: 'Weight', id: 'playerWeight' },
+]
+
+export const draftCol = [
+  { title: 'Draft #', id: 'playerDraftOverallPickNo' },
+  { title: 'Draft Round', id: 'playerDraftRoundNo' },
+  { title: 'Draft Year', id: 'playerDraftYear' },
 ]
 
 export const yearFormatter = cell => {
