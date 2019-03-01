@@ -22,7 +22,7 @@ import {
 import TablePaginationActions from './TablePaginationActions'
 import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
-// import PlayerComparison from './PlayerComparison'
+import PlayerComparison from './PlayerComparison'
 import PlayerTags from './PlayerTags'
 
 // Marking event handler as 'passive' in response to console violations
@@ -341,9 +341,9 @@ class PlayerStats extends Component {
             justifyContent: 'center',
           }}
         >
-          {/* <Paper>
+          <Paper>
             <PlayerComparison players={selectedPlayers} data={dataDisplay} />
-          </Paper> */}
+          </Paper>
         </Modal>
       </div>
     )

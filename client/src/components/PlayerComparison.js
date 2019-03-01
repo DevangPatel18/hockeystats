@@ -1,12 +1,13 @@
 import React from 'react'
 import { yearFormatter } from '../helper/columnLabels'
-import { columns } from '../helper/columnLabels'
+import {
+  seasonCol,
+  skaterStatsCol,
+  bioCol,
+  draftCol,
+  goalieStatsCol,
+} from '../helper/columnLabels'
 import { Table, TableBody, TableRow, TableCell } from '@material-ui/core'
-
-const columnsMin = columns.slice()
-// Remove Track field
-const trackIdx = columnsMin.findIndex(obj => obj.title === 'Track')
-columnsMin.splice(trackIdx, 1)
 
 const PlayerComparison = ({ players, data }) => {
   const playersObj = players.map(playerStr => {
@@ -29,6 +30,23 @@ const PlayerComparison = ({ players, data }) => {
 
     return newplayerObj
   })
+
+  const aggregateTable = !(playersObj[0]
+    ? Object.keys(playersObj[0]).includes('seasonId')
+    : false)
+
+  const isSkaters = playersObj[0]
+    ? playersObj[0]['playerPositionCode'] !== 'G'
+    : true
+
+  const playerStatsCol = isSkaters ? skaterStatsCol : goalieStatsCol
+
+  let columnsMin = aggregateTable
+    ? [].concat(playerStatsCol, bioCol, draftCol)
+    : [].concat(seasonCol, playerStatsCol, bioCol, draftCol)
+
+  columnsMin = columnsMin.filter(obj => obj.id !== 'track')
+  columnsMin.unshift({ title: 'Name', id: 'playerName' })
 
   return (
     <Table padding="checkbox">
