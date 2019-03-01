@@ -1,12 +1,6 @@
 import React from 'react'
 import { yearFormatter } from '../helper/columnLabels'
-import {
-  seasonCol,
-  skaterStatsCol,
-  bioCol,
-  draftCol,
-  goalieStatsCol,
-} from '../helper/columnLabels'
+import { generateCols } from '../helper/columnLabels'
 import { Table, TableBody, TableRow, TableCell } from '@material-ui/core'
 
 const PlayerComparison = ({ players, data }) => {
@@ -31,19 +25,7 @@ const PlayerComparison = ({ players, data }) => {
     return newplayerObj
   })
 
-  const aggregateTable = !(playersObj[0]
-    ? Object.keys(playersObj[0]).includes('seasonId')
-    : false)
-
-  const isSkaters = playersObj[0]
-    ? playersObj[0]['playerPositionCode'] !== 'G'
-    : true
-
-  const playerStatsCol = isSkaters ? skaterStatsCol : goalieStatsCol
-
-  let columnsMin = aggregateTable
-    ? [].concat(playerStatsCol, bioCol, draftCol)
-    : [].concat(seasonCol, playerStatsCol, bioCol, draftCol)
+  let columnsMin = generateCols(playersObj)
 
   columnsMin = columnsMin.filter(obj => obj.id !== 'track')
   columnsMin.unshift({ title: 'Name', id: 'playerName' })

@@ -90,3 +90,19 @@ export const getSorting = (order, orderBy) => {
     ? (a, b) => desc(a, b, orderBy)
     : (a, b) => -desc(a, b, orderBy)
 }
+
+export const generateCols = data => {
+  const aggregateTable = !(data[0]
+    ? Object.keys(data[0]).includes('seasonId')
+    : false)
+
+  const isSkaters = data[0] ? data[0]['playerPositionCode'] !== 'G' : true
+
+  const playerStatsCol = isSkaters ? skaterStatsCol : goalieStatsCol
+
+  const columns = aggregateTable
+    ? [].concat(playerStatsCol, bioCol, draftCol)
+    : [].concat(seasonCol, playerStatsCol, bioCol, draftCol)
+    
+  return columns
+}
