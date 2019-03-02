@@ -39,6 +39,8 @@ const IndexPage = () => (
     <Link to="/app/profile">Your profile</Link>
     <br />
     <Link to="/app/playerstats">Player Statistics</Link>
+    <br />
+    <Link to="/app/dashboard">Dashboard</Link>
   </Layout>
 )
 
