@@ -46,4 +46,21 @@ router.get('/:reportName', async (req, res, next) => {
   }
 });
 
+// Retrieve individual player stats
+router.get('/players/:playerId', async (req, res, next) => {
+  try {
+    const { playerId } = req.params;
+
+    const playerData = await axios
+      .get(
+        `https://statsapi.web.nhl.com/api/v1/people/${playerId}?expand=person.stats&stats=yearByYear,careerRegularSeason&expand=stats.team&site=en_nhlCA`
+      )
+      .then(res => res.data.people[0]);
+
+    return res.status(200).json(playerData);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;
