@@ -4,6 +4,7 @@ import {
   REMOVE_PLAYER,
   DATA_LOADING,
   DATA_LOADED,
+  CLEAR_PLAYER_LIST,
 } from '../actions/types'
 const initialState = {
   trackedPlayers: [],
@@ -16,6 +17,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         trackedPlayers: action.payload,
+      }
+    case CLEAR_PLAYER_LIST:
+      return {
+        ...state,
+        trackedPlayers: [],
       }
     case ADD_PLAYER:
       return {

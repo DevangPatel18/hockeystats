@@ -7,6 +7,7 @@ import {
   USER_LOADING,
   SEND_EMAIL,
   PASSWORD_RESET,
+  CLEAR_PLAYER_LIST,
 } from './types'
 import { navigate } from 'gatsby'
 
@@ -80,6 +81,7 @@ export const logoutUser = () => dispatch => {
   setAuthToken(false)
   // Set current user to empty object {} which will set isAuthenticated to false
   dispatch(setCurrentUser({}))
+  dispatch({ type: CLEAR_PLAYER_LIST })
   dispatch(setUserLoading())
   navigate('/app/login')
 }
