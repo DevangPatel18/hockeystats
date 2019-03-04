@@ -4,6 +4,7 @@ import jwt_decode from 'jwt-decode'
 import store from '../store'
 import setAuthToken from '../utils/setAuthToken'
 import { setCurrentUser, logoutUser } from '../actions/authActions'
+import { getPlayerList } from '../actions/statActions'
 import { navigate } from 'gatsby'
 import Layout from '../components/layout'
 
@@ -16,6 +17,8 @@ if (token) {
   const decoded = jwt_decode(token)
   // Set user and isAuthenticated
   store.dispatch(setCurrentUser(decoded))
+  // Set trackedPlayers list from user id
+  store.dispatch(getPlayerList(decoded.id))
   // Check for expired token
   const currentTime = Date.now() / 1000 // to get in milliseconds
   if (decoded.exp < currentTime) {
@@ -24,6 +27,9 @@ if (token) {
     // Redirect to login
     navigate(`app/login`)
   }
+} else {
+  // Set trackedPlayers list from local storage
+  store.dispatch(getPlayerList())
 }
 
 const IndexPage = () => (
