@@ -7,9 +7,7 @@ import { getPlayerList } from '../actions/statActions'
 class Dashboard extends Component {
   constructor() {
     super()
-    this.state = {
-      trackedPlayers: [],
-    }
+    this.state = {}
 
     this._isMounted = false
   }
@@ -17,18 +15,11 @@ class Dashboard extends Component {
   componentDidMount() {
     this._isMounted = true
 
-    if (this.props.auth.isAuthenticated) {
-      this.props.getPlayerList(this.props.auth.user.id)
-    } else {
-      if (localStorage.hasOwnProperty('players')) {
-        this.setState({
-          trackedPlayers: JSON.parse(localStorage.getItem('players')),
-        })
-        window.addEventListener(
-          'beforeunload',
-          this.playersToLocalStorage.bind(this)
-        )
-      }
+    if (!this.props.auth.isAuthenticated) {
+      window.addEventListener(
+        'beforeunload',
+        this.playersToLocalStorage.bind(this)
+      )
     }
   }
 
@@ -45,20 +36,12 @@ class Dashboard extends Component {
   }
 
   playersToLocalStorage() {
-    localStorage.setItem('players', JSON.stringify(this.state.trackedPlayers))
-  }
-
-  static getDerivedStateFromProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
-      return {
-        trackedPlayers: [...nextProps.stats.trackedPlayers],
-      }
-    }
-    return null
+    const { trackedPlayers } = this.props.stats
+    localStorage.setItem('players', JSON.stringify(trackedPlayers))
   }
 
   render() {
-    const { trackedPlayers } = this.state
+    const { trackedPlayers } = this.props.stats
 
     return (
       <div style={{ fontFamily: 'Arial' }}>
