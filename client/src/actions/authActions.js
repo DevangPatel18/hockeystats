@@ -1,13 +1,13 @@
 import axios from 'axios'
 import setAuthToken from '../utils/setAuthToken'
 import jwt_decode from 'jwt-decode'
+import { getPlayerList } from '../actions/statActions'
 import {
   GET_ERRORS,
   SET_CURRENT_USER,
   USER_LOADING,
   SEND_EMAIL,
   PASSWORD_RESET,
-  CLEAR_PLAYER_LIST,
 } from './types'
 import { navigate } from 'gatsby'
 
@@ -41,6 +41,7 @@ export const loginUser = userData => dispatch => {
       const decoded = jwt_decode(token)
       // Set current user
       dispatch(setCurrentUser(decoded))
+      dispatch(getPlayerList(decoded.id))
     })
     .catch(err =>
       dispatch({
@@ -81,7 +82,7 @@ export const logoutUser = () => dispatch => {
   setAuthToken(false)
   // Set current user to empty object {} which will set isAuthenticated to false
   dispatch(setCurrentUser({}))
-  dispatch({ type: CLEAR_PLAYER_LIST })
+  dispatch(getPlayerList())
   dispatch(setUserLoading())
   navigate('/app/login')
 }

@@ -71,16 +71,11 @@ class PlayerStats extends Component {
         })
     })
 
-    if (this.props.auth.isAuthenticated) {
-      this.props.getPlayerList(this.props.auth.user.id)
-    } else {
-      this.props.getPlayerList()
-      if (localStorage.hasOwnProperty('players')) {
-        window.addEventListener(
-          'beforeunload',
-          this.playersToLocalStorage.bind(this)
-        )
-      }
+    if (!this.props.auth.isAuthenticated) {
+      window.addEventListener(
+        'beforeunload',
+        this.playersToLocalStorage.bind(this)
+      )
     }
   }
 

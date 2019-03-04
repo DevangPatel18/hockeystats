@@ -29,7 +29,9 @@ if (token) {
   }
 } else {
   // Set trackedPlayers list from local storage
-  store.dispatch(getPlayerList())
+  if (localStorage.hasOwnProperty('players')) {
+    store.dispatch(getPlayerList())
+  }
 }
 
 const IndexPage = () => (
