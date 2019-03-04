@@ -8,48 +8,64 @@ import {
 } from './types'
 
 export const getPlayerList = userId => dispatch => {
-  axios
-    .get(`/api/playerList/${userId}`)
-    .then(res => {
-      const { playerList } = res.data
-      dispatch({ type: GET_PLAYER_LIST, payload: playerList })
+  if (userId) {
+    axios
+      .get(`/api/playerList/${userId}`)
+      .then(res => {
+        const { playerList } = res.data
+        dispatch({ type: GET_PLAYER_LIST, payload: playerList })
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  } else {
+    dispatch({
+      type: GET_PLAYER_LIST,
+      payload: JSON.parse(localStorage.getItem('players')),
     })
-    .catch(err => {
-      console.log(err)
-    })
+  }
 }
 
 export const addPlayerList = userData => dispatch => {
   const { userId, playerId } = userData
-  axios
-    .put(`/api/playerList/${userId}/${playerId}`)
-    .then(() => {
-      dispatch({ type: ADD_PLAYER, payload: playerId })
-    })
-    .catch(err => {
-      console.log(err)
-    })
+
+  if (userId) {
+    axios
+      .put(`/api/playerList/${userId}/${playerId}`)
+      .then(() => {
+        dispatch({ type: ADD_PLAYER, payload: playerId })
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  } else {
+    dispatch({ type: ADD_PLAYER, payload: playerId })
+  }
 }
 
 export const removePlayerList = userData => dispatch => {
   const { userId, playerId } = userData
-  axios
-    .delete(`/api/playerList/${userId}/${playerId}`)
-    .then(() => {
-      dispatch({ type: REMOVE_PLAYER, payload: playerId })
-    })
-    .catch(err => {
-      console.log(err)
-    })
+
+  if (userId) {
+    axios
+      .delete(`/api/playerList/${userId}/${playerId}`)
+      .then(() => {
+        dispatch({ type: REMOVE_PLAYER, payload: playerId })
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  } else {
+    dispatch({ type: REMOVE_PLAYER, payload: playerId })
+  }
 }
 
 export const startLoad = event => dispatch => {
-  console.log('start loading from dfunction');
-  
+  console.log('start loading from dfunction')
   dispatch({ type: DATA_LOADING })
 }
 
 export const stopLoad = event => dispatch => {
-  console.log('stop loading from dfunction');
+  console.log('stop loading from dfunction')
   dispatch({ type: DATA_LOADED })
 }

@@ -74,10 +74,8 @@ class PlayerStats extends Component {
     if (this.props.auth.isAuthenticated) {
       this.props.getPlayerList(this.props.auth.user.id)
     } else {
+      this.props.getPlayerList()
       if (localStorage.hasOwnProperty('players')) {
-        this.setState({
-          trackedPlayers: JSON.parse(localStorage.getItem('players')),
-        })
         window.addEventListener(
           'beforeunload',
           this.playersToLocalStorage.bind(this)
@@ -87,16 +85,8 @@ class PlayerStats extends Component {
   }
 
   playersToLocalStorage() {
-    localStorage.setItem('players', JSON.stringify(this.state.trackedPlayers))
-  }
-
-  static getDerivedStateFromProps(nextProps) {
-    if (nextProps.auth.isAuthenticated) {
-      return {
-        trackedPlayers: [...nextProps.stats.trackedPlayers],
-      }
-    }
-    return null
+    const { trackedPlayers } = this.props.stats
+    localStorage.setItem('players', JSON.stringify(trackedPlayers))
   }
 
   componentWillUnmount() {
@@ -208,31 +198,19 @@ class PlayerStats extends Component {
   }
 
   updateTrackedPlayers(playerId, seasonId) {
-    const newTrackedPlayers = this.state.trackedPlayers.slice()
-    const index = newTrackedPlayers.indexOf(playerId)
+    const { trackedPlayers } = this.props.stats
+    const index = trackedPlayers.indexOf(playerId)
+
     const dispatchArgs = {
       userId: this.props.auth.user.id,
       playerId,
     }
 
     if (seasonId === 20182019) {
-      if (this.props.auth.isAuthenticated) {
-        if (index === -1) {
-          this.props.addPlayerList(dispatchArgs)
-        } else {
-          this.props.removePlayerList(dispatchArgs)
-        }
+      if (index === -1) {
+        this.props.addPlayerList(dispatchArgs)
       } else {
-        if (index === -1) {
-          newTrackedPlayers.push(playerId)
-        } else {
-          newTrackedPlayers.splice(index, 1)
-        }
-
-        this.setState({
-          trackedPlayers: newTrackedPlayers,
-          [playerId]: !this.state[playerId],
-        })
+        this.props.removePlayerList(dispatchArgs)
       }
     }
   }
@@ -246,13 +224,12 @@ class PlayerStats extends Component {
       yearEnd,
       playerPositionCode,
       selectedPlayers,
-      trackedPlayers,
       rowsPerPage,
       page,
       order,
       orderBy,
     } = this.state
-    const { dataLoad } = this.props.stats
+    const { dataLoad, trackedPlayers } = this.props.stats
 
     const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
     const dataDisplay = isSkaters
