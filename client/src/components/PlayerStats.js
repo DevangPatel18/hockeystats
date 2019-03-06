@@ -28,9 +28,6 @@ import PlayerTags from './PlayerTags'
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
 
-// Configure 'localforage' and instantiate 'axios' with 'axios-cache-adapter'
-configure()
-
 class PlayerStats extends Component {
   constructor() {
     super()

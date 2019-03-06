@@ -6,9 +6,6 @@ import { getPlayerList } from '../actions/statActions'
 import configure from '../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
 
-// Configure 'localforage' and instantiate 'axios' with 'axios-cache-adapter'
-configure()
-
 class Dashboard extends Component {
   constructor() {
     super()
