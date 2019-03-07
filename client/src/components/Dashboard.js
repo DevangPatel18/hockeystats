@@ -18,6 +18,7 @@ class Dashboard extends Component {
 
   async componentDidMount() {
     const { trackedPlayers } = this.props.stats
+    this._isMounted = true
 
     if (trackedPlayers.length) {
       await configure().then(async api => {
@@ -26,11 +27,11 @@ class Dashboard extends Component {
             api.get(`/api/statistics/players/${playerId}`).then(res => res.data)
           )
         )
-        this.setState({ trackedPlayerData })
+        if (this._isMounted) {
+          this.setState({ trackedPlayerData })
+        }
       })
     }
-
-    this._isMounted = true
 
     if (!this.props.auth.isAuthenticated) {
       window.addEventListener(
