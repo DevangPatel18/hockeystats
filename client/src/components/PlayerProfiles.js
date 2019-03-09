@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import ProfileStatTable from './ProfileStatTable'
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -30,47 +31,63 @@ const PlayerBioListItem = styled.li`
 `
 
 const PlayerProfiles = ({ players }) =>
-  players.map(playerObj => (
-    <ProfileContainer key={playerObj.id} style={{ marginBottom: '1rem' }}>
-      <ImageContainer>
-        <img
-          src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${
-            playerObj.id
-          }.jpg`}
-          alt={playerObj.playerName}
-          style={{
-            margin: '5px',
-            borderRadius: '50%',
-            width: '120px',
-            boxShadow: '0 0 5px black',
-          }}
-        />
-        <div>#{playerObj.primaryNumber}</div>
-      </ImageContainer>
+  players.map(playerObj => {
+    const currentSeasonData = playerObj.stats
+      .find(obj => obj.type.displayName === 'yearByYear')
+      .splits.find(
+        obj =>
+          obj.season === '20182019' &&
+          obj.league.name === 'National Hockey League'
+      ).stat
 
-      <TextContainer>
-        <h2>{playerObj.fullName}</h2>
-        <PlayerBioList>
-          <PlayerBioListItem>
-            Team: {playerObj.currentTeam.name} -{' '}
-            {playerObj.primaryPosition.abbreviation}
-          </PlayerBioListItem>
-          <PlayerBioListItem>
-            Bio: {playerObj.currentAge} yrs - {playerObj.height} ft -{' '}
-            {playerObj.weight} lbs
-          </PlayerBioListItem>
-          <PlayerBioListItem>
-            Birthdate: {playerObj.birthDate}
-          </PlayerBioListItem>
-          <PlayerBioListItem>
-            Birthplace: {playerObj.birthCity},
-            {playerObj.birthStateProvince &&
-              ` ${playerObj.birthStateProvince}, `}{' '}
-            {playerObj.birthCountry}
-          </PlayerBioListItem>
-        </PlayerBioList>
-      </TextContainer>
-    </ProfileContainer>
-  ))
+    return (
+      <ProfileContainer key={playerObj.id} style={{ marginBottom: '1rem',  }}>
+        <ImageContainer>
+          <img
+            src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${
+              playerObj.id
+            }.jpg`}
+            alt={playerObj.playerName}
+            style={{
+              margin: '5px',
+              borderRadius: '50%',
+              minWidth: '120px',
+              boxShadow: '0 0 5px black',
+            }}
+          />
+          <div>#{playerObj.primaryNumber}</div>
+        </ImageContainer>
+
+        <TextContainer>
+          <h2>{playerObj.fullName}</h2>
+          <PlayerBioList>
+            <PlayerBioListItem>
+              Team: {playerObj.currentTeam.name} -{' '}
+              {playerObj.primaryPosition.abbreviation}
+            </PlayerBioListItem>
+            <PlayerBioListItem>
+              Bio: {playerObj.currentAge} yrs - {playerObj.height} ft -{' '}
+              {playerObj.weight} lbs
+            </PlayerBioListItem>
+            <PlayerBioListItem>
+              Birthdate: {playerObj.birthDate}
+            </PlayerBioListItem>
+            <PlayerBioListItem>
+              Birthplace: {playerObj.birthCity},
+              {playerObj.birthStateProvince &&
+                ` ${playerObj.birthStateProvince}, `}{' '}
+              {playerObj.birthCountry}
+            </PlayerBioListItem>
+          </PlayerBioList>
+
+          {playerObj.primaryPosition.code !== 'G' ? (
+            <ProfileStatTable stats={currentSeasonData} />
+          ) : (
+            <div>Goalie stats</div>
+          )}
+        </TextContainer>
+      </ProfileContainer>
+    )
+  })
 
 export default PlayerProfiles

@@ -106,3 +106,27 @@ export const generateCols = data => {
     
   return columns
 }
+
+export const ProfileSkateCol = [
+  { key: 'games', label: 'GP' },
+  { key: 'goals', label: 'G' },
+  { key: 'assists', label: 'A' },
+  { key: 'points', label: 'P' },
+  { key: 'plusMinus', label: '+/-' },
+  { key: 'pim', label: 'PIM' },
+  { key: 'powerPlayGoals', label: 'PPG' },
+  { key: 'powerPlayPoints', label: 'PPP' },
+  { key: 'powerPlayTimeOnIce', label: 'PP/TOI' },
+  { key: 'shortHandedGoals', label: 'SHG' },
+  { key: 'shortHandedPoints', label: 'SHP' },
+  { key: 'shortHandedTimeOnIce', label: 'SH/TOI' },
+  { key: 'gameWinningGoals', label: 'GWG' },
+  { key: 'overTimeGoals', label: 'OTG' },
+  { key: 'timeOnIce', label: 'TOI' },
+  { key: 'shifts', label: 'Shifts' },
+  { key: 'shots', label: 'S' },
+  { key: 'shotPct', label: 'S%' },
+  { key: 'faceOffPct', label: 'FO%' },
+  { key: 'blocked', label: 'Blocks' },
+  { key: 'hits', label: 'Hits' },
+]
