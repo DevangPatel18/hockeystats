@@ -130,3 +130,28 @@ export const ProfileSkateCol = [
   { key: 'blocked', label: 'Blocks' },
   { key: 'hits', label: 'Hits' },
 ]
+
+export const ProfileGoalieCol = [
+  { key: 'games', label: 'GP' },
+  { key: 'gamesStarted', label: 'GS' },
+  { key: 'wins', label: 'W' },
+  { key: 'losses', label: 'L' },
+  { key: 'ties', label: 'T' },
+  { key: 'ot', label: 'OT' },
+  { key: 'shotsAgainst', label: 'SA' },
+  { key: 'saves', label: 'S' },
+  { key: 'savePercentage', label: 'Sv%' },
+  { key: 'goalsAgainst', label: 'GA' },
+  { key: 'goalAgainstAverage', label: 'GAA' },
+  { key: 'shutouts', label: 'SO' },
+  { key: 'timeOnIce', label: 'TOI' },
+  { key: 'powerPlayShots', label: 'PPSA' },
+  { key: 'powerPlaySaves', label: 'PPS' },
+  { key: 'powerPlaySavePercentage', label: 'PPSv%' },
+  { key: 'shortHandedShots', label: 'SHSA' },
+  { key: 'shortHandedSaves', label: 'SHS' },
+  { key: 'shortHandedSavePercentage', label: 'SHSv%' },
+  { key: 'evenShots', label: 'ESSA' },
+  { key: 'evenSaves', label: 'ESS' },
+  { key: 'evenStrengthSavePercentage', label: 'ESSv%' },
+]

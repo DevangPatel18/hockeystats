@@ -41,7 +41,7 @@ const PlayerProfiles = ({ players }) =>
       ).stat
 
     return (
-      <ProfileContainer key={playerObj.id} style={{ marginBottom: '1rem',  }}>
+      <ProfileContainer key={playerObj.id} style={{ marginBottom: '1rem' }}>
         <ImageContainer>
           <img
             src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${
@@ -79,12 +79,7 @@ const PlayerProfiles = ({ players }) =>
               {playerObj.birthCountry}
             </PlayerBioListItem>
           </PlayerBioList>
-
-          {playerObj.primaryPosition.code !== 'G' ? (
-            <ProfileStatTable stats={currentSeasonData} />
-          ) : (
-            <div>Goalie stats</div>
-          )}
+          <ProfileStatTable stats={currentSeasonData} />
         </TextContainer>
       </ProfileContainer>
     )
