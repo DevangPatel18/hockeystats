@@ -1,8 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
 import ProfileStatTable from './ProfileStatTable'
 import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
+import { connect } from 'react-redux'
+import { removePlayerList } from '../actions/statActions'
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -48,8 +51,8 @@ const RemovePlayerButton = styled.div`
   }
 `
 
-const PlayerProfiles = ({ players }) =>
-  players.map(playerObj => {
+const PlayerProfiles = ({ players, auth, removePlayerList }) => {
+  return players.map(playerObj => {
     const currentSeasonData = playerObj.stats
       .find(obj => obj.type.displayName === 'yearByYear')
       .splits.find(
@@ -57,6 +60,8 @@ const PlayerProfiles = ({ players }) =>
           obj.season === '20182019' &&
           obj.league.name === 'National Hockey League'
       ).stat
+
+    const userData = { userId: auth.user.id, playerId: playerObj.id }
 
     return (
       <ProfileContainer key={playerObj.id} style={{ marginBottom: '1rem' }}>
@@ -102,11 +107,26 @@ const PlayerProfiles = ({ players }) =>
             <IconButton
               children={<CloseIcon fontSize="small" />}
               color="secondary"
+              onClick={() => removePlayerList(userData)}
             />
           </RemovePlayerButton>
         </TextContainer>
       </ProfileContainer>
     )
   })
+}
 
-export default PlayerProfiles
+PlayerProfiles.propTypes = {
+  removePlayerList: PropTypes.func.isRequired,
+  auth: PropTypes.object.isRequired,
+  players: PropTypes.array.isRequired,
+}
+
+const mapStateToProps = state => ({
+  auth: state.auth,
+})
+
+export default connect(
+  mapStateToProps,
+  { removePlayerList }
+)(PlayerProfiles)

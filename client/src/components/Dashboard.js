@@ -61,13 +61,16 @@ class Dashboard extends Component {
   render() {
     const { trackedPlayerData } = this.state
     const { trackedPlayers } = this.props.stats
+    const filterTrackedPlayerData = trackedPlayerData.filter(
+      obj => trackedPlayers.indexOf(obj.id) !== -1
+    )
 
     return (
       <div style={{ fontFamily: 'Arial' }}>
         <h1>Dashboard</h1>
         <br />
         {trackedPlayers.length ? (
-          <DashboardProfiles trackedPlayerData={trackedPlayerData} />
+          <DashboardProfiles trackedPlayerData={filterTrackedPlayerData} />
         ) : (
           <div>No players selected for tracking.</div>
         )}
