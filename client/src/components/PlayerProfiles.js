@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import ProfileStatTable from './ProfileStatTable'
+import IconButton from '@material-ui/core/IconButton'
+import CloseIcon from '@material-ui/icons/Close'
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -14,8 +16,9 @@ const ImageContainer = styled.div`
 `
 
 const TextContainer = styled.div`
+  position: relative;
   padding: 1rem;
-  overflow-X: auto;
+  overflow-x: auto;
 `
 
 const PlayerBioList = styled.ul`
@@ -29,6 +32,20 @@ const PlayerBioList = styled.ul`
 const PlayerBioListItem = styled.li`
   flex: 50%;
   margin-bottom: 0.5rem;
+`
+
+const RemovePlayerButton = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.25rem;
+  opacity: 0;
+  transition: all 0.2s;
+  cursor: pointer;
+
+  :hover {
+    opacity: 1;
+  }
 `
 
 const PlayerProfiles = ({ players }) =>
@@ -81,6 +98,12 @@ const PlayerProfiles = ({ players }) =>
             </PlayerBioListItem>
           </PlayerBioList>
           <ProfileStatTable stats={currentSeasonData} />
+          <RemovePlayerButton>
+            <IconButton
+              children={<CloseIcon fontSize="small" />}
+              color="secondary"
+            />
+          </RemovePlayerButton>
         </TextContainer>
       </ProfileContainer>
     )
