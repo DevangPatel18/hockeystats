@@ -15,6 +15,7 @@ const ImageContainer = styled.div`
 
 const TextContainer = styled.div`
   padding: 1rem;
+  overflow-X: auto;
 `
 
 const PlayerBioList = styled.ul`

@@ -31,9 +31,8 @@ const ProfileStatTable = ({ stats }) => {
     <Paper
       style={{
         overflowX: 'auto',
-        width: '700px',
         paddingLeft: '1rem',
-        margin: '1rem',
+        margin: '1rem 0',
       }}
     >
       <Table padding="checkbox">
