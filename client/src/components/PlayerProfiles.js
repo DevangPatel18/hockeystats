@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Trail, animated } from 'react-spring/renderprops'
 import PropTypes from 'prop-types'
 import ProfileStatTable from './ProfileStatTable'
 import IconButton from '@material-ui/core/IconButton'
@@ -52,7 +53,7 @@ const RemovePlayerButton = styled.div`
 `
 
 const PlayerProfiles = ({ players, auth, removePlayerList }) => {
-  return players.map(playerObj => {
+  const profiles = players.map(playerObj => {
     const currentSeasonData = playerObj.stats
       .find(obj => obj.type.displayName === 'yearByYear')
       .splits.find(
@@ -114,6 +115,27 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
       </ProfileContainer>
     )
   })
+
+  return (
+    <Trail
+      native
+      items={profiles}
+      keys={profile => profile.key}
+      from={{ opacity: 0, x: -100 }}
+      to={{ opacity: 1, x: 0 }}
+    >
+      {profile => ({ x, opacity }) => (
+        <animated.div
+          style={{
+            opacity,
+            transform: x.interpolate(x => `translate3d(${x}%,0,0)`),
+          }}
+        >
+          {profile}
+        </animated.div>
+      )}
+    </Trail>
+  )
 }
 
 PlayerProfiles.propTypes = {
