@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { getPlayerList } from '../actions/statActions'
 import configure from '../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 class Dashboard extends Component {
   constructor() {
@@ -70,7 +71,13 @@ class Dashboard extends Component {
         <h1>Dashboard</h1>
         <br />
         {trackedPlayers.length ? (
-          <DashboardProfiles trackedPlayerData={filterTrackedPlayerData} />
+          filterTrackedPlayerData.length ? (
+            <DashboardProfiles trackedPlayerData={filterTrackedPlayerData} />
+          ) : (
+            <div style={{ textAlign: 'center' }}>
+              <CircularProgress />
+            </div>
+          )
         ) : (
           <div>No players selected for tracking.</div>
         )}
