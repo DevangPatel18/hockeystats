@@ -64,6 +64,14 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
 
     const userData = { userId: auth.user.id, playerId: playerObj.id }
 
+    const bDay = new Date(playerObj.birthDate)
+    let bDayStr = bDay.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      timeZone: 'UTC',
+    })
+
     return (
       <ProfileContainer key={playerObj.id} style={{ marginBottom: '1rem' }}>
         <ImageContainer>
@@ -93,9 +101,7 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
               Bio: {playerObj.currentAge} yrs - {playerObj.height} ft -{' '}
               {playerObj.weight} lbs
             </PlayerBioListItem>
-            <PlayerBioListItem>
-              Birthdate: {playerObj.birthDate}
-            </PlayerBioListItem>
+            <PlayerBioListItem>Birthdate: {bDayStr}</PlayerBioListItem>
             <PlayerBioListItem>
               Birthplace: {playerObj.birthCity},
               {playerObj.birthStateProvince &&
