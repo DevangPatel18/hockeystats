@@ -112,13 +112,17 @@ const TableData = props => {
               style={{ height: 'auto' }}
               selected={
                 selectedPlayers.includes(
-                  [row.playerId, row.seasonId].join('-')
+                  [row.playerId, row.seasonId, row.playerTeamsPlayedFor].join(
+                    '-'
+                  )
                 ) || selectedPlayers.includes(row.playerId.toString())
               }
               onClick={event => {
                 const tagEntry = aggregateTable
                   ? `${row.playerId}`
-                  : `${row.playerId}-${row.seasonId}`
+                  : `${row.playerId}-${row.seasonId}-${
+                      row.playerTeamsPlayedFor
+                    }`
                 return handleRowClick(event, tagEntry)
               }}
             >
