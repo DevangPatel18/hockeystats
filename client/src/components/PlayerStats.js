@@ -38,6 +38,7 @@ class PlayerStats extends Component {
       reportName: 'skatersummary',
       yearStart: '20182019',
       yearEnd: '20182019',
+      filterTracked: false,
       trackedPlayers: [],
       selectedPlayers: [],
       page: 0,
@@ -215,6 +216,7 @@ class PlayerStats extends Component {
       yearStart,
       yearEnd,
       playerPositionCode,
+      filterTracked,
       selectedPlayers,
       rowsPerPage,
       page,
@@ -224,10 +226,13 @@ class PlayerStats extends Component {
     const { dataLoad, trackedPlayers } = this.props.stats
 
     const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
-    const dataDisplay = isSkaters
+    let dataDisplay = isSkaters
       ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
       : stats
-
+    dataDisplay = filterTracked
+    ? dataDisplay.filter(obj => trackedPlayers.includes(obj.playerId))
+    : dataDisplay
+    
     console.log('selectedPlayers:', selectedPlayers)
     console.log('trackedPlayers:', trackedPlayers)
     return (
@@ -240,6 +245,7 @@ class PlayerStats extends Component {
           yearEnd={yearEnd}
           playerPositionCode={playerPositionCode}
           selectedPlayers={selectedPlayers}
+          filterTracked={filterTracked}
           handleChange={this.handleChange}
           handleRowFilter={this.handleRowFilter}
           handleSwitchChange={this.handleSwitchChange}

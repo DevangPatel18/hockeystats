@@ -16,6 +16,7 @@ const StatsFilterPanel = props => {
     yearStart,
     yearEnd,
     playerPositionCode,
+    filterTracked,
     handleChange,
     handleRowFilter,
     handleSwitchChange,
@@ -114,6 +115,15 @@ const StatsFilterPanel = props => {
             <option value={'D'}>Defensemen</option>
           </NativeSelect>
         </FormControl>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={filterTracked}
+              onChange={handleSwitchChange('filterTracked')}
+            />
+          }
+          label="Tracked Players Only"
+        />
       </div>
       <div
         style={{
