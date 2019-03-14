@@ -40,9 +40,16 @@ const PlayerTags = ({ selectedPlayers, stats }) => {
     <PlayerTagContainerStyles>
       {selectedPlayers.map(idx => {
         const [playerId, seasonId, teamCodes] = idx.split('-')
-        const teams =
-          teamCodes.length > 3 ? teamCodes.split(', ')[0] : teamCodes
-        const colors = teamColors[teams]
+        let colors
+
+        if (teamCodes) {
+          const teams =
+            teamCodes.length > 3 ? teamCodes.split(', ')[0] : teamCodes
+          colors = teamColors[teams]
+        } else {
+          colors = { first: '#283048', second: '#859398' }
+        }
+
         const playerObj = stats.find(obj => obj.playerId === parseInt(playerId))
         if (!playerObj) return null
         const { playerName } = playerObj
