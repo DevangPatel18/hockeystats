@@ -54,6 +54,7 @@ class PlayerStats extends Component {
   componentDidMount() {
     const { isAggregate, reportName, yearStart, yearEnd } = this.state
     this._isMounted = true
+    this.props.startLoad()
     configure().then(api => {
       api
         .get(
@@ -61,6 +62,7 @@ class PlayerStats extends Component {
         )
         .then(res => {
           if (this._isMounted) {
+            this.props.stopLoad()
             this.setState({ stats: res.data })
           }
         })
@@ -230,9 +232,9 @@ class PlayerStats extends Component {
       ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
       : stats
     dataDisplay = filterTracked
-    ? dataDisplay.filter(obj => trackedPlayers.includes(obj.playerId))
-    : dataDisplay
-    
+      ? dataDisplay.filter(obj => trackedPlayers.includes(obj.playerId))
+      : dataDisplay
+
     console.log('selectedPlayers:', selectedPlayers)
     console.log('trackedPlayers:', trackedPlayers)
     return (
@@ -262,6 +264,17 @@ class PlayerStats extends Component {
           }}
         />
         <Paper style={{ overflowX: 'auto' }}>
+          <div
+            style={{
+              position: 'absolute',
+              width: 'calc(100% - 2rem)',
+              height: `calc(156px + ${rowsPerPage * 33}px)`,
+              background: 'white',
+              opacity: dataLoad ? '0.5' : '0',
+              zIndex: dataLoad ? '1' : '-1',
+              transition: 'all 0.5s',
+            }}
+          />
           <Table padding="checkbox">
             <TableData
               dataDisplay={dataDisplay}
