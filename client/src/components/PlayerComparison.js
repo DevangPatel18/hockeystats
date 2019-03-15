@@ -4,13 +4,15 @@ import { generateCols } from '../helper/columnLabels'
 import { Table, TableBody, TableRow, TableCell } from '@material-ui/core'
 
 const PlayerComparison = ({ players, data }) => {
-  const playersObj = players.map(playerStr => {
+  let playersObj = players.map(playerStr => {
     const [playerId, seasonId] = playerStr.split('-')
     const playerObj = data.find(
       obj =>
         obj.playerId === parseInt(playerId) &&
         (!seasonId || obj.seasonId === parseInt(seasonId))
     )
+
+    if (!playerObj) return null
 
     let newplayerObj
     if (seasonId) {
@@ -24,6 +26,12 @@ const PlayerComparison = ({ players, data }) => {
 
     return newplayerObj
   })
+
+  playersObj = playersObj.filter(x => x)
+  if (!playersObj.length)
+    return (
+      <div style={{ padding: '2rem' }}>Please select rows for comparison</div>
+    )
 
   let columnsMin = generateCols(playersObj)
 

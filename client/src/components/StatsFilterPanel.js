@@ -22,7 +22,6 @@ const StatsFilterPanel = props => {
     handleSwitchChange,
     handleSeasonChange,
     submitQuery,
-    selectedPlayers,
     handleModalOpen,
   } = props
 
@@ -133,19 +132,17 @@ const StatsFilterPanel = props => {
         <Button color="primary" variant="contained" onClick={submitQuery}>
           generate data
         </Button>
-        {selectedPlayers.length !== 0 && (
-          <Button
-            variant="outlined"
-            size="small"
-            onClick={handleModalOpen}
-            style={{
-              fontWeight: 'bolder',
-              marginLeft: '1rem',
-            }}
-          >
-            compare selected
-          </Button>
-        )}
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={handleModalOpen}
+          style={{
+            fontWeight: 'bolder',
+            marginLeft: '1rem',
+          }}
+        >
+          compare selected
+        </Button>
       </div>
     </div>
   )
