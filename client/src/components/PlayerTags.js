@@ -35,7 +35,7 @@ const PlayerTagYearStyles = styled.span`
   text-align: right;
 `
 
-const PlayerTags = ({ selectedPlayers, stats }) => {
+const PlayerTags = ({ selectedPlayers, stats, handleRowClick }) => {
   return (
     <PlayerTagContainerStyles>
       {selectedPlayers.map(idx => {
@@ -54,7 +54,13 @@ const PlayerTags = ({ selectedPlayers, stats }) => {
         if (!playerObj) return null
         const { playerName } = playerObj
         return (
-          <PlayerTagStyles key={idx} seasonId={seasonId} colors={colors}>
+          <PlayerTagStyles
+            key={idx}
+            seasonId={seasonId}
+            colors={colors}
+            onClick={() => handleRowClick(null, idx)}
+            style={{ cursor: 'pointer' }}
+          >
             <PlayerTagNameStyles>{playerName}</PlayerTagNameStyles>
             {seasonId && (
               <PlayerTagYearStyles>

@@ -255,7 +255,11 @@ class PlayerStats extends Component {
           submitQuery={this.submitQuery}
           handleModalOpen={this.handleModalOpen}
         />
-        <PlayerTags selectedPlayers={selectedPlayers} stats={dataDisplay} />
+        <PlayerTags
+          selectedPlayers={selectedPlayers}
+          stats={dataDisplay}
+          handleRowClick={this.handleRowClick}
+        />
         <LinearProgress
           color="secondary"
           style={{
