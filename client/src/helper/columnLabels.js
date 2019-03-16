@@ -4,6 +4,13 @@ export const seasonCol = [
   { title: 'Team', id: 'playerTeamsPlayedFor' },
 ]
 
+const secToString = val => {
+  const valRnd = Math.round(val)
+  const seconds = valRnd % 60
+  const minutes = (valRnd - seconds) / 60
+  return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`
+}
+
 export const skaterStatsCol = [
   { title: 'Pos', id: 'playerPositionCode' },
   { title: 'GP', id: 'gamesPlayed' },
@@ -15,10 +22,10 @@ export const skaterStatsCol = [
   { title: 'PPP', id: 'ppPoints' },
   { title: 'SHG', id: 'shGoals' },
   { title: 'SHP', id: 'shPoints' },
-  { title: 'P/G', id: 'pointsPerGame' },
-  { title: 'Shifts/G', id: 'shiftsPerGame' },
-  { title: 'S%', id: 'shootingPctg' },
-  { title: 'TOI/G', id: 'timeOnIcePerGame' },
+  { title: 'P/G', id: 'pointsPerGame', format: val => val.toFixed(2) },
+  { title: 'Shifts/G', id: 'shiftsPerGame', format: val => val.toFixed(1) },
+  { title: 'S%', id: 'shootingPctg', format: val => (val * 100).toFixed(1) },
+  { title: 'TOI/G', id: 'timeOnIcePerGame', format: val => secToString(val) },
 ]
 
 export const goalieStatsCol = [
@@ -31,9 +38,9 @@ export const goalieStatsCol = [
   { title: 'SA', id: 'shotsAgainst' },
   { title: 'Svs', id: 'saves' },
   { title: 'GA', id: 'goalsAgainst' },
-  { title: 'Sv%', id: 'savePctg' },
-  { title: 'GAA', id: 'goalsAgainstAverage' },
-  { title: 'TOI', id: 'timeOnIce' },
+  { title: 'Sv%', id: 'savePctg', format: val => val.toFixed(3) },
+  { title: 'GAA', id: 'goalsAgainstAverage', format: val => val.toFixed(2) },
+  { title: 'TOI', id: 'timeOnIce', format: val => secToString(val) },
   { title: 'SO', id: 'shutouts' },
 ]
 
@@ -103,7 +110,7 @@ export const generateCols = data => {
   const columns = aggregateTable
     ? [].concat(playerStatsCol, bioCol, draftCol)
     : [].concat(seasonCol, playerStatsCol, bioCol, draftCol)
-    
+
   return columns
 }
 

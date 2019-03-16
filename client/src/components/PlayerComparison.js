@@ -117,7 +117,9 @@ const PlayerComparison = ({ players, data }) => {
                       : {}
                   }
                 >
-                  {obj[colObj.id]}
+                  {colObj.format
+                    ? colObj.format(obj[colObj.id])
+                    : obj[colObj.id]}
                 </TableCell>
               ))}
             </TableRow>
