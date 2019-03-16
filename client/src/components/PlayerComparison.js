@@ -3,6 +3,15 @@ import { yearFormatter } from '../helper/columnLabels'
 import { generateCols } from '../helper/columnLabels'
 import { Table, TableBody, TableRow, TableCell } from '@material-ui/core'
 
+const cellBackground = (obj, i) => {
+  if (obj.max.includes(i)) {
+    return { color: 'red', fontWeight: 'bolder' }
+  } else if (obj.min.includes(i)) {
+    return { color: 'blue', fontWeight: 'bolder' }
+  }
+  return {}
+}
+
 const PlayerComparison = ({ players, data }) => {
   let playersObj = players.map(playerStr => {
     const [playerId, seasonId] = playerStr.split('-')
@@ -38,6 +47,33 @@ const PlayerComparison = ({ players, data }) => {
   columnsMin = columnsMin.filter(obj => obj.id !== 'track')
   columnsMin.unshift({ title: 'Name', id: 'playerName' })
 
+  let minMax = {}
+
+  if (playersObj.length > 1) {
+    columnsMin.forEach(attr => {
+      const dataVal = playersObj[0][attr.id]
+      if (typeof dataVal === 'number') {
+        const attrArray = playersObj.map(obj => obj[attr.id])
+        const max = Math.max(...attrArray)
+        const min = Math.min(...attrArray)
+        const maxArray = []
+        const minArray = []
+
+        if (min !== max) {
+          attrArray.forEach((val, i) => {
+            if (val === max) {
+              maxArray.push(i)
+            }
+            if (val === min) {
+              minArray.push(i)
+            }
+          })
+          minMax[attr.id] = { max: maxArray, min: minArray }
+        }
+      }
+    })
+  }
+
   return (
     <Table padding="checkbox">
       <TableBody>
@@ -71,10 +107,15 @@ const PlayerComparison = ({ players, data }) => {
               <TableCell style={{ fontWeight: 'bolder', paddingLeft: '10px' }}>
                 {colObj.title}
               </TableCell>
-              {playersObj.map(obj => (
+              {playersObj.map((obj, i) => (
                 <TableCell
                   align="center"
                   key={`${obj.playerId}-${obj.seasonId}-${colObj.id}`}
+                  style={
+                    minMax[colObj.id]
+                      ? cellBackground(minMax[colObj.id], i)
+                      : {}
+                  }
                 >
                   {obj[colObj.id]}
                 </TableCell>
