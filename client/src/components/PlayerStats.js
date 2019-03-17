@@ -6,7 +6,8 @@ import {
   TableFooter,
   TablePagination,
   Paper,
-  Modal,
+  Dialog,
+  DialogContent,
   LinearProgress,
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
@@ -324,19 +325,20 @@ class PlayerStats extends Component {
             Back to Home
           </span>
         </Link>
-        <Modal
+        <Dialog
           open={this.state.modal}
           onClose={this.handleModalClose}
+          scroll="paper"
           style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
         >
-          <Paper>
+          <DialogContent>
             <PlayerComparison players={selectedPlayers} data={dataDisplay} />
-          </Paper>
-        </Modal>
+          </DialogContent>
+        </Dialog>
       </div>
     )
   }
