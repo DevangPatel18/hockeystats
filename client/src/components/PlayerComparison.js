@@ -30,7 +30,7 @@ class PlayerComparison extends Component {
 
 PlayerComparison.propTypes = {
   players: PropTypes.array.isRequired,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
 }
 
 export default PlayerComparison
