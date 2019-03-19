@@ -7,7 +7,6 @@ import {
   TablePagination,
   Paper,
   Dialog,
-  DialogContent,
   LinearProgress,
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
@@ -335,9 +334,7 @@ class PlayerStats extends Component {
             justifyContent: 'center',
           }}
         >
-          <DialogContent>
-            <PlayerComparison players={selectedPlayers} data={dataDisplay} />
-          </DialogContent>
+          <PlayerComparison players={selectedPlayers} data={dataDisplay} />
         </Dialog>
       </div>
     )
