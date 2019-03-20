@@ -1,9 +1,18 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import {
+  VictoryChart,
+  VictoryLine,
+  VictoryLabel,
+  VictoryLegend,
+} from 'victory'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import chroma from 'chroma-js'
 import configure from '../utils/configLocalforage'
 import { startLoad, stopLoad } from '../actions/statActions'
+
+const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
 class ChartComparison extends Component {
   constructor() {
@@ -37,7 +46,6 @@ class ChartComparison extends Component {
         }
       })
     }
-    console.log(playerIds)
   }
 
   componentWillUnmount() {
@@ -53,25 +61,58 @@ class ChartComparison extends Component {
       data.find(playerObj => playerObj.playerId === parseInt(playerId))
     )
 
+    const playerPointProgress = playerData.map(playerGameLog => {
+      let total = 0
+      return playerGameLog
+        .map((game, i) => {
+          total += game.stat.points
+          return { x: i, y: total }
+        })
+        .reverse()
+    })
+
     return (
       <div style={{ padding: '2rem' }}>
         {dataLoad && <CircularProgress />}
-        {playerData.length > 0 &&
-          playerData.map((player, i) => {
-            const { stat, team, opponent } = player[0]
-            const { goals, assists, points, timeOnIce } = stat
-            return (
-              <div key={playerIds[i]} style={{marginBottom: '1rem'}}>
-                <h4>{playerObjs[i].playerName}</h4>
-                <div>
-                  Recent game: {team.name} vs {opponent.name}
-                </div>
-                <div>
-                  G: {goals} - A: {assists} - P: {points} - TOI: {timeOnIce}
-                </div>
-              </div>
-            )
-          })}
+        {playerData.length > 0 && (
+          <VictoryChart>
+            {playerPointProgress.map((data, i) => (
+              <VictoryLine
+                key={`${playerIds[i]}-line`}
+                data={data}
+                animate={{ duration: 2000, onLoad: { duration: 1000 } }}
+                interpolation="natural"
+                style={{ data: { stroke: colorFunc(i / playerData.length) } }}
+              />
+            ))}
+            <VictoryLabel
+              angle="-90"
+              text="Points"
+              textAnchor="middle"
+              style={{ fontWeight: 'bolder' }}
+              x={10}
+              y={150}
+            />
+            <VictoryLabel
+              text="Games"
+              textAnchor="middle"
+              style={{ fontWeight: 'bolder' }}
+              x={225}
+              y={290}
+            />
+            <VictoryLegend
+              data={playerData.map((player, i) => ({
+                name: playerObjs[i].playerName,
+                symbol: {
+                  fill: colorFunc(i / playerData.length),
+                },
+              }))}
+              orientation="horizontal"
+              x={0}
+              y={0}
+            />
+          </VictoryChart>
+        )}
       </div>
     )
   }
