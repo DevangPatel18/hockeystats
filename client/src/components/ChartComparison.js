@@ -1,12 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import {
-  VictoryChart,
-  VictoryLine,
-  VictoryLabel,
-  VictoryLegend,
-} from 'victory'
+import { VictoryChart, VictoryLine, VictoryLabel, VictoryLegend } from 'victory'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import chroma from 'chroma-js'
 import configure from '../utils/configLocalforage'
@@ -63,19 +58,19 @@ class ChartComparison extends Component {
 
     const playerPointProgress = playerData.map(playerGameLog => {
       let total = 0
-      return playerGameLog
-        .map((game, i) => {
-          total += game.stat.points
-          return { x: i, y: total }
-        })
-        .reverse()
+      const orderedGameLog = playerGameLog.slice().reverse()
+      return orderedGameLog.map(game => {
+        total += game.stat.points
+        let x = Date.parse(game.date)
+        return { x, y: total }
+      })
     })
 
     return (
       <div style={{ padding: '2rem' }}>
         {dataLoad && <CircularProgress />}
         {playerData.length > 0 && (
-          <VictoryChart>
+          <VictoryChart scale={{ x: 'time' }}>
             {playerPointProgress.map((data, i) => (
               <VictoryLine
                 key={`${playerIds[i]}-line`}
@@ -107,9 +102,7 @@ class ChartComparison extends Component {
                   fill: colorFunc(i / playerData.length),
                 },
               }))}
-              orientation="horizontal"
-              x={0}
-              y={0}
+              x={50}
             />
           </VictoryChart>
         )}
