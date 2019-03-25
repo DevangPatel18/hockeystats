@@ -13,6 +13,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import chroma from 'chroma-js'
 import configure from '../utils/configLocalforage'
 import { startLoad, stopLoad } from '../actions/statActions'
+import chartTheme from '../helper/chartTheme'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
@@ -78,6 +79,7 @@ class ChartComparison extends Component {
         {dataLoad && <CircularProgress />}
         {playerData.length > 0 && (
           <VictoryChart
+            theme={chartTheme}
             scale={{ x: 'time' }}
             containerComponent={
               <VictoryVoronoiContainer
@@ -117,7 +119,7 @@ class ChartComparison extends Component {
               textAnchor="middle"
               style={{ fontWeight: 'bolder' }}
               x={225}
-              y={290}
+              y={340}
             />
             <VictoryLegend
               data={playerData.map((player, i) => ({
