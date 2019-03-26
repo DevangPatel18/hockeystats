@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import {
+  VictoryAxis,
   VictoryChart,
   VictoryLine,
   VictoryLabel,
@@ -16,6 +17,7 @@ import configure from '../utils/configLocalforage'
 import { startLoad, stopLoad } from '../actions/statActions'
 import chartTheme from '../helper/chartTheme'
 import { skaterLogStats } from '../helper/chartComparisonHelper'
+import { secToString } from '../helper/columnLabels'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
@@ -73,11 +75,14 @@ class ChartComparison extends Component {
 
     const statLabel = skaterLogStats.find(obj => obj.key === playerStat).label
 
+    const formatter = skaterLogStats.find(obj => obj.key === playerStat).format
+      ? skaterLogStats.find(obj => obj.key === playerStat).format
+      : x => x
     const playerPointProgress = playerData.map(playerGameLog => {
       let total = 0
       const orderedGameLog = playerGameLog.slice().reverse()
       return orderedGameLog.map(game => {
-        total += game.stat[playerStat]
+        total += formatter(game.stat[playerStat])
         let x = Date.parse(game.date)
         return { x, y: total }
       })
@@ -132,6 +137,10 @@ class ChartComparison extends Component {
                   style={{ data: { stroke: colorFunc(i / playerData.length) } }}
                 />
               ))}
+              {statLabel.includes('TOI') && (
+                <VictoryAxis dependentAxis tickFormat={secToString} />
+              )}
+              {statLabel.includes('TOI') && <VictoryAxis />}
               <VictoryLabel
                 angle="-90"
                 text={statLabel}

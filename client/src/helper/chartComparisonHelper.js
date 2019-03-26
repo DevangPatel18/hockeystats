@@ -1,3 +1,8 @@
+const strToMin = timeStr => {
+  let [min, sec] = timeStr.split(':')
+  return parseInt(sec) + parseInt(min * 60)
+}
+
 export const skaterLogStats = [
   { key: 'points', label: 'Points' },
   { key: 'assists', label: 'Assists' },
@@ -8,10 +13,10 @@ export const skaterLogStats = [
   { key: 'hits', label: 'Hits' },
   { key: 'shifts', label: 'Shifts' },
   { key: 'plusMinus', label: 'Plus/Minus' },
-  // { key: 'timeOnIce', label: 'Total TOI' },
-  // { key: 'evenTimeOnIce', label: 'Evenstrength TOI' },
-  // { key: 'powerPlayTimeOnIce', label: 'Powerplay TOI' },
-  // { key: 'shortHandedTimeOnIce', label: 'Shorthanded TOI' },
+  { key: 'timeOnIce', label: 'Total TOI', format: strToMin },
+  { key: 'evenTimeOnIce', label: 'Evenstrength TOI', format: strToMin },
+  { key: 'powerPlayTimeOnIce', label: 'Powerplay TOI', format: strToMin },
+  { key: 'shortHandedTimeOnIce', label: 'Shorthanded TOI', format: strToMin },
   { key: 'gameWinningGoals', label: 'Gamewinning Goals' },
   { key: 'overTimeGoals', label: 'Overtime Goals' },
   { key: 'powerPlayGoals', label: 'Powerplay Goals' },

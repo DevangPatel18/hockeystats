@@ -4,11 +4,18 @@ export const seasonCol = [
   { title: 'Team', id: 'playerTeamsPlayedFor' },
 ]
 
-const secToString = val => {
-  const valRnd = Math.round(val)
-  const seconds = valRnd % 60
-  const minutes = (valRnd - seconds) / 60
-  return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`
+export const secToString = val => {
+  var sec_num = Math.round(val)
+  var hours = Math.floor(sec_num / 3600)
+  var minutes = Math.floor((sec_num - hours * 3600) / 60)
+  var seconds = (sec_num - (hours * 3600 + minutes * 60))
+    .toString()
+    .padStart(2, '0')
+
+  hours = hours ? `${hours.toString()}:` : ''
+  minutes = minutes.toString().padStart(2, '0')
+
+  return `${hours}${minutes}:${seconds}`
 }
 
 export const skaterStatsCol = [
