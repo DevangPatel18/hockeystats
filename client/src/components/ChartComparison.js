@@ -88,6 +88,9 @@ class ChartComparison extends Component {
       })
     })
 
+    const toi = statLabel.includes('TOI')
+    const theme = chartTheme(toi)
+
     return (
       <div style={{ padding: '2rem' }}>
         {dataLoad && <CircularProgress />}
@@ -110,7 +113,7 @@ class ChartComparison extends Component {
               </FormControl>
             </div>
             <VictoryChart
-              theme={chartTheme}
+              theme={theme}
               scale={{ x: 'time' }}
               containerComponent={
                 <VictoryVoronoiContainer
@@ -133,14 +136,11 @@ class ChartComparison extends Component {
                   key={`${playerIds[i]}-line`}
                   data={data}
                   animate={{ duration: 2000, onLoad: { duration: 1000 } }}
-                  // interpolation="natural"
                   style={{ data: { stroke: colorFunc(i / playerData.length) } }}
                 />
               ))}
-              {statLabel.includes('TOI') && (
-                <VictoryAxis dependentAxis tickFormat={secToString} />
-              )}
-              {statLabel.includes('TOI') && <VictoryAxis />}
+              {toi && <VictoryAxis dependentAxis tickFormat={secToString} />}
+              {toi && <VictoryAxis />}
               <VictoryLabel
                 angle="-90"
                 text={statLabel}
@@ -163,7 +163,7 @@ class ChartComparison extends Component {
                     fill: colorFunc(i / playerData.length),
                   },
                 }))}
-                x={50}
+                x={toi ? 80 : 50}
               />
             </VictoryChart>
           </>
