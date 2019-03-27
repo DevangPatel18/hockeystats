@@ -7,8 +7,7 @@ import {
   VictoryLine,
   VictoryLabel,
   VictoryLegend,
-  VictoryVoronoiContainer,
-  VictoryTooltip,
+  VictorySharedEvents,
 } from 'victory'
 import {
   Input,
@@ -111,8 +110,10 @@ class ChartComparison extends Component {
     const toi = statLabel.includes('TOI')
     const theme = chartTheme(toi)
 
+    const lineNames = playerIds.map(x => `${x}-line-name`)
+
     return (
-      <div style={{ padding: '2rem' }}>
+      <div style={{ padding: '2rem', textAlign: 'center' }}>
         {dataLoad && <CircularProgress />}
         {playerData.length > 0 && (
           <>
@@ -151,29 +152,63 @@ class ChartComparison extends Component {
             <VictoryChart
               theme={theme}
               scale={{ x: 'time' }}
-              // containerComponent={
-              //   <VictoryVoronoiContainer
-              //     voronoiDimension="x"
-              //     labels={d => {
-              //       const date = new Date(d.x)
-              //       const dateStr = date.toLocaleDateString('en-US', {
-              //         month: 'short',
-              //         day: 'numeric',
-              //         timeZone: 'UTC',
-              //       })
-              //       return `${dateStr}, ${d.y}`
-              //     }}
-              //     labelComponent={<VictoryTooltip />}
-              //   />
-              // }
+              events={[
+                {
+                  childName: [...lineNames],
+                  target: 'data',
+                  eventHandlers: {
+                    onMouseOver: () => {
+                      return [
+                        {
+                          childName: lineNames,
+                          mutation: props => {
+                            return {
+                              style: Object.assign({}, props.style, {
+                                opacity: 0.2,
+                              }),
+                            }
+                          },
+                        },
+                        {
+                          mutation: props => {
+                            return {
+                              style: Object.assign({}, props.style, {
+                                stroke: props.style.stroke,
+                                display: 'inline',
+                                opacity: 1,
+                              }),
+                            }
+                          },
+                        },
+                      ]
+                    },
+                    onMouseOut: () => {
+                      return [
+                        {
+                          childName: lineNames,
+                          mutation: () => {
+                            return null
+                          },
+                        },
+                      ]
+                    },
+                  },
+                },
+              ]}
             >
               {playerPointProgress.map((data, i) => (
                 <VictoryLine
                   key={`${playerIds[i]}-line`}
+                  name={`${playerIds[i]}-line-name`}
                   data={data}
                   animate={{ duration: 2000, onLoad: { duration: 1000 } }}
                   interpolation="step"
-                  style={{ data: { stroke: colorFunc(i / playerData.length) } }}
+                  style={{
+                    data: {
+                      stroke: colorFunc(i / playerData.length),
+                      transition: 'all 0.2s',
+                    },
+                  }}
                 />
               ))}
               {toi && <VictoryAxis dependentAxis tickFormat={secToString} />}
