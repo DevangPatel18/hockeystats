@@ -81,11 +81,19 @@ class ChartComparison extends Component {
     const playerPointProgress = playerData.map(playerGameLog => {
       let total = 0
       const orderedGameLog = playerGameLog.slice().reverse()
-      return orderedGameLog.map(game => {
-        total += formatter(game.stat[playerStat])
-        let x = Date.parse(game.date)
-        return { x, y: total }
-      })
+
+      if (['faceOffPct', 'shotPct'].includes(playerStat)) {
+        return orderedGameLog.map(game => {
+          let x = Date.parse(game.date)
+          return { x, y: game.stat[playerStat] || 0 }
+        })
+      } else {
+        return orderedGameLog.map(game => {
+          total += formatter(game.stat[playerStat])
+          let x = Date.parse(game.date)
+          return { x, y: total }
+        })
+      }
     })
 
     const toi = statLabel.includes('TOI')
@@ -115,27 +123,28 @@ class ChartComparison extends Component {
             <VictoryChart
               theme={theme}
               scale={{ x: 'time' }}
-              containerComponent={
-                <VictoryVoronoiContainer
-                  voronoiDimension="x"
-                  labels={d => {
-                    const date = new Date(d.x)
-                    const dateStr = date.toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      timeZome: 'UTC',
-                    })
-                    return `${dateStr}, ${d.y}`
-                  }}
-                  labelComponent={<VictoryTooltip />}
-                />
-              }
+              // containerComponent={
+              //   <VictoryVoronoiContainer
+              //     voronoiDimension="x"
+              //     labels={d => {
+              //       const date = new Date(d.x)
+              //       const dateStr = date.toLocaleDateString('en-US', {
+              //         month: 'short',
+              //         day: 'numeric',
+              //         timeZone: 'UTC',
+              //       })
+              //       return `${dateStr}, ${d.y}`
+              //     }}
+              //     labelComponent={<VictoryTooltip />}
+              //   />
+              // }
             >
               {playerPointProgress.map((data, i) => (
                 <VictoryLine
                   key={`${playerIds[i]}-line`}
                   data={data}
                   animate={{ duration: 2000, onLoad: { duration: 1000 } }}
+                  interpolation="step"
                   style={{ data: { stroke: colorFunc(i / playerData.length) } }}
                 />
               ))}

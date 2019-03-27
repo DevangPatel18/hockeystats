@@ -23,6 +23,6 @@ export const skaterLogStats = [
   { key: 'powerPlayPoints', label: 'Powerplay Points' },
   { key: 'shortHandedGoals', label: 'Shorthanded Goals' },
   { key: 'shortHandedPoints', label: 'Shorthanded Points' },
-  // { key: 'faceOffPct', label: 'Faceoff ' },
-  // { key: 'shotPct', label: 'Shooting ' },
+  { key: 'faceOffPct', label: 'Faceoff ' },
+  { key: 'shotPct', label: 'Shooting ' },
 ]
