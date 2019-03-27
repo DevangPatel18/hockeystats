@@ -10,7 +10,14 @@ import {
   VictoryVoronoiContainer,
   VictoryTooltip,
 } from 'victory'
-import { Input, FormControl, InputLabel, NativeSelect } from '@material-ui/core'
+import {
+  Input,
+  FormControl,
+  InputLabel,
+  NativeSelect,
+  FormControlLabel,
+  Switch,
+} from '@material-ui/core'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import chroma from 'chroma-js'
 import configure from '../utils/configLocalforage'
@@ -27,6 +34,7 @@ class ChartComparison extends Component {
     this.state = {
       playerData: [],
       playerStat: 'points',
+      summed: true,
     }
 
     this._isMounted = false
@@ -64,8 +72,12 @@ class ChartComparison extends Component {
     this.setState({ playerStat: e.target.value })
   }
 
+  handleSwitchChange = name => event => {
+    this.setState({ [name]: event.target.checked })
+  }
+
   render() {
-    const { playerData, playerStat } = this.state
+    const { playerData, playerStat, summed } = this.state
     const { players, data, stats } = this.props
     const { dataLoad } = stats
     const playerIds = players.map(playerStr => playerStr.split('-')[0])
@@ -82,7 +94,7 @@ class ChartComparison extends Component {
       let total = 0
       const orderedGameLog = playerGameLog.slice().reverse()
 
-      if (['faceOffPct', 'shotPct'].includes(playerStat)) {
+      if (['faceOffPct', 'shotPct'].includes(playerStat) || !summed) {
         return orderedGameLog.map(game => {
           let x = Date.parse(game.date)
           return { x, y: game.stat[playerStat] || 0 }
@@ -104,7 +116,14 @@ class ChartComparison extends Component {
         {dataLoad && <CircularProgress />}
         {playerData.length > 0 && (
           <>
-            <div>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                paddingBottom: '1rem',
+              }}
+            >
               <FormControl>
                 <InputLabel htmlFor="playerStat">Statistic</InputLabel>
                 <NativeSelect
@@ -119,6 +138,15 @@ class ChartComparison extends Component {
                   ))}
                 </NativeSelect>
               </FormControl>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={summed}
+                    onChange={this.handleSwitchChange('summed')}
+                  />
+                }
+                label="Sum Results"
+              />
             </div>
             <VictoryChart
               theme={theme}
