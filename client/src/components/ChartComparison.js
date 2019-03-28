@@ -6,8 +6,6 @@ import {
   VictoryChart,
   VictoryLine,
   VictoryLabel,
-  VictoryLegend,
-  VictorySharedEvents,
 } from 'victory'
 import {
   Input,
@@ -18,7 +16,9 @@ import {
   Switch,
 } from '@material-ui/core'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import { RadioButtonChecked } from '@material-ui/icons'
 import chroma from 'chroma-js'
+import styled from 'styled-components'
 import configure from '../utils/configLocalforage'
 import { startLoad, stopLoad } from '../actions/statActions'
 import chartTheme from '../helper/chartTheme'
@@ -26,6 +26,20 @@ import { skaterLogStats } from '../helper/chartComparisonHelper'
 import { secToString } from '../helper/columnLabels'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
+
+const Legend = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  font-family: Roboto, 'Helvetica Neue', Helvetica, sans-serif;
+  font-size: 12px;
+`
+
+const LegendItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+`
 
 class ChartComparison extends Component {
   constructor() {
@@ -149,6 +163,20 @@ class ChartComparison extends Component {
                 label="Sum Results"
               />
             </div>
+            <Legend>
+              {playerObjs.map((x, i) => (
+                <LegendItem key={`${x.playerName}-legend`}>
+                  <RadioButtonChecked
+                    fontSize="inherit"
+                    style={{
+                      color: colorFunc(i / playerObjs.length),
+                      marginRight: '0.3rem',
+                    }}
+                  />
+                  {x.playerName}
+                </LegendItem>
+              ))}
+            </Legend>
             <VictoryChart
               theme={theme}
               scale={{ x: 'time' }}
@@ -227,15 +255,6 @@ class ChartComparison extends Component {
                 style={{ fontWeight: 'bolder' }}
                 x={225}
                 y={340}
-              />
-              <VictoryLegend
-                data={playerData.map((player, i) => ({
-                  name: playerObjs[i].playerName,
-                  symbol: {
-                    fill: colorFunc(i / playerData.length),
-                  },
-                }))}
-                x={toi ? 80 : 50}
               />
             </VictoryChart>
           </>

@@ -53,7 +53,9 @@ const chartTheme = (toi = false) => {
   baseProps = {
     width: 450,
     height: 350,
-    padding: toi ? { left: 80, top: 50, right: 50, bottom: 50 } : 50,
+    padding: toi
+      ? { left: 80, top: 25, right: 50, bottom: 50 }
+      : { left: 50, top: 25, right: 50, bottom: 50 },
   }
   return {
     area: Object.assign(
