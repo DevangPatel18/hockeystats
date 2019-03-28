@@ -1,12 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import {
-  VictoryAxis,
-  VictoryChart,
-  VictoryLine,
-  VictoryLabel,
-} from 'victory'
+import { VictoryAxis, VictoryChart, VictoryLine, VictoryLabel } from 'victory'
 import {
   Input,
   FormControl,
@@ -16,7 +11,7 @@ import {
   Switch,
 } from '@material-ui/core'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { RadioButtonChecked } from '@material-ui/icons'
+import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons'
 import chroma from 'chroma-js'
 import styled from 'styled-components'
 import configure from '../utils/configLocalforage'
@@ -39,6 +34,7 @@ const LegendItem = styled.div`
   display: flex;
   align-items: center;
   margin-right: 1rem;
+  cursor: pointer;
 `
 
 class ChartComparison extends Component {
@@ -48,6 +44,7 @@ class ChartComparison extends Component {
       playerData: [],
       playerStat: 'points',
       summed: true,
+      activeLines: '',
     }
 
     this._isMounted = false
@@ -73,7 +70,12 @@ class ChartComparison extends Component {
           const tableData = data.find(
             playerObj => playerObj.playerId === parseInt(playerIds[i])
           )
-          return { tag, tableData, gameLog: playerGameLogs[i] }
+          return {
+            tag,
+            tableData,
+            gameLog: playerGameLogs[i],
+            activeLines: selectedPlayers.slice(),
+          }
         })
 
         if (this._isMounted) {
@@ -100,8 +102,19 @@ class ChartComparison extends Component {
     this.setState({ [name]: event.target.checked })
   }
 
+  toggleLines = tag => {
+    const newActiveLines = this.state.activeLines.slice()
+    const tagIndex = newActiveLines.indexOf(tag)
+    if (tagIndex === -1) {
+      newActiveLines.push(tag)
+    } else {
+      newActiveLines.splice(tagIndex, 1)
+    }
+    this.setState({ activeLines: newActiveLines })
+  }
+
   render() {
-    const { playerData, playerStat, summed } = this.state
+    const { playerData, playerStat, summed, activeLines } = this.state
     const { dataLoad } = this.props.stats
 
     if (!playerData)
@@ -116,6 +129,10 @@ class ChartComparison extends Component {
     const formatter = skaterLogStats.find(obj => obj.key === playerStat).format
       ? skaterLogStats.find(obj => obj.key === playerStat).format
       : x => x
+
+    const selectedPlayerData = playerData.filter(obj =>
+      activeLines.includes(obj.tag)
+    )
 
     const playerPointProgress = playerData.map(obj => {
       const { gameLog } = obj
@@ -139,7 +156,7 @@ class ChartComparison extends Component {
     const toi = statLabel.includes('TOI')
     const theme = chartTheme(toi)
 
-    const lineNames = playerData.map(obj => `${obj.tag}-line-name`)
+    const lineNames = selectedPlayerData.map(obj => `${obj.tag}-line-name`)
 
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -180,14 +197,27 @@ class ChartComparison extends Component {
             </div>
             <Legend>
               {playerData.map((obj, i) => (
-                <LegendItem key={`${obj.tag}-legend`}>
-                  <RadioButtonChecked
-                    fontSize="inherit"
-                    style={{
-                      color: colorFunc(i / playerData.length),
-                      marginRight: '0.3rem',
-                    }}
-                  />
+                <LegendItem
+                  key={`${obj.tag}-legend`}
+                  onClick={() => this.toggleLines(obj.tag)}
+                >
+                  {activeLines.includes(obj.tag) ? (
+                    <RadioButtonChecked
+                      fontSize="inherit"
+                      style={{
+                        color: colorFunc(i / playerData.length),
+                        marginRight: '0.3rem',
+                      }}
+                    />
+                  ) : (
+                    <RadioButtonUnchecked
+                      fontSize="inherit"
+                      style={{
+                        color: colorFunc(i / playerData.length),
+                        marginRight: '0.3rem',
+                      }}
+                    />
+                  )}
                   {obj.tableData.playerName}
                 </LegendItem>
               ))}
@@ -197,7 +227,7 @@ class ChartComparison extends Component {
               scale={{ x: 'time' }}
               events={[
                 {
-                  childName: [...lineNames],
+                  childName: lineNames,
                   target: 'data',
                   eventHandlers: {
                     onMouseOver: () => {
@@ -207,6 +237,7 @@ class ChartComparison extends Component {
                           mutation: props => {
                             return {
                               style: Object.assign({}, props.style, {
+                                display: 'inline',
                                 opacity: 0.2,
                               }),
                             }
@@ -248,6 +279,9 @@ class ChartComparison extends Component {
                   interpolation="step"
                   style={{
                     data: {
+                      display: activeLines.includes(playerData[i].tag)
+                        ? 'inline'
+                        : 'none',
                       stroke: colorFunc(i / playerData.length),
                       transition: 'all 0.2s',
                     },
