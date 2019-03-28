@@ -45,6 +45,7 @@ class ChartComparison extends Component {
       playerStat: 'points',
       summed: true,
       activeLines: '',
+      hover: '',
     }
 
     this._isMounted = false
@@ -114,7 +115,7 @@ class ChartComparison extends Component {
   }
 
   render() {
-    const { playerData, playerStat, summed, activeLines } = this.state
+    const { playerData, playerStat, summed, activeLines, hover } = this.state
     const { dataLoad } = this.props.stats
 
     if (!playerData)
@@ -200,6 +201,8 @@ class ChartComparison extends Component {
                 <LegendItem
                   key={`${obj.tag}-legend`}
                   onClick={() => this.toggleLines(obj.tag)}
+                  onMouseEnter={() => this.setState({ hover: obj.tag })}
+                  onMouseLeave={() => this.setState({ hover: '' })}
                 >
                   {activeLines.includes(obj.tag) ? (
                     <RadioButtonChecked
@@ -283,7 +286,9 @@ class ChartComparison extends Component {
                         ? 'inline'
                         : 'none',
                       stroke: colorFunc(i / playerData.length),
-                      transition: 'all 0.2s',
+                      transition: '0.2s',
+                      opacity:
+                        hover && hover !== playerData[i].tag ? '0.2' : '1',
                     },
                   }}
                 />
