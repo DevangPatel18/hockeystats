@@ -12,8 +12,8 @@ const cellBackground = (obj, i) => {
   return {}
 }
 
-const TableComparison = ({ players, data }) => {
-  let playersObj = players.map(playerStr => {
+const TableComparison = ({ selectedPlayers, data }) => {
+  let playersObj = selectedPlayers.map(playerStr => {
     const [playerId, seasonId] = playerStr.split('-')
     const playerObj = data.find(
       obj =>

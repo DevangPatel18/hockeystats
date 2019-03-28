@@ -12,7 +12,7 @@ class PlayerComparison extends Component {
   }
   render() {
     const { value } = this.state
-    const { players, data } = this.props
+    const { selectedPlayers, data } = this.props
     return (
       <div>
         <AppBar position="static">
@@ -21,15 +21,19 @@ class PlayerComparison extends Component {
             <Tab label="Chart" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TableComparison players={players} data={data} />}
-        {value === 1 && <ChartComparison players={players} data={data} />}
+        {value === 0 && (
+          <TableComparison selectedPlayers={selectedPlayers} data={data} />
+        )}
+        {value === 1 && (
+          <ChartComparison selectedPlayers={selectedPlayers} data={data} />
+        )}
       </div>
     )
   }
 }
 
 PlayerComparison.propTypes = {
-  players: PropTypes.array.isRequired,
+  selectedPlayers: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
 }
 

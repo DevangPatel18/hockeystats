@@ -54,24 +54,35 @@ class ChartComparison extends Component {
   }
 
   async componentDidMount() {
-    const { players } = this.props
+    const { selectedPlayers, data } = this.props
     this._isMounted = true
-    const playerIds = players.map(playerStr => playerStr.split('-')[0])
+    const playerIds = selectedPlayers.map(playerStr => playerStr.split('-')[0])
 
     if (playerIds.length) {
       this.props.startLoad()
       await configure().then(async api => {
-        const playerData = await Promise.all(
+        const playerGameLogs = await Promise.all(
           playerIds.map(playerId =>
             api
               .get(`/api/statistics/players/gameLog/${playerId}`)
               .then(res => res.data)
           )
         )
+
+        const playerData = selectedPlayers.map((tag, i) => {
+          const tableData = data.find(
+            playerObj => playerObj.playerId === parseInt(playerIds[i])
+          )
+          return { tag, tableData, gameLog: playerGameLogs[i] }
+        })
+
         if (this._isMounted) {
-          this.setState({ playerData }, () => {
-            this.props.stopLoad()
-          })
+          this.setState(
+            { playerData, activeLines: selectedPlayers.slice() },
+            () => {
+              this.props.stopLoad()
+            }
+          )
         }
       })
     }
@@ -91,21 +102,25 @@ class ChartComparison extends Component {
 
   render() {
     const { playerData, playerStat, summed } = this.state
-    const { players, data, stats } = this.props
-    const { dataLoad } = stats
-    const playerIds = players.map(playerStr => playerStr.split('-')[0])
-    const playerObjs = playerIds.map(playerId =>
-      data.find(playerObj => playerObj.playerId === parseInt(playerId))
-    )
+    const { dataLoad } = this.props.stats
+
+    if (!playerData)
+      return (
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <CircularProgress />
+        </div>
+      )
 
     const statLabel = skaterLogStats.find(obj => obj.key === playerStat).label
 
     const formatter = skaterLogStats.find(obj => obj.key === playerStat).format
       ? skaterLogStats.find(obj => obj.key === playerStat).format
       : x => x
-    const playerPointProgress = playerData.map(playerGameLog => {
+
+    const playerPointProgress = playerData.map(obj => {
+      const { gameLog } = obj
       let total = 0
-      const orderedGameLog = playerGameLog.slice().reverse()
+      const orderedGameLog = gameLog.slice().reverse()
 
       if (['faceOffPct', 'shotPct'].includes(playerStat) || !summed) {
         return orderedGameLog.map(game => {
@@ -124,7 +139,7 @@ class ChartComparison extends Component {
     const toi = statLabel.includes('TOI')
     const theme = chartTheme(toi)
 
-    const lineNames = playerIds.map(x => `${x}-line-name`)
+    const lineNames = playerData.map(obj => `${obj.tag}-line-name`)
 
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -164,16 +179,16 @@ class ChartComparison extends Component {
               />
             </div>
             <Legend>
-              {playerObjs.map((x, i) => (
-                <LegendItem key={`${x.playerName}-legend`}>
+              {playerData.map((obj, i) => (
+                <LegendItem key={`${obj.tag}-legend`}>
                   <RadioButtonChecked
                     fontSize="inherit"
                     style={{
-                      color: colorFunc(i / playerObjs.length),
+                      color: colorFunc(i / playerData.length),
                       marginRight: '0.3rem',
                     }}
                   />
-                  {x.playerName}
+                  {obj.tableData.playerName}
                 </LegendItem>
               ))}
             </Legend>
@@ -226,8 +241,8 @@ class ChartComparison extends Component {
             >
               {playerPointProgress.map((data, i) => (
                 <VictoryLine
-                  key={`${playerIds[i]}-line`}
-                  name={`${playerIds[i]}-line-name`}
+                  key={`${playerData[i].tag}-line`}
+                  name={`${playerData[i].tag}-line-name`}
                   data={data}
                   animate={{ duration: 2000, onLoad: { duration: 1000 } }}
                   interpolation="step"
@@ -265,7 +280,7 @@ class ChartComparison extends Component {
 }
 
 ChartComparison.propTypes = {
-  players: PropTypes.array.isRequired,
+  selectedPlayers: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
   stats: PropTypes.object.isRequired,
   startLoad: PropTypes.func.isRequired,

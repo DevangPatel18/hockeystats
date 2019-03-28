@@ -334,7 +334,10 @@ class PlayerStats extends Component {
             justifyContent: 'center',
           }}
         >
-          <PlayerComparison players={selectedPlayers} data={dataDisplay} />
+          <PlayerComparison
+            selectedPlayers={selectedPlayers}
+            data={dataDisplay}
+          />
         </Dialog>
       </div>
     )
