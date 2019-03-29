@@ -17,7 +17,7 @@ import styled from 'styled-components'
 import configure from '../utils/configLocalforage'
 import { startLoad, stopLoad } from '../actions/statActions'
 import chartTheme from '../helper/chartTheme'
-import { skaterLogStats } from '../helper/chartComparisonHelper'
+import { skaterLogStats, goalieLogStats } from '../helper/chartComparisonHelper'
 import { secToString } from '../helper/columnLabels'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
@@ -42,10 +42,11 @@ class ChartComparison extends Component {
     super()
     this.state = {
       playerData: [],
-      playerStat: 'points',
+      playerStat: '',
       summed: true,
       activeLines: '',
       hover: '',
+      statOptions: '',
     }
 
     this._isMounted = false
@@ -67,6 +68,16 @@ class ChartComparison extends Component {
           )
         )
 
+        let statOptions
+        let playerStat
+        if (data[0].playerPositionCode !== 'G') {
+          statOptions = skaterLogStats
+          playerStat = 'points'
+        } else {
+          statOptions = goalieLogStats
+          playerStat = 'saves'
+        }
+
         const playerData = selectedPlayers.map((tag, i) => {
           const tableData = data.find(
             playerObj => playerObj.playerId === parseInt(playerIds[i])
@@ -75,13 +86,17 @@ class ChartComparison extends Component {
             tag,
             tableData,
             gameLog: playerGameLogs[i],
-            activeLines: selectedPlayers.slice(),
           }
         })
 
         if (this._isMounted) {
           this.setState(
-            { playerData, activeLines: selectedPlayers.slice() },
+            {
+              playerData,
+              activeLines: selectedPlayers.slice(),
+              statOptions,
+              playerStat,
+            },
             () => {
               this.props.stopLoad()
             }
@@ -115,20 +130,27 @@ class ChartComparison extends Component {
   }
 
   render() {
-    const { playerData, playerStat, summed, activeLines, hover } = this.state
+    const {
+      playerData,
+      playerStat,
+      summed,
+      activeLines,
+      hover,
+      statOptions,
+    } = this.state
     const { dataLoad } = this.props.stats
 
-    if (!playerData)
+    if (!playerStat)
       return (
         <div style={{ padding: '2rem', textAlign: 'center' }}>
           <CircularProgress />
         </div>
       )
 
-    const statLabel = skaterLogStats.find(obj => obj.key === playerStat).label
+    const statLabel = statOptions.find(obj => obj.key === playerStat).label
 
-    const formatter = skaterLogStats.find(obj => obj.key === playerStat).format
-      ? skaterLogStats.find(obj => obj.key === playerStat).format
+    const formatter = statOptions.find(obj => obj.key === playerStat).format
+      ? statOptions.find(obj => obj.key === playerStat).format
       : x => x
 
     const selectedPlayerData = playerData.filter(obj =>
@@ -143,7 +165,7 @@ class ChartComparison extends Component {
       if (['faceOffPct', 'shotPct'].includes(playerStat) || !summed) {
         return orderedGameLog.map(game => {
           let x = Date.parse(game.date)
-          return { x, y: game.stat[playerStat] || 0 }
+          return { x, y: formatter(game.stat[playerStat]) || 0 }
         })
       } else {
         return orderedGameLog.map(game => {
@@ -161,7 +183,7 @@ class ChartComparison extends Component {
 
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
-        {dataLoad && <CircularProgress />}
+        {/* {dataLoad && <CircularProgress />} */}
         {playerData.length > 0 && (
           <>
             <div
@@ -179,7 +201,7 @@ class ChartComparison extends Component {
                   onChange={this.handleStatChange}
                   input={<Input name="playerStat" id="playerStat" />}
                 >
-                  {skaterLogStats.map(stat => (
+                  {statOptions.map(stat => (
                     <option value={stat.key} key={stat.key}>
                       {stat.label}
                     </option>

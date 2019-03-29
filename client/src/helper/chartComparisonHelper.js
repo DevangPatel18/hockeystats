@@ -26,3 +26,23 @@ export const skaterLogStats = [
   { key: 'faceOffPct', label: 'Faceoff ' },
   { key: 'shotPct', label: 'Shooting ' },
 ]
+
+export const goalieLogStats = [
+  { key: 'decision', label: 'Decision' },
+  { key: 'timeOnIce', label: 'TOI', format: strToMin },
+  { key: 'ot', label: 'OT' },
+  { key: 'shutouts', label: 'Shutouts' },
+  { key: 'saves', label: 'Saves' },
+  { key: 'evenSaves', label: 'ES Saves' },
+  { key: 'powerPlaySaves', label: 'PP Saves' },
+  { key: 'shortHandedSaves', label: 'SH Saves' },
+  { key: 'shotsAgainst', label: 'Shots against' },
+  { key: 'evenShots', label: 'ES Shots' },
+  { key: 'powerPlayShots', label: 'PP Shots' },
+  { key: 'shortHandedShots', label: 'SH Shots' },
+  { key: 'savePercentage', label: 'Save %' },
+  { key: 'goalsAgainst', label: 'Goals against' },
+  { key: 'powerPlaySavePercentage', label: 'PP Save %' },
+  { key: 'shortHandedSavePercentage', label: 'SH Save %' },
+  { key: 'evenStrengthSavePercentage', label: 'ES Save %' },
+]
