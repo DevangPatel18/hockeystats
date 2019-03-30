@@ -52,24 +52,8 @@ class PlayerStats extends Component {
   }
 
   componentDidMount() {
-    const { isAggregate, reportName, yearStart, yearEnd } = this.state
     this._isMounted = true
-    this.props.startLoad()
-    configure().then(api => {
-      api
-        .get(
-          `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}`
-        )
-        .then(res => {
-          if (this._isMounted) {
-            this.props.stopLoad()
-            this.setState({ stats: res.data })
-          }
-        })
-        .catch(err => {
-          console.log(err)
-        })
-    })
+    this.submitQuery()
 
     if (!this.props.auth.isAuthenticated) {
       window.addEventListener(
@@ -169,7 +153,10 @@ class PlayerStats extends Component {
   }
 
   submitQuery = e => {
-    e.preventDefault()
+    if (e) {
+      e.preventDefault()
+    }
+
     const { isAggregate, reportName, yearStart, yearEnd } = this.state
 
     this.props.startLoad()
@@ -186,7 +173,7 @@ class PlayerStats extends Component {
       console.log(`Received data from ${yearStart} to ${yearEnd} seasons`)
 
       this.props.stopLoad()
-      if (stats) {
+      if (stats && this._isMounted) {
         this.setState({ stats, selectedPlayers: [] })
       }
     })
