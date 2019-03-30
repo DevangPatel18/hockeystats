@@ -64,20 +64,23 @@ router.get('/players/:playerId', async (req, res, next) => {
 });
 
 // Retrieve player stats from individual games
-router.get('/players/gameLog/:playerId', async (req, res, next) => {
-  try {
-    const { playerId } = req.params;
+router.get(
+  '/players/gameLog/playerId/:playerId/seasonId/:seasonId',
+  async (req, res, next) => {
+    try {
+      const { playerId, seasonId } = req.params;
 
-    const playerData = await axios
-      .get(
-        `https://statsapi.web.nhl.com/api/v1/people/${playerId}/stats?stats=gameLog&season=20182019`
-      )
-      .then(res => res.data.stats[0].splits);
+      const playerData = await axios
+        .get(
+          `https://statsapi.web.nhl.com/api/v1/people/${playerId}/stats?stats=gameLog&season=${seasonId}`
+        )
+        .then(res => res.data.stats[0].splits);
 
-    return res.status(200).json(playerData);
-  } catch (err) {
-    return next(err);
+      return res.status(200).json(playerData);
+    } catch (err) {
+      return next(err);
+    }
   }
-});
+);
 
 module.exports = router;

@@ -55,17 +55,20 @@ class ChartComparison extends Component {
   async componentDidMount() {
     const { selectedPlayers, data } = this.props
     this._isMounted = true
-    const playerIds = selectedPlayers.map(playerStr => playerStr.split('-')[0])
+    const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
 
     if (playerIds.length) {
       this.props.startLoad()
       await configure().then(async api => {
         const playerGameLogs = await Promise.all(
-          playerIds.map(playerId =>
-            api
-              .get(`/api/statistics/players/gameLog/${playerId}`)
+          playerIds.map(playerArr => {
+            const [playerId, seasonId] = playerArr
+            return api
+              .get(
+                `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}`
+              )
               .then(res => res.data)
-          )
+          })
         )
 
         let statOptions
