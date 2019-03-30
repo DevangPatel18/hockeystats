@@ -45,7 +45,7 @@ const PlayerTags = ({ selectedPlayers, stats, handleRowClick }) => {
         if (teamCodes) {
           const teams =
             teamCodes.length > 3 ? teamCodes.split(', ')[0] : teamCodes
-          colors = teamColors[teams]
+          colors = teamColors[teams] || { first: 'black', second: 'grey' }
         } else {
           colors = { first: '#283048', second: '#859398' }
         }

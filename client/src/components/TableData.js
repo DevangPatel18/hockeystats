@@ -177,7 +177,9 @@ const TableData = props => {
                     style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
                     align="center"
                   >
-                    {col.format ? col.format(row[col.id]) : row[col.id]}
+                    {col.format && row[col.id]
+                      ? col.format(row[col.id])
+                      : row[col.id]}
                   </TableCell>
                 ))}
             </TableRow>

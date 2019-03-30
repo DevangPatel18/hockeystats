@@ -106,11 +106,10 @@ export const getSorting = (order, orderBy) => {
 }
 
 export const generateCols = data => {
-  const aggregateTable = !(data[0]
-    ? Object.keys(data[0]).includes('seasonId')
-    : false)
+  if (!data.length) return skaterStatsCol
 
-  const isSkaters = data[0] ? data[0]['playerPositionCode'] !== 'G' : true
+  const aggregateTable = !Object.keys(data[0]).includes('seasonId')
+  const isSkaters = data[0]['playerPositionCode'] !== 'G'
 
   const playerStatsCol = isSkaters ? skaterStatsCol : goalieStatsCol
 
