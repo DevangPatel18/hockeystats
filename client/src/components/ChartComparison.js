@@ -37,6 +37,12 @@ const LegendItem = styled.div`
   cursor: pointer;
 `
 
+const yearFormat = seasonId => {
+  const seasonIdFormat = seasonId.split('')
+  seasonIdFormat.splice(4, 0, '-')
+  return `(${seasonIdFormat.join('')})`
+}
+
 class ChartComparison extends Component {
   constructor() {
     super()
@@ -141,7 +147,6 @@ class ChartComparison extends Component {
       hover,
       statOptions,
     } = this.state
-    const { dataLoad } = this.props.stats
 
     if (!playerStat)
       return (
@@ -160,22 +165,38 @@ class ChartComparison extends Component {
       activeLines.includes(obj.tag)
     )
 
+    const seasonIds = this.props.selectedPlayers.map(
+      playerTag => playerTag.split('-')[1]
+    )
+
+    const sameSeason = seasonIds.every(seasonId => seasonId === seasonIds[0])
+
     const playerPointProgress = playerData.map(obj => {
       const { gameLog } = obj
       let total = 0
       const orderedGameLog = gameLog.slice().reverse()
 
       if (['faceOffPct', 'shotPct'].includes(playerStat) || !summed) {
-        return orderedGameLog.map(game => {
-          let x = Date.parse(game.date)
-          return { x, y: formatter(game.stat[playerStat]) || 0 }
-        })
+        return sameSeason
+          ? orderedGameLog.map(game => {
+              let x = Date.parse(game.date)
+              return { x, y: formatter(game.stat[playerStat]) || 0 }
+            })
+          : orderedGameLog.map((game, i) => ({
+              i,
+              y: formatter(game.stat[playerStat]) || 0,
+            }))
       } else {
-        return orderedGameLog.map(game => {
-          total += formatter(game.stat[playerStat])
-          let x = Date.parse(game.date)
-          return { x, y: total }
-        })
+        return sameSeason
+          ? orderedGameLog.map(game => {
+              total += formatter(game.stat[playerStat])
+              let x = Date.parse(game.date)
+              return { x, y: total }
+            })
+          : orderedGameLog.map((game, i) => {
+              total += formatter(game.stat[playerStat])
+              return { i, y: total }
+            })
       }
     })
 
@@ -186,7 +207,6 @@ class ChartComparison extends Component {
 
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
-        {/* {dataLoad && <CircularProgress />} */}
         {playerData.length > 0 && (
           <>
             <div
@@ -246,13 +266,14 @@ class ChartComparison extends Component {
                       }}
                     />
                   )}
-                  {obj.tableData.playerName}
+                  {obj.tableData.playerName}{' '}
+                  {!sameSeason ? yearFormat(seasonIds[i]) : ''}
                 </LegendItem>
               ))}
             </Legend>
             <VictoryChart
               theme={theme}
-              scale={{ x: 'time' }}
+              scale={{ x: sameSeason ? 'time' : 'linear' }}
               events={[
                 {
                   childName: lineNames,
@@ -329,7 +350,7 @@ class ChartComparison extends Component {
                 y={150}
               />
               <VictoryLabel
-                text="Date"
+                text={sameSeason ? 'Date' : 'Games'}
                 textAnchor="middle"
                 style={{ fontWeight: 'bolder' }}
                 x={225}
