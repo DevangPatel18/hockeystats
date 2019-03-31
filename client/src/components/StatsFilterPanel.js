@@ -17,6 +17,11 @@ const StatsFilterPanel = props => {
     yearEnd,
     playerPositionCode,
     filterTracked,
+    teamFilter,
+    teams,
+  } = props.this
+
+  const {
     handleChange,
     handleRowFilter,
     handleSwitchChange,
@@ -99,7 +104,25 @@ const StatsFilterPanel = props => {
         label="Sum Results"
       />
       <div>
-        <FormControl>
+        <FormControl style={{ marginRight: '1rem' }}>
+          <InputLabel htmlFor="teamFilter">Teams</InputLabel>
+          <NativeSelect
+            value={teamFilter}
+            onChange={handleChange('teamFilter')}
+            input={
+              <Input name="teamFilter" id="teamFilter" />
+            }
+          >
+            <option value={'all'}>All Teams</option>
+            {teams &&
+              teams.map(teamCode => (
+                <option value={teamCode} key={teamCode}>
+                  {teamCode}
+                </option>
+              ))}
+          </NativeSelect>
+        </FormControl>
+        <FormControl style={{ marginRight: '1rem' }}>
           <InputLabel htmlFor="playerPositionCode">Position</InputLabel>
           <NativeSelect
             value={playerPositionCode}

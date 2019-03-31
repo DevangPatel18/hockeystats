@@ -38,6 +38,8 @@ class PlayerStats extends Component {
       reportName: 'skatersummary',
       yearStart: '20182019',
       yearEnd: '20182019',
+      teamFilter: 'all',
+      teams: '',
       filterTracked: false,
       trackedPlayers: [],
       selectedPlayers: [],
@@ -172,9 +174,24 @@ class PlayerStats extends Component {
 
       console.log(`Received data from ${yearStart} to ${yearEnd} seasons`)
 
+      const teams = stats
+        .reduce((acc, playerObj) => {
+          let team = playerObj.playerTeamsPlayedFor
+          if (team.length === 3 && !acc.includes(team)) {
+            acc.push(team)
+          }
+          return acc
+        }, [])
+        .sort()
+
       this.props.stopLoad()
       if (stats && this._isMounted) {
-        this.setState({ stats, selectedPlayers: [] })
+        this.setState({
+          stats,
+          teams,
+          selectedPlayers: [],
+          teamFilter: 'all',
+        })
       }
     })
   }
@@ -201,9 +218,6 @@ class PlayerStats extends Component {
     const {
       stats,
       isAggregate,
-      reportName,
-      yearStart,
-      yearEnd,
       playerPositionCode,
       filterTracked,
       selectedPlayers,
@@ -211,6 +225,7 @@ class PlayerStats extends Component {
       page,
       order,
       orderBy,
+      teamFilter,
     } = this.state
     const { dataLoad, trackedPlayers } = this.props.stats
 
@@ -221,6 +236,12 @@ class PlayerStats extends Component {
     dataDisplay = filterTracked
       ? dataDisplay.filter(obj => trackedPlayers.includes(obj.playerId))
       : dataDisplay
+    dataDisplay =
+      teamFilter !== 'all'
+        ? dataDisplay.filter(playerObj =>
+            playerObj.playerTeamsPlayedFor.includes(teamFilter)
+          )
+        : dataDisplay
 
     console.log('selectedPlayers:', selectedPlayers)
     console.log('trackedPlayers:', trackedPlayers)
@@ -228,13 +249,7 @@ class PlayerStats extends Component {
       <div style={{ fontFamily: 'Arial' }}>
         <h1>Player Statistics</h1>
         <StatsFilterPanel
-          isAggregate={isAggregate}
-          reportName={reportName}
-          yearStart={yearStart}
-          yearEnd={yearEnd}
-          playerPositionCode={playerPositionCode}
-          selectedPlayers={selectedPlayers}
-          filterTracked={filterTracked}
+          this={this.state}
           handleChange={this.handleChange}
           handleRowFilter={this.handleRowFilter}
           handleSwitchChange={this.handleSwitchChange}
