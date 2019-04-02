@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { VictoryAxis, VictoryChart, VictoryLine, VictoryLabel } from 'victory'
 import {
   Input,
   FormControl,
@@ -17,9 +16,8 @@ import styled from 'styled-components'
 import { DatePicker } from 'material-ui-pickers'
 import configure from '../utils/configLocalforage'
 import { startLoad, stopLoad } from '../actions/statActions'
-import chartTheme from '../helper/chartTheme'
 import { skaterLogStats, goalieLogStats } from '../helper/chartComparisonHelper'
-import { secToString } from '../helper/columnLabels'
+import StatsChart from './StatsChart'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
@@ -80,10 +78,7 @@ class ChartComparison extends Component {
                 .then(res => res.data.reverse())
             } else {
               isAggregate = true
-              const count =
-                parseInt(yearEnd.slice(0, 4)) -
-                parseInt(yearStart.slice(0, 4)) +
-                1
+              const count = yearEnd.slice(0, 4) - yearStart.slice(0, 4) + 1
 
               let seasonIdArr = []
               let yearBase = yearStart.slice(0, 4)
@@ -95,7 +90,7 @@ class ChartComparison extends Component {
                 yearBase = (parseInt(yearBase) + 1).toString()
               }
 
-              let playerLogs = await Promise.all(
+              return Promise.all(
                 seasonIdArr.map(async seasonId =>
                   api
                     .get(
@@ -104,8 +99,6 @@ class ChartComparison extends Component {
                     .then(res => res.data.reverse())
                 )
               )
-
-              return playerLogs
             }
           })
         )
@@ -298,9 +291,19 @@ class ChartComparison extends Component {
     })
 
     const toi = statLabel.includes('TOI')
-    const theme = chartTheme(toi)
 
     const lineNames = selectedPlayerData.map(obj => `${obj.tag}-line-name`)
+
+    const StatChartProps = {
+      toi,
+      sameSeason,
+      lineNames,
+      statLabel,
+      playerData,
+      activeLines,
+      hover,
+      dataSet: playerPointProgress,
+    }
 
     return (
       <div style={{ padding: '2rem', textAlign: 'center' }}>
@@ -397,92 +400,7 @@ class ChartComparison extends Component {
                 </LegendItem>
               ))}
             </Legend>
-            <VictoryChart
-              theme={theme}
-              scale={{ x: sameSeason ? 'time' : 'linear' }}
-              events={[
-                {
-                  childName: lineNames,
-                  target: 'data',
-                  eventHandlers: {
-                    onMouseOver: () => {
-                      return [
-                        {
-                          childName: lineNames,
-                          mutation: props => {
-                            return {
-                              style: Object.assign({}, props.style, {
-                                display: 'inline',
-                                opacity: 0.2,
-                              }),
-                            }
-                          },
-                        },
-                        {
-                          mutation: props => {
-                            return {
-                              style: Object.assign({}, props.style, {
-                                stroke: props.style.stroke,
-                                display: 'inline',
-                                opacity: 1,
-                              }),
-                            }
-                          },
-                        },
-                      ]
-                    },
-                    onMouseOut: () => {
-                      return [
-                        {
-                          childName: lineNames,
-                          mutation: () => {
-                            return null
-                          },
-                        },
-                      ]
-                    },
-                  },
-                },
-              ]}
-            >
-              {playerPointProgress.map((data, i) => (
-                <VictoryLine
-                  key={`${playerData[i].tag}-line`}
-                  name={`${playerData[i].tag}-line-name`}
-                  data={data}
-                  animate={{ duration: 2000, onLoad: { duration: 1000 } }}
-                  interpolation="step"
-                  style={{
-                    data: {
-                      display: activeLines.includes(playerData[i].tag)
-                        ? 'inline'
-                        : 'none',
-                      stroke: colorFunc(i / playerData.length),
-                      transition: '0.2s',
-                      opacity:
-                        hover && hover !== playerData[i].tag ? '0.2' : '1',
-                    },
-                  }}
-                />
-              ))}
-              {toi && <VictoryAxis dependentAxis tickFormat={secToString} />}
-              {toi && <VictoryAxis />}
-              <VictoryLabel
-                angle="-90"
-                text={statLabel}
-                textAnchor="middle"
-                style={{ fontWeight: 'bolder' }}
-                x={10}
-                y={150}
-              />
-              <VictoryLabel
-                text={sameSeason ? 'Date' : 'Games'}
-                textAnchor="middle"
-                style={{ fontWeight: 'bolder' }}
-                x={225}
-                y={340}
-              />
-            </VictoryChart>
+            <StatsChart {...StatChartProps} />
           </>
         )}
       </div>
