@@ -228,6 +228,8 @@ class PlayerStats extends Component {
       order,
       orderBy,
       teamFilter,
+      yearStart,
+      yearEnd,
     } = this.state
     const { dataLoad, trackedPlayers } = this.props.stats
 
@@ -341,6 +343,8 @@ class PlayerStats extends Component {
           <PlayerComparison
             selectedPlayers={selectedPlayers}
             data={dataDisplay}
+            yearStart={yearStart}
+            yearEnd={yearEnd}
           />
         </Dialog>
       </div>

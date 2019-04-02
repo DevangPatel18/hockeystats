@@ -62,23 +62,59 @@ class ChartComparison extends Component {
   }
 
   async componentDidMount() {
-    const { selectedPlayers, data } = this.props
+    const { selectedPlayers, data, yearStart, yearEnd } = this.props
     this._isMounted = true
     const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
-
+    let isAggregate = false
     if (playerIds.length) {
       this.props.startLoad()
       await configure().then(async api => {
-        const playerGameLogs = await Promise.all(
-          playerIds.map(playerArr => {
+        let playerGameLogs = await Promise.all(
+          playerIds.map(async playerArr => {
             const [playerId, seasonId] = playerArr
-            return api
-              .get(
-                `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}`
+            if (seasonId) {
+              return api
+                .get(
+                  `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}`
+                )
+                .then(res => res.data.reverse())
+            } else {
+              isAggregate = true
+              const count =
+                parseInt(yearEnd.slice(0, 4)) -
+                parseInt(yearStart.slice(0, 4)) +
+                1
+
+              let seasonIdArr = []
+              let yearBase = yearStart.slice(0, 4)
+              let tempSeasonId
+
+              for (let i = 1; i < count + 1; i++) {
+                tempSeasonId = yearBase.concat(parseInt(yearBase) + 1)
+                seasonIdArr.push(tempSeasonId)
+                yearBase = (parseInt(yearBase) + 1).toString()
+              }
+
+              let playerLogs = await Promise.all(
+                seasonIdArr.map(async seasonId =>
+                  api
+                    .get(
+                      `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}`
+                    )
+                    .then(res => res.data.reverse())
+                )
               )
-              .then(res => res.data)
+
+              return playerLogs
+            }
           })
         )
+
+        if (isAggregate) {
+          playerGameLogs = playerGameLogs.map(singlePlayerLogs =>
+            singlePlayerLogs.reduce((a, b) => a.concat(b))
+          )
+        }
 
         let allStatOptions
         let playerStat
@@ -99,7 +135,9 @@ class ChartComparison extends Component {
           }
         }
 
-        statOptions = allStatOptions.filter(statObj => statOptions.includes(statObj.key))
+        statOptions = allStatOptions.filter(statObj =>
+          statOptions.includes(statObj.key)
+        )
 
         const playerData = selectedPlayers.map((tag, i) => {
           const tableData = data.find(
@@ -108,17 +146,19 @@ class ChartComparison extends Component {
           return {
             tag,
             tableData,
-            gameLog: playerGameLogs[i].reverse(),
+            gameLog: playerGameLogs[i],
           }
         })
 
-        const seasonIds = this.props.selectedPlayers.map(
-          playerTag => playerTag.split('-')[1]
-        )
+        const seasonIds = isAggregate
+          ? this.props.selectedPlayers.map(playerTag =>
+              yearStart.slice(0, 4).concat(yearEnd.slice(-4))
+            )
+          : this.props.selectedPlayers.map(playerTag => playerTag.split('-')[1])
 
-        const sameSeason = seasonIds.every(
-          seasonId => seasonId === seasonIds[0]
-        )
+        const sameSeason = isAggregate
+          ? false
+          : seasonIds.every(seasonId => seasonId === seasonIds[0])
 
         const startDate = sameSeason
           ? new Date(parseInt(seasonIds[0].slice(0, 4)), 9, 1)
@@ -456,6 +496,8 @@ ChartComparison.propTypes = {
   stats: PropTypes.object.isRequired,
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
+  yearStart: PropTypes.string.isRequired,
+  yearEnd: PropTypes.string.isRequired,
 }
 
 const mapStateToProps = state => ({
