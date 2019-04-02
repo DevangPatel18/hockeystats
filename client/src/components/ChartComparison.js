@@ -80,15 +80,26 @@ class ChartComparison extends Component {
           })
         )
 
-        let statOptions
+        let allStatOptions
         let playerStat
         if (data[0].playerPositionCode !== 'G') {
-          statOptions = skaterLogStats
+          allStatOptions = skaterLogStats
           playerStat = 'points'
         } else {
-          statOptions = goalieLogStats
+          allStatOptions = goalieLogStats
           playerStat = 'saves'
         }
+
+        let statOptions = []
+        for (const playerLogs of playerGameLogs) {
+          for (const statKey in playerLogs[0].stat) {
+            if (!statOptions.includes(statKey)) {
+              statOptions.push(statKey)
+            }
+          }
+        }
+
+        statOptions = allStatOptions.filter(statObj => statOptions.includes(statObj.key))
 
         const playerData = selectedPlayers.map((tag, i) => {
           const tableData = data.find(
@@ -97,7 +108,7 @@ class ChartComparison extends Component {
           return {
             tag,
             tableData,
-            gameLog: playerGameLogs[i],
+            gameLog: playerGameLogs[i].reverse(),
           }
         })
 
@@ -202,7 +213,7 @@ class ChartComparison extends Component {
     const playerPointProgress = playerData.map(obj => {
       const { gameLog } = obj
       let total = 0
-      const orderedGameLog = gameLog.slice().reverse()
+      const orderedGameLog = gameLog.slice()
 
       let startDateIso
       let endDateIso
@@ -211,6 +222,8 @@ class ChartComparison extends Component {
         startDateIso = startDate.toISOString().slice(0, 10)
         endDateIso = endDate.toISOString().slice(0, 10)
       }
+
+      if (!Object.keys(gameLog[0].stat).includes(playerStat)) return []
 
       if (['faceOffPct', 'shotPct'].includes(playerStat) || !summed) {
         return sameSeason
