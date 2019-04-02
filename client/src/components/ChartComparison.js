@@ -14,6 +14,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons'
 import chroma from 'chroma-js'
 import styled from 'styled-components'
+import { DatePicker } from 'material-ui-pickers'
 import configure from '../utils/configLocalforage'
 import { startLoad, stopLoad } from '../actions/statActions'
 import chartTheme from '../helper/chartTheme'
@@ -53,6 +54,8 @@ class ChartComparison extends Component {
       activeLines: '',
       hover: '',
       statOptions: '',
+      startDate: '',
+      endDate: '',
     }
 
     this._isMounted = false
@@ -98,6 +101,21 @@ class ChartComparison extends Component {
           }
         })
 
+        const seasonIds = this.props.selectedPlayers.map(
+          playerTag => playerTag.split('-')[1]
+        )
+
+        const sameSeason = seasonIds.every(
+          seasonId => seasonId === seasonIds[0]
+        )
+
+        const startDate = sameSeason
+          ? new Date(parseInt(seasonIds[0].slice(0, 4)), 9, 1)
+          : ''
+        const endDate = sameSeason
+          ? new Date(parseInt(seasonIds[0].slice(4)), 3, 30)
+          : ''
+
         if (this._isMounted) {
           this.setState(
             {
@@ -105,6 +123,12 @@ class ChartComparison extends Component {
               activeLines: selectedPlayers.slice(),
               statOptions,
               playerStat,
+              seasonIds,
+              sameSeason,
+              startDate,
+              endDate,
+              minDate: startDate,
+              maxDate: endDate,
             },
             () => {
               this.props.stopLoad()
@@ -138,6 +162,10 @@ class ChartComparison extends Component {
     this.setState({ activeLines: newActiveLines })
   }
 
+  onChangeDate = name => event => {
+    this.setState({ [name]: event })
+  }
+
   render() {
     const {
       playerData,
@@ -146,6 +174,12 @@ class ChartComparison extends Component {
       activeLines,
       hover,
       statOptions,
+      startDate,
+      endDate,
+      seasonIds,
+      sameSeason,
+      minDate,
+      maxDate,
     } = this.state
 
     if (!playerStat)
@@ -165,34 +199,44 @@ class ChartComparison extends Component {
       activeLines.includes(obj.tag)
     )
 
-    const seasonIds = this.props.selectedPlayers.map(
-      playerTag => playerTag.split('-')[1]
-    )
-
-    const sameSeason = seasonIds.every(seasonId => seasonId === seasonIds[0])
-
     const playerPointProgress = playerData.map(obj => {
       const { gameLog } = obj
       let total = 0
       const orderedGameLog = gameLog.slice().reverse()
 
+      let startDateIso
+      let endDateIso
+
+      if (sameSeason) {
+        startDateIso = startDate.toISOString().slice(0, 10)
+        endDateIso = endDate.toISOString().slice(0, 10)
+      }
+
       if (['faceOffPct', 'shotPct'].includes(playerStat) || !summed) {
         return sameSeason
-          ? orderedGameLog.map(game => {
-              let x = Date.parse(game.date)
-              return { x, y: formatter(game.stat[playerStat]) || 0 }
-            })
+          ? orderedGameLog
+              .filter(
+                game => game.date > startDateIso && game.date < endDateIso
+              )
+              .map(game => {
+                let x = Date.parse(game.date)
+                return { x, y: formatter(game.stat[playerStat]) || 0 }
+              })
           : orderedGameLog.map((game, i) => ({
               i,
               y: formatter(game.stat[playerStat]) || 0,
             }))
       } else {
         return sameSeason
-          ? orderedGameLog.map(game => {
-              total += formatter(game.stat[playerStat])
-              let x = Date.parse(game.date)
-              return { x, y: total }
-            })
+          ? orderedGameLog
+              .filter(
+                game => game.date > startDateIso && game.date < endDateIso
+              )
+              .map(game => {
+                total += formatter(game.stat[playerStat])
+                let x = Date.parse(game.date)
+                return { x, y: total }
+              })
           : orderedGameLog.map((game, i) => {
               total += formatter(game.stat[playerStat])
               return { i, y: total }
@@ -239,6 +283,35 @@ class ChartComparison extends Component {
                   />
                 }
                 label="Sum Results"
+              />
+            </div>
+            <div
+              style={{
+                display: sameSeason ? 'flex' : 'none',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                paddingBottom: '1rem',
+              }}
+            >
+              <DatePicker
+                autoOk
+                label="From"
+                disableFuture
+                value={startDate}
+                onChange={this.onChangeDate('startDate')}
+                animateYearScrolling={false}
+                minDate={minDate}
+                maxDate={endDate}
+              />
+              <DatePicker
+                autoOk
+                label="To"
+                disableFuture
+                value={endDate}
+                onChange={this.onChangeDate('endDate')}
+                animateYearScrolling={false}
+                minDate={startDate}
+                maxDate={maxDate}
               />
             </div>
             <Legend>
