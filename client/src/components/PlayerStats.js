@@ -174,15 +174,17 @@ class PlayerStats extends Component {
 
       console.log(`Received data from ${yearStart} to ${yearEnd} seasons`)
 
-      const teams = stats
-        .reduce((acc, playerObj) => {
-          let team = playerObj.playerTeamsPlayedFor
-          if (team.length === 3 && !acc.includes(team)) {
-            acc.push(team)
-          }
-          return acc
-        }, [])
-        .sort()
+      const teams = !isAggregate
+        ? stats
+            .reduce((acc, playerObj) => {
+              let team = playerObj.playerTeamsPlayedFor
+              if (team.length === 3 && !acc.includes(team)) {
+                acc.push(team)
+              }
+              return acc
+            }, [])
+            .sort()
+        : ''
 
       this.props.stopLoad()
       if (stats && this._isMounted) {
