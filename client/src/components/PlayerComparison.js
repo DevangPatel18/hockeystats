@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { AppBar, Tab, Tabs } from '@material-ui/core/'
+import { AppBar, Tab, Tabs, IconButton, Toolbar } from '@material-ui/core/'
+import CloseIcon from '@material-ui/icons/Close'
 import TableComparison from './TableComparison'
 import ChartComparison from './ChartComparison'
 
@@ -16,10 +17,23 @@ class PlayerComparison extends Component {
     return (
       <div>
         <AppBar position="static">
-          <Tabs value={value} variant="fullWidth" onChange={this.handleChange}>
-            <Tab label="Table" />
-            <Tab label="Chart" />
-          </Tabs>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              onClick={this.props.onClose}
+              aria-label="Close"
+            >
+              <CloseIcon />
+            </IconButton>
+            <Tabs
+              value={value}
+              variant="fullWidth"
+              onChange={this.handleChange}
+            >
+              <Tab label="Table" />
+              <Tab label="Chart" />
+            </Tabs>
+          </Toolbar>
         </AppBar>
         {value === 0 && (
           <TableComparison selectedPlayers={selectedPlayers} data={data} />
@@ -38,6 +52,7 @@ class PlayerComparison extends Component {
 }
 
 PlayerComparison.propTypes = {
+  onClose: PropTypes.func.isRequired,
   selectedPlayers: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
   yearStart: PropTypes.string.isRequired,

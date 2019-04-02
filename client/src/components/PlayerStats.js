@@ -341,6 +341,7 @@ class PlayerStats extends Component {
           }}
         >
           <PlayerComparison
+            onClose={this.handleModalClose}
             selectedPlayers={selectedPlayers}
             data={dataDisplay}
             yearStart={yearStart}
