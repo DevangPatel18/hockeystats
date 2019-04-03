@@ -75,7 +75,10 @@ const TableComparison = ({ selectedPlayers, data }) => {
   }
 
   return (
-    <Table padding="checkbox">
+    <Table
+      padding="checkbox"
+      style={{ width: 'auto', margin: '0 auto', border: '1px solid' }}
+    >
       <TableBody>
         <TableRow>
           <TableCell />
@@ -87,7 +90,8 @@ const TableComparison = ({ selectedPlayers, data }) => {
                 }.jpg`}
                 alt={obj.playerName}
                 style={{
-                  margin: '5px',
+                  display: 'flex',
+                  margin: '1rem',
                   borderRadius: '50%',
                   width: '120px',
                   boxShadow: '0 0 5px black',
@@ -103,7 +107,11 @@ const TableComparison = ({ selectedPlayers, data }) => {
               !['seasonId', 'playerTeamsPlayedFor'].includes(colObj.id)
           )
           .map(colObj => (
-            <TableRow key={colObj.title} style={{ height: '27px' }}>
+            <TableRow
+              key={colObj.title}
+              style={{ height: '27px' }}
+              hover="true"
+            >
               <TableCell style={{ fontWeight: 'bolder', paddingLeft: '10px' }}>
                 {colObj.title}
               </TableCell>
