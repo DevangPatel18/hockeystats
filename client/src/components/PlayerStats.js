@@ -8,6 +8,7 @@ import {
   Paper,
   Dialog,
   LinearProgress,
+  Slide,
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -27,6 +28,10 @@ import PlayerTags from './PlayerTags'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
+
+function Transition(props) {
+  return <Slide direction="up" {...props} />
+}
 
 class PlayerStats extends Component {
   constructor() {
@@ -331,14 +336,11 @@ class PlayerStats extends Component {
           </span>
         </Link>
         <Dialog
+          fullScreen
           open={this.state.modal}
           onClose={this.handleModalClose}
           scroll="paper"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          TransitionComponent={Transition}
         >
           <PlayerComparison
             onClose={this.handleModalClose}
