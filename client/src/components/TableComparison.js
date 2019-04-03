@@ -110,7 +110,7 @@ const TableComparison = ({ selectedPlayers, data }) => {
             <TableRow
               key={colObj.title}
               style={{ height: '27px' }}
-              hover="true"
+              hover={true}
             >
               <TableCell style={{ fontWeight: 'bolder', paddingLeft: '10px' }}>
                 {colObj.title}

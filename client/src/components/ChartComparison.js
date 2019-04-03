@@ -156,8 +156,14 @@ class ChartComparison extends Component {
         const startDate = sameSeason
           ? new Date(parseInt(seasonIds[0].slice(0, 4)), 9, 1)
           : ''
+
+        const presentDay = new Date()
+        const lastDay = new Date(parseInt(seasonIds[0].slice(4)), 3, 30)
+
         const endDate = sameSeason
-          ? new Date(parseInt(seasonIds[0].slice(4)), 3, 30)
+          ? lastDay > presentDay
+            ? presentDay
+            : lastDay
           : ''
 
         if (this._isMounted) {
@@ -312,63 +318,74 @@ class ChartComparison extends Component {
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                paddingBottom: '1rem',
+                justifyContent: 'center',
+                height: '6.5rem',
+                marginBottom: '2rem',
               }}
             >
-              <FormControl>
-                <InputLabel htmlFor="playerStat">Statistic</InputLabel>
-                <NativeSelect
-                  value={playerStat}
-                  onChange={this.handleStatChange}
-                  input={<Input name="playerStat" id="playerStat" />}
-                >
-                  {statOptions.map(stat => (
-                    <option value={stat.key} key={stat.key}>
-                      {stat.label}
-                    </option>
-                  ))}
-                </NativeSelect>
-              </FormControl>
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={summed}
-                    onChange={this.handleSwitchChange('summed')}
-                  />
-                }
-                label="Sum Results"
-              />
-            </div>
-            <div
-              style={{
-                display: sameSeason ? 'flex' : 'none',
-                justifyContent: 'space-between',
-                flexWrap: 'wrap',
-                paddingBottom: '1rem',
-              }}
-            >
-              <DatePicker
-                autoOk
-                label="From"
-                disableFuture
-                value={startDate}
-                onChange={this.onChangeDate('startDate')}
-                animateYearScrolling={false}
-                minDate={minDate}
-                maxDate={endDate}
-              />
-              <DatePicker
-                autoOk
-                label="To"
-                disableFuture
-                value={endDate}
-                onChange={this.onChangeDate('endDate')}
-                animateYearScrolling={false}
-                minDate={startDate}
-                maxDate={maxDate}
-              />
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  marginRight: '1rem',
+                }}
+              >
+                <FormControl>
+                  <InputLabel htmlFor="playerStat">Statistic</InputLabel>
+                  <NativeSelect
+                    value={playerStat}
+                    onChange={this.handleStatChange}
+                    input={<Input name="playerStat" id="playerStat" />}
+                    style={{ marginRight: '1rem' }}
+                  >
+                    {statOptions.map(stat => (
+                      <option value={stat.key} key={stat.key}>
+                        {stat.label}
+                      </option>
+                    ))}
+                  </NativeSelect>
+                </FormControl>
+                <DatePicker
+                  autoOk
+                  label="From"
+                  disableFuture
+                  value={startDate}
+                  onChange={this.onChangeDate('startDate')}
+                  animateYearScrolling={false}
+                  minDate={minDate}
+                  maxDate={endDate}
+                  style={{ marginRight: '1rem' }}
+                />
+              </div>
+              <div
+                style={{
+                  display: sameSeason ? 'flex' : 'none',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-end',
+                }}
+              >
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={summed}
+                      onChange={this.handleSwitchChange('summed')}
+                    />
+                  }
+                  label="Sum Results"
+                />
+                <DatePicker
+                  autoOk
+                  label="To"
+                  disableFuture
+                  value={endDate}
+                  onChange={this.onChangeDate('endDate')}
+                  animateYearScrolling={false}
+                  minDate={startDate}
+                  maxDate={maxDate}
+                />
+              </div>
             </div>
             <Legend>
               {playerData.map((obj, i) => (
