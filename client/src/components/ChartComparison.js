@@ -24,9 +24,9 @@ const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 const Legend = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
   font-family: Roboto, 'Helvetica Neue', Helvetica, sans-serif;
-  font-size: 12px;
+  font-size: 0.8rem;
 `
 
 const LegendItem = styled.div`
@@ -417,7 +417,9 @@ class ChartComparison extends Component {
                 </LegendItem>
               ))}
             </Legend>
-            <StatsChart {...StatChartProps} />
+            <div style={{ height: '60vh' }}>
+              <StatsChart {...StatChartProps}/>
+            </div>
           </>
         )}
       </div>
