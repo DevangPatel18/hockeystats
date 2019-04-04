@@ -7,6 +7,7 @@ import {
   NativeSelect,
   Button,
   Switch,
+  TextField,
 } from '@material-ui/core'
 
 const StatsFilterPanel = props => {
@@ -19,6 +20,7 @@ const StatsFilterPanel = props => {
     filterTracked,
     teamFilter,
     teams,
+    search,
   } = props.this
 
   const {
@@ -109,9 +111,7 @@ const StatsFilterPanel = props => {
           <NativeSelect
             value={teamFilter}
             onChange={handleChange('teamFilter')}
-            input={
-              <Input name="teamFilter" id="teamFilter" />
-            }
+            input={<Input name="teamFilter" id="teamFilter" />}
           >
             <option value={'all'}>All Teams</option>
             {teams &&
@@ -150,6 +150,7 @@ const StatsFilterPanel = props => {
       <div
         style={{
           marginTop: '1rem',
+          position: 'relative'
         }}
       >
         <Button color="primary" variant="contained" onClick={submitQuery}>
@@ -166,6 +167,14 @@ const StatsFilterPanel = props => {
         >
           compare selected
         </Button>
+        <TextField
+          id="player-search-input"
+          label="Search"
+          value={search}
+          onChange={handleChange('search')}
+          variant="outlined"
+          style={{ position: 'absolute', right: '0' }}
+        />
       </div>
     </div>
   )

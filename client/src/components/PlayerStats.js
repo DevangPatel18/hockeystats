@@ -45,6 +45,7 @@ class PlayerStats extends Component {
       yearEnd: '20182019',
       teamFilter: 'all',
       teams: '',
+      search: '',
       filterTracked: false,
       trackedPlayers: [],
       selectedPlayers: [],
@@ -235,6 +236,7 @@ class PlayerStats extends Component {
       teamFilter,
       yearStart,
       yearEnd,
+      search,
     } = this.state
     const { dataLoad, trackedPlayers } = this.props.stats
 
@@ -251,6 +253,9 @@ class PlayerStats extends Component {
             playerObj.playerTeamsPlayedFor.includes(teamFilter)
           )
         : dataDisplay
+    dataDisplay = search
+      ? dataDisplay.filter(obj => obj.playerName.toLowerCase().includes(search))
+      : dataDisplay
 
     console.log('selectedPlayers:', selectedPlayers)
     console.log('trackedPlayers:', trackedPlayers)
