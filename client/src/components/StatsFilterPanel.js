@@ -150,10 +150,17 @@ const StatsFilterPanel = props => {
       <div
         style={{
           marginTop: '1rem',
-          position: 'relative'
+          display: 'flex',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
         }}
       >
-        <Button color="primary" variant="contained" onClick={submitQuery}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={submitQuery}
+          style={{ marginBottom: '1rem' }}
+        >
           generate data
         </Button>
         <Button
@@ -167,13 +174,14 @@ const StatsFilterPanel = props => {
         >
           compare selected
         </Button>
+        <div style={{ flexGrow: '1', marginRight: '1rem' }} />
         <TextField
           id="player-search-input"
           label="Search"
           value={search}
           onChange={handleChange('search')}
           variant="outlined"
-          style={{ position: 'absolute', right: '0' }}
+          style={{width: '170px'}}
         />
       </div>
     </div>
