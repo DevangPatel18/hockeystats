@@ -2,70 +2,93 @@ import React from 'react'
 import { Link } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import styled from 'styled-components'
 import { logoutUser } from '../actions/authActions'
+
+const HeaderMain = styled.div`
+  background: #333333;
+`
+
+const HeaderContainer = styled.div`
+  margin: 0 auto;
+  max-width: 960px;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  text-transform: uppercase;
+  font-family: 'Lato', sans-serif;
+  color: white;
+`
+
+const HeaderTitle = styled.h1`
+  margin: 0;
+  a {
+    color: white;
+    text-decoration: none;
+  }
+`
+
+const HeaderNavList = styled.ul`
+  display: flex;
+  align-items: center;
+  margin: 0;
+`
+
+const HeaderNavItems = styled.li`
+  margin: 0 1rem;
+  list-style: none;
+  cursor: pointer;
+`
+
+const LinkStyled = styled(Link)`
+  color: white;
+  text-decoration: none;
+`
 
 class Header extends React.Component {
   render() {
     const { siteTitle } = this.props
     return (
-      <div
-        style={{
-          background: '#333333',
-          marginBottom: '1.45rem',
-          textTransform: 'uppercase',
-        }}
-      >
-        <div
-          style={{
-            margin: '0 auto',
-            maxWidth: 960,
-            padding: '1.45rem 1.0875rem',
-          }}
-        >
-          <h1
-            style={{
-              margin: 0,
-              fontFamily: `'Lato', sans-serif`,
-            }}
-          >
-            <Link to="/" style={styles.headerTitle}>
-              {siteTitle}
-            </Link>
-          </h1>
+      <HeaderMain>
+        <HeaderContainer>
+          <HeaderTitle>
+            <Link to="/">{siteTitle}</Link>
+          </HeaderTitle>
+          <div style={{ flexGrow: '1' }} />
 
-          <div style={styles.navLinks}>
-            {this.props.auth.isAuthenticated && (
-              <p
-                onClick={() => {
-                  this.props.logoutUser()
-                }}
-                style={styles.link}
-              >
-                Sign Out
-              </p>
-            )}
-          </div>
-        </div>
-      </div>
+          <nav>
+            <HeaderNavList>
+              {this.props.auth.isAuthenticated ? (
+                <HeaderNavItems
+                  onClick={() => {
+                    this.props.logoutUser()
+                  }}
+                >
+                  Sign Out
+                </HeaderNavItems>
+              ) : (
+                <>
+                  <HeaderNavItems>
+                    <LinkStyled to="/app/signup">Sign Up</LinkStyled>
+                  </HeaderNavItems>
+                  <HeaderNavItems>
+                    <LinkStyled to="/app/login">Sign In</LinkStyled>
+                  </HeaderNavItems>
+                </>
+              )}
+
+              <HeaderNavItems>
+                <LinkStyled to="/app/playerstats">Player Statistics</LinkStyled>
+              </HeaderNavItems>
+              <HeaderNavItems>
+                <LinkStyled to="/app/dashboard">Dashboard</LinkStyled>
+              </HeaderNavItems>
+            </HeaderNavList>
+          </nav>
+        </HeaderContainer>
+      </HeaderMain>
     )
   }
-}
-
-const styles = {
-  headerTitle: {
-    color: 'white',
-    textDecoration: 'none',
-  },
-  link: {
-    cursor: 'pointer',
-    color: 'white',
-    textDecoration: 'underline',
-    textAlign: 'right',
-  },
-  navLinks: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
 }
 
 Header.propTypes = {
