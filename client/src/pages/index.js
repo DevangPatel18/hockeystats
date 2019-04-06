@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'gatsby'
 import jwt_decode from 'jwt-decode'
+import styled from 'styled-components'
 import store from '../store'
 import setAuthToken from '../utils/setAuthToken'
 import { setCurrentUser, logoutUser } from '../actions/authActions'
@@ -34,21 +35,32 @@ if (token) {
   }
 }
 
+const HeroContainer = styled.div`
+  font-family: 'Open Sans', sans-serif;
+  position: relative;
+  top: 25vh;
+`
+
+const HeroHeader = styled.h1`
+  font-size: 3rem;
+  font-weight: 400;
+`
+
+const HeroText = styled.p`
+  font-size: 1rem;
+`
+
 const IndexPage = () => (
   <Layout>
-    <h1>Hi people</h1>
-    <p>
-      Create a new account: <Link to="/app/signup">Sign Up</Link>
-    </p>
-    <Link to="/app/login">Sign In</Link>
-    <br />
-    <Link to="/app/home">Home</Link>
-    <br />
-    <Link to="/app/profile">Your profile</Link>
-    <br />
-    <Link to="/app/playerstats">Player Statistics</Link>
-    <br />
-    <Link to="/app/dashboard">Dashboard</Link>
+    <HeroContainer>
+      <HeroHeader>Welcome to Skates & Stats!</HeroHeader>
+      <HeroText>
+        Select, track, and compare players in different categories
+      </HeroText>
+      <Link to="/app/home">Home</Link>
+      <br />
+      <Link to="/app/profile">Your profile</Link>
+    </HeroContainer>
   </Layout>
 )
 

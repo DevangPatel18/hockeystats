@@ -16,11 +16,11 @@ const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
   text-transform: uppercase;
-  font-family: 'Lato', sans-serif;
   color: white;
 `
 
 const HeaderTitle = styled.h1`
+  font-family: 'Lato', sans-serif;
   margin: 0;
   a {
     color: white;
@@ -29,6 +29,7 @@ const HeaderTitle = styled.h1`
 `
 
 const HeaderNavList = styled.ul`
+  font-family: 'Lato', sans-serif;
   display: flex;
   align-items: center;
   margin: 0;

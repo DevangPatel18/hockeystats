@@ -26,6 +26,10 @@ module.exports = {
             family: `Lato`,
             variants: [`400`, `900`],
           },
+          {
+            family: `Open Sans`,
+            variants: [`400`],
+          },
         ],
       },
     },
