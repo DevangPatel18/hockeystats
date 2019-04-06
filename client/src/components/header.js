@@ -10,8 +10,9 @@ class Header extends React.Component {
     return (
       <div
         style={{
-          background: 'royalblue',
+          background: '#333333',
           marginBottom: '1.45rem',
+          textTransform: 'uppercase',
         }}
       >
         <div
@@ -21,7 +22,12 @@ class Header extends React.Component {
             padding: '1.45rem 1.0875rem',
           }}
         >
-          <h1 style={{ margin: 0 }}>
+          <h1
+            style={{
+              margin: 0,
+              fontFamily: `'Lato', sans-serif`,
+            }}
+          >
             <Link to="/" style={styles.headerTitle}>
               {siteTitle}
             </Link>

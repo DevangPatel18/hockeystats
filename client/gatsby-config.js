@@ -1,6 +1,6 @@
 module.exports = {
   siteMetadata: {
-    title: 'Hockey Stats',
+    title: 'Skates & Stats',
     description: 'Hockey statistics for players and teams',
   },
   plugins: [
@@ -18,6 +18,17 @@ module.exports = {
       },
     },
     'gatsby-plugin-offline',
+    {
+      resolve: `gatsby-plugin-prefetch-google-fonts`,
+      options: {
+        fonts: [
+          {
+            family: `Lato`,
+            variants: [`400`, `900`],
+          },
+        ],
+      },
+    },
   ],
   proxy: {
     prefix: '/api',

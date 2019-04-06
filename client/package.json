@@ -16,6 +16,7 @@
     "gatsby": "next",
     "gatsby-plugin-manifest": "next",
     "gatsby-plugin-offline": "next",
+    "gatsby-plugin-prefetch-google-fonts": "^1.4.1",
     "gatsby-plugin-react-helmet": "next",
     "is-empty": "^1.2.0",
     "jwt-decode": "^2.2.0",
