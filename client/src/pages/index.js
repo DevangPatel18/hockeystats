@@ -102,9 +102,6 @@ const IndexPage = () => (
               <HeroText>
                 Select, track, and compare players in different categories
               </HeroText>
-              <Link to="/app/home">Home</Link>
-              <br />
-              <Link to="/app/profile">Your profile</Link>
             </HeroContent>
             <ChartImg src={Charts} alt="Charts" />
           </HeroContainer>
