@@ -1,5 +1,6 @@
 import React from 'react'
-import { Link } from 'gatsby'
+import { Link, StaticQuery, graphql } from 'gatsby'
+import Img from 'gatsby-image'
 import jwt_decode from 'jwt-decode'
 import styled from 'styled-components'
 import store from '../store'
@@ -35,6 +36,14 @@ if (token) {
   }
 }
 
+const HeroBackground = styled(Img)`
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+`
+
 const HeroContainer = styled.div`
   font-family: 'Open Sans', sans-serif;
   position: relative;
@@ -51,17 +60,37 @@ const HeroText = styled.p`
 `
 
 const IndexPage = () => (
-  <Layout>
-    <HeroContainer>
-      <HeroHeader>Welcome to Skates & Stats!</HeroHeader>
-      <HeroText>
-        Select, track, and compare players in different categories
-      </HeroText>
-      <Link to="/app/home">Home</Link>
-      <br />
-      <Link to="/app/profile">Your profile</Link>
-    </HeroContainer>
-  </Layout>
+  <StaticQuery
+    query={graphql`
+      {
+        file(relativePath: { eq: "ice-2025937_1920.jpg" }) {
+          childImageSharp {
+            fluid(maxWidth: 1920) {
+              ...GatsbyImageSharpFluid
+            }
+          }
+        }
+      }
+    `}
+    render={data => {
+      const imgURL = data.file.childImageSharp.fluid
+
+      return (
+        <Layout>
+          <HeroBackground fluid={imgURL} style={{ position: 'absolute' }} />
+          <HeroContainer>
+            <HeroHeader>Welcome to Skates & Stats!</HeroHeader>
+            <HeroText>
+              Select, track, and compare players in different categories
+            </HeroText>
+            <Link to="/app/home">Home</Link>
+            <br />
+            <Link to="/app/profile">Your profile</Link>
+          </HeroContainer>
+        </Layout>
+      )
+    }}
+  />
 )
 
 export default IndexPage
