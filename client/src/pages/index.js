@@ -10,6 +10,9 @@ import { getPlayerList } from '../actions/statActions'
 import { navigate } from 'gatsby'
 import Layout from '../components/layout'
 
+const Charts =
+  'https://res.cloudinary.com/dbeqp2lyo/image/upload/v1554606574/Hockey%20stats/Charts.svg'
+
 const token = localStorage.jwtToken
 // Check for token to keep user logged in
 if (token) {
@@ -44,10 +47,9 @@ const HeroBackground = styled(Img)`
   z-index: -1;
 `
 
-const HeroContainer = styled.div`
+const HeroContent = styled.div`
   font-family: 'Open Sans', sans-serif;
   position: relative;
-  top: 25vh;
 `
 
 const HeroHeader = styled.h1`
@@ -57,6 +59,22 @@ const HeroHeader = styled.h1`
 
 const HeroText = styled.p`
   font-size: 1rem;
+`
+
+const ChartImg = styled.img`
+  padding: 1rem;
+  max-width: 400px;
+`
+
+const HeroContainer = styled.div`
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-around;
+  top: 25vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
 `
 
 const IndexPage = () => (
@@ -79,13 +97,16 @@ const IndexPage = () => (
         <Layout>
           <HeroBackground fluid={imgURL} style={{ position: 'absolute' }} />
           <HeroContainer>
-            <HeroHeader>Welcome to Skates & Stats!</HeroHeader>
-            <HeroText>
-              Select, track, and compare players in different categories
-            </HeroText>
-            <Link to="/app/home">Home</Link>
-            <br />
-            <Link to="/app/profile">Your profile</Link>
+            <HeroContent>
+              <HeroHeader>Welcome to Skates & Stats!</HeroHeader>
+              <HeroText>
+                Select, track, and compare players in different categories
+              </HeroText>
+              <Link to="/app/home">Home</Link>
+              <br />
+              <Link to="/app/profile">Your profile</Link>
+            </HeroContent>
+            <ChartImg src={Charts} alt="Charts" />
           </HeroContainer>
         </Layout>
       )
