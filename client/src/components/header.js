@@ -21,7 +21,6 @@ const HeaderContainer = styled.div`
 `
 
 const HeaderTitle = styled.h1`
-  font-family: 'Lato', sans-serif;
   margin: 0;
   a {
     color: white;

@@ -21,6 +21,7 @@ const PlayerTagStyles = styled.div`
   line-height: ${props => (props.seasonId ? '12px' : '')};
   display: flex;
   flex-direction: column;
+  font-family: Lato, sans-serif;
 `
 
 const PlayerTagNameStyles = styled.span`

@@ -25,7 +25,6 @@ const Legend = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  font-family: Roboto, 'Helvetica Neue', Helvetica, sans-serif;
   font-size: 0.8rem;
 `
 
@@ -418,7 +417,7 @@ class ChartComparison extends Component {
               ))}
             </Legend>
             <div style={{ height: '60vh' }}>
-              <StatsChart {...StatChartProps}/>
+              <StatsChart {...StatChartProps} />
             </div>
           </>
         )}

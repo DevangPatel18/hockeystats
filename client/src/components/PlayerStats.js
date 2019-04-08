@@ -260,7 +260,7 @@ class PlayerStats extends Component {
     console.log('selectedPlayers:', selectedPlayers)
     console.log('trackedPlayers:', trackedPlayers)
     return (
-      <div style={{ fontFamily: 'Arial' }}>
+      <div>
         <h1>Player Statistics</h1>
         <StatsFilterPanel
           this={this.state}

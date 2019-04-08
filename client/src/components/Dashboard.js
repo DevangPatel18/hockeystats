@@ -67,7 +67,7 @@ class Dashboard extends Component {
     )
 
     return (
-      <div style={{ fontFamily: 'Arial' }}>
+      <div>
         <h1>Dashboard</h1>
         <br />
         {trackedPlayers.length ? (
