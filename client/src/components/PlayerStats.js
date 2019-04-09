@@ -9,6 +9,7 @@ import {
   Dialog,
   LinearProgress,
   Slide,
+  Button,
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -331,15 +332,15 @@ class PlayerStats extends Component {
           </Table>
         </Paper>
         <br />
-        <Link to="/">
-          <span
-            style={{
-              marginTop: '1rem',
-            }}
-          >
-            Back to Home
-          </span>
-        </Link>
+        <Button
+          component={Link}
+          to="/app/dashboard"
+          color="secondary"
+          variant="contained"
+          size="large"
+        >
+          Dashboard
+        </Button>
         <Dialog
           fullScreen
           open={this.state.modal}

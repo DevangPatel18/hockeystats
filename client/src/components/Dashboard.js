@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { getPlayerList } from '../actions/statActions'
 import configure from '../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import { CircularProgress, Button } from '@material-ui/core/'
 
 class Dashboard extends Component {
   constructor() {
@@ -82,14 +82,16 @@ class Dashboard extends Component {
           <div>No players selected for tracking.</div>
         )}
         <div>
-          <Link to="/app/playerstats">
-            <span>Player Statistics</span>
-          </Link>
-        </div>
-        <div>
-          <Link to="/">
-            <span>Back to Home</span>
-          </Link>
+          <Button
+            component={Link}
+            to="/app/playerstats"
+            color="secondary"
+            variant="contained"
+            size="large"
+            style={{ marginTop: '1rem' }}
+          >
+            Player Statistics
+          </Button>
         </div>
       </div>
     )
