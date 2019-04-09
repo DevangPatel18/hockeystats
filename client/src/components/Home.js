@@ -1,16 +1,21 @@
 import React from 'react'
 import { Link } from 'gatsby'
+import { Button } from '@material-ui/core/'
 
 const Home = () => (
   <div>
     <h1>Home</h1>
-    <p>
-      You are now logged in! <Link to="/app/profile">View profile</Link>
-    </p>
-    <p>
-      Now go build something great and deploy it using the{' '}
-      <a href="https://console.amplify.aws">AWS Amplify Console</a>
-    </p>
+    <p>You are now logged in!</p>
+    <Button
+      component={Link}
+      to="/app/profile"
+      color="primary"
+      variant="contained"
+      size="large"
+      style={{ marginTop: '1rem' }}
+    >
+      View profile
+    </Button>
   </div>
 )
 
