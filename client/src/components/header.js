@@ -5,9 +5,15 @@ import { connect } from 'react-redux'
 import styled from 'styled-components'
 import ArrowDropDown from '@material-ui/icons/ArrowDropDown'
 import { logoutUser } from '../actions/authActions'
+import MenuIcon from '@material-ui/icons/Menu'
+import ArrowUpward from '@material-ui/icons/ArrowUpward'
+import IconButton from '@material-ui/core/IconButton'
+
+const mobileWidth = '900px'
 
 const HeaderMain = styled.div`
   background: #333333;
+  z-index: 5;
 `
 
 const HeaderContainer = styled.div`
@@ -18,10 +24,11 @@ const HeaderContainer = styled.div`
   align-items: center;
   text-transform: uppercase;
   color: white;
+  position: relative;
 `
 
 const HeaderTitle = styled.h1`
-  margin: 0;
+  margin: 0 1rem;
   a {
     color: white;
     text-decoration: none;
@@ -33,19 +40,53 @@ const HeaderNavList = styled.ul`
   display: flex;
   align-items: center;
   margin: 0;
+
+  @media (max-width: ${mobileWidth}) {
+    flex-direction: column;
+  }
+`
+
+const NavStyled = styled.nav`
+  z-index: 4;
+  @media (max-width: ${mobileWidth}) {
+    position: absolute;
+    top: 100%;
+    width: 100%;
+    background: rgba(68, 68, 68, 0.7);
+    overflow: hidden;
+    height: ${props => {
+      console.log(props.menuOpen)
+
+      return props.menuOpen ? 'auto' : 0
+    }};
+  }
 `
 
 const UserLabelItem = styled.li`
   display: flex;
-  align-items: flex-end;
   position: relative;
   margin: 0;
   padding: 0.3rem 1rem;
   list-style: none;
   cursor: pointer;
 
+  div {
+    display: flex;
+    align-items: flex-end;
+  }
+
   &:hover ul {
     height: 99px;
+  }
+
+  @media (max-width: ${mobileWidth}) {
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+
+    &:hover ul {
+      height: auto;
+    }
   }
 `
 
@@ -63,6 +104,13 @@ const UserNavList = styled.ul`
   margin: 0;
   background: #444444;
   overflow: hidden;
+
+  @media (max-width: ${mobileWidth}) {
+    background: none;
+    position: static;
+    height: auto;
+    transform: translateX(0%);
+  }
 `
 
 const UserNavItems = styled.li`
@@ -80,6 +128,10 @@ const UserNavItems = styled.li`
 
   &:hover {
     background: #4787fe;
+  }
+
+  @media (max-width: ${mobileWidth}) {
+    padding: 0;
   }
 `
 
@@ -103,9 +155,28 @@ const LinkStyled = styled(Link)`
   text-decoration: none;
 `
 
+const HamburgerBox = styled.div`
+  display: none;
+  @media (max-width: ${mobileWidth}) {
+    display: block;
+  }
+`
+
 class Header extends React.Component {
+  constructor() {
+    super()
+    this.state = {
+      menuOpen: false,
+    }
+  }
+
+  handleMenu = () => {
+    this.setState({ menuOpen: !this.state.menuOpen })
+  }
+
   render() {
     const { siteTitle, auth } = this.props
+    const { menuOpen } = this.state
 
     return (
       <HeaderMain>
@@ -114,12 +185,13 @@ class Header extends React.Component {
             <Link to="/">{siteTitle}</Link>
           </HeaderTitle>
           <div style={{ flexGrow: '1' }} />
-
-          <nav>
+          <NavStyled menuOpen={menuOpen}>
             <HeaderNavList>
               {this.props.auth.isAuthenticated ? (
                 <UserLabelItem>
-                  {auth.user.name} <ArrowDropDown />
+                  <div>
+                    {auth.user.name} <ArrowDropDown />
+                  </div>
                   <UserNavList>
                     <UserNavItems>
                       <LinkStyled to="/app/home">Home</LinkStyled>
@@ -154,7 +226,16 @@ class Header extends React.Component {
                 <LinkStyled to="/app/dashboard">Dashboard</LinkStyled>
               </HeaderNavItems>
             </HeaderNavList>
-          </nav>
+          </NavStyled>
+          <HamburgerBox>
+            <IconButton
+              color="inherit"
+              aria-label="Menu"
+              onClick={this.handleMenu}
+            >
+              {menuOpen ? <ArrowUpward /> : <MenuIcon />}
+            </IconButton>
+          </HamburgerBox>
         </HeaderContainer>
       </HeaderMain>
     )
