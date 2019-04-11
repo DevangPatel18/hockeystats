@@ -26,7 +26,7 @@ const configure = async () => {
 
     // 'axios-cache-adapter' options
     cache: {
-      maxAge: 15 * 60 * 1000,
+      maxAge: 12 * 60 * 60 * 1000,
       store, // Pass 'localforage' store to 'axios-cache-adapter'
     },
   })
