@@ -55,10 +55,10 @@ const TableData = props => {
   return (
     <>
       <TableHead>
-        <TableRow style={{ borderColor: 'none' }}>
+        <TableRow style={{ borderColor: 'none', height: '35px' }}>
           <TableCell
             style={{
-              background: 'linear-gradient(to top, #535353, #000000)',
+              background: '#6d6d6d',
             }}
           />
           <TableCell
@@ -68,7 +68,7 @@ const TableData = props => {
               color: 'white',
               fontWeight: 'bolder',
               letterSpacing: '1px',
-              background: 'linear-gradient(to top, #535353, #000000)',
+              background: '#6d6d6d',
             }}
             sortDirection={orderBy === columns[0].id ? order : false}
           >
@@ -83,7 +83,7 @@ const TableData = props => {
                 whiteSpace: 'nowrap',
                 fontWeight: 'bolder',
                 letterSpacing: '1px',
-                background: 'linear-gradient(to top, #535353, #000000)',
+                background: '#6d6d6d',
               }}
               sortDirection={orderBy === col.id ? order : false}
             >
@@ -110,6 +110,7 @@ const TableData = props => {
             <TableRow
               key={`${row.playerId}-${row.seasonId}`}
               style={{ height: 'auto' }}
+              hover={true}
               selected={
                 selectedPlayers.includes(
                   [row.playerId, row.seasonId, row.playerTeamsPlayedFor].join(
@@ -161,6 +162,7 @@ const TableData = props => {
                         updateTrackedPlayers(row.playerId, row.seasonId)
                       }
                       onClick={stopPropagation}
+                      style={{textAlign: 'center'}}
                       classes={{
                         root: classes.root,
                         checked: classes.checked,
