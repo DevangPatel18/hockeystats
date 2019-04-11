@@ -22,6 +22,13 @@ const PlayerTagStyles = styled.div`
   display: flex;
   flex-direction: column;
   font-family: Lato, sans-serif;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 1px gray;
+
+  &:hover {
+    box-shadow: 0 3px 6px gray;
+    transform: translateY(-3px);
+  }
 `
 
 const PlayerTagNameStyles = styled.span`
