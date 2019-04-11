@@ -248,6 +248,9 @@ class ChartComparison extends Component {
       activeLines.includes(obj.tag)
     )
 
+    const statPercentage =
+      playerStat.includes('Pct') || playerStat.includes('Percentage')
+
     const playerPointProgress = playerData.map(obj => {
       const { gameLog } = obj
       let total = 0
@@ -263,7 +266,7 @@ class ChartComparison extends Component {
 
       if (!Object.keys(gameLog[0].stat).includes(playerStat)) return []
 
-      if (['faceOffPct', 'shotPct'].includes(playerStat) || !summed) {
+      if (statPercentage || !summed) {
         return sameSeason
           ? orderedGameLog
               .filter(
@@ -370,6 +373,7 @@ class ChartComparison extends Component {
                     <Switch
                       checked={summed}
                       onChange={this.handleSwitchChange('summed')}
+                      disabled={statPercentage}
                     />
                   }
                   label="Sum Results"
