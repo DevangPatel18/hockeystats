@@ -9,6 +9,63 @@ import {
   Switch,
   TextField,
 } from '@material-ui/core'
+import styled from 'styled-components'
+
+const tabletWidth = '425px'
+const mobileWidth = '900px'
+
+const StatsPanel = styled.div`
+  position: relative;
+  border: 1px solid #bbbbbb;
+  border-radius: 5px;
+  margin: 1rem 0;
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+
+  @media (max-width: ${mobileWidth}) {
+    justify-content: space-evenly;
+  }
+
+  &::before {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -1.8rem);
+    padding: 0 4px;
+    background: white;
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #757575;
+    content: ${props =>
+      props.title
+        ? `
+    '${props.title}'
+    `
+        : ''};
+  }
+`
+
+const YearRange = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+
+  @media (max-width: ${mobileWidth}) {
+    flex-wrap: wrap;
+  }
+`
+
+const YearRangeLabel = styled.div`
+  padding-right: 1rem;
+  font-weight: bolder;
+  font-size: 0.8rem;
+
+  @media (max-width: ${tabletWidth}) {
+    padding: 0 0 0.5rem;
+  }
+`
 
 const StatsFilterPanel = props => {
   const {
@@ -51,61 +108,57 @@ const StatsFilterPanel = props => {
 
   return (
     <div style={{ margin: '2rem 0 1rem' }}>
-      <div style={{ display: 'flex', alignItems: 'flex-end' }}>
-        <span
-          style={{
-            paddingRight: '1rem',
-            fontWeight: 'bolder',
-            height: '100%',
-          }}
-        >
-          Season Range
-        </span>
-        <FormControl>
-          <InputLabel htmlFor="yearStart" />
+      <StatsPanel title={'Settings'}>
+        <YearRange>
+          <YearRangeLabel>Season Range</YearRangeLabel>
+          <div>
+            <FormControl>
+              <InputLabel htmlFor="yearStart">Year start</InputLabel>
+              <NativeSelect
+                value={yearStart}
+                onChange={handleSeasonChange('yearStart')}
+                input={<Input name="yearStart" id="yearStart" />}
+              >
+                {optionsStart.map(option => option)}
+              </NativeSelect>
+            </FormControl>
+            <span style={{ padding: '0 1rem' }}> to </span>
+            <FormControl>
+              <InputLabel htmlFor="yearEnd">Year End</InputLabel>
+              <NativeSelect
+                value={yearEnd}
+                onChange={handleSeasonChange('yearEnd')}
+                input={<Input name="yearEnd" id="yearEnd" />}
+              >
+                {optionsEnd.map(option => option)}
+              </NativeSelect>
+            </FormControl>
+          </div>
+        </YearRange>
+        <FormControl style={{ margin: '0 1rem' }}>
+          <InputLabel htmlFor="reportName">Report Type</InputLabel>
           <NativeSelect
-            value={yearStart}
-            onChange={handleSeasonChange('yearStart')}
-            input={<Input name="yearStart" id="yearStart" />}
+            value={reportName}
+            onChange={handleChange('reportName')}
+            input={<Input name="reportName" id="reportName" />}
+            name="reportName"
           >
-            {optionsStart.map(option => option)}
+            <option value="skatersummary">Skaters</option>
+            <option value="goaliesummary">Goaltenders</option>
           </NativeSelect>
         </FormControl>
-        <span style={{ padding: '0 1rem' }}> to </span>
-        <FormControl>
-          <InputLabel htmlFor="yearEnd" />
-          <NativeSelect
-            value={yearEnd}
-            onChange={handleSeasonChange('yearEnd')}
-            input={<Input name="yearEnd" id="yearEnd" />}
-          >
-            {optionsEnd.map(option => option)}
-          </NativeSelect>
-        </FormControl>
-      </div>
-      <FormControl>
-        <InputLabel htmlFor="reportName">Report Type</InputLabel>
-        <NativeSelect
-          value={reportName}
-          onChange={handleChange('reportName')}
-          input={<Input name="reportName" id="reportName" />}
-          name="reportName"
-        >
-          <option value="skatersummary">Skaters</option>
-          <option value="goaliesummary">Goaltenders</option>
-        </NativeSelect>
-      </FormControl>
-      <br />
-      <FormControlLabel
-        control={
-          <Switch
-            checked={isAggregate}
-            onChange={handleSwitchChange('isAggregate')}
-          />
-        }
-        label="Sum Results"
-      />
-      <div>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={isAggregate}
+              onChange={handleSwitchChange('isAggregate')}
+              style={{ margin: '0 1rem' }}
+            />
+          }
+          label="Sum Results"
+        />
+      </StatsPanel>
+      <StatsPanel title={'Filters'}>
         <FormControl style={{ marginRight: '1rem' }}>
           <InputLabel htmlFor="teamFilter">Teams</InputLabel>
           <NativeSelect
@@ -146,7 +199,7 @@ const StatsFilterPanel = props => {
           }
           label="Tracked Players Only"
         />
-      </div>
+      </StatsPanel>
       <div
         style={{
           marginTop: '1rem',
@@ -181,7 +234,7 @@ const StatsFilterPanel = props => {
           value={search}
           onChange={handleChange('search')}
           variant="outlined"
-          style={{width: '170px'}}
+          style={{ width: '170px' }}
         />
       </div>
     </div>

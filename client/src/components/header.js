@@ -54,11 +54,7 @@ const NavStyled = styled.nav`
     width: 100%;
     background: rgba(68, 68, 68, 0.7);
     overflow: hidden;
-    height: ${props => {
-      console.log(props.menuOpen)
-
-      return props.menuOpen ? 'auto' : 0
-    }};
+    height: ${props => (props.menuOpen ? 'auto' : 0)};
   }
 `
 
