@@ -8,21 +8,57 @@ import CloseIcon from '@material-ui/icons/Close'
 import { connect } from 'react-redux'
 import { removePlayerList } from '../actions/statActions'
 
+const mobileWidth = '425px'
+const tabletWidth = '800px'
+
 const ProfileContainer = styled.div`
+  box-shadow: 3px 3px 8px lightgray;
+  padding-bottom: 0.3rem;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+
+  @media (max-width: ${mobileWidth}) {
+    font-size: 0.85rem;
+  }
+`
+
+const PlayerIdent = styled.div`
   display: flex;
   flex-direction: row;
-  border: 1px solid black;
+  position: relative;
+  margin: 1rem;
+
+  &:before {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    content: '';
+    background: ${props => `url(${props.logoUrl}) no-repeat right`};
+    opacity: 0.1;
+    z-index: -1;
+  }
+
+  @media (max-width: ${mobileWidth}) {
+    flex-direction: column;
+    text-align: center;
+  }
 `
 
 const ImageContainer = styled.div`
-  padding: 1rem;
+  padding: 1rem 1rem 0;
   text-align: center;
+  max-width: 180px;
+
+  @media (max-width: ${mobileWidth}) {
+    margin: 0 auto;
+    max-width: 120px;
+  }
 `
 
 const TextContainer = styled.div`
   position: relative;
-  padding: 1rem;
   overflow-x: auto;
+  margin: 1rem 1rem 0;
 `
 
 const PlayerBioList = styled.ul`
@@ -31,11 +67,19 @@ const PlayerBioList = styled.ul`
   flex-wrap: wrap;
   list-style: none;
   margin: 0;
+
+  @media (max-width: ${tabletWidth}) {
+    flex-direction: column;
+  }
 `
 
 const PlayerBioListItem = styled.li`
   flex: 50%;
   margin-bottom: 0.5rem;
+
+  @media (max-width: ${mobileWidth}) {
+    margin-bottom: 0.1rem;
+  }
 `
 
 const RemovePlayerButton = styled.div`
@@ -43,13 +87,9 @@ const RemovePlayerButton = styled.div`
   top: 0;
   right: 0;
   padding: 0.25rem;
-  opacity: 0;
+  opacity: 1;
   transition: all 0.2s;
   cursor: pointer;
-
-  :hover {
-    opacity: 1;
-  }
 `
 
 const PlayerProfiles = ({ players, auth, removePlayerList }) => {
@@ -72,52 +112,56 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
       timeZone: 'UTC',
     })
 
-    return (
-      <ProfileContainer key={playerObj.id} style={{ marginBottom: '1rem' }}>
-        <ImageContainer>
-          <img
-            src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${
-              playerObj.id
-            }.jpg`}
-            alt={playerObj.playerName}
-            style={{
-              margin: '5px',
-              borderRadius: '50%',
-              minWidth: '120px',
-              boxShadow: '0 0 5px black',
-            }}
-          />
-          <div>#{playerObj.primaryNumber}</div>
-        </ImageContainer>
+    const logoUrl = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${playerObj.currentTeam.id}.svg`
 
-        <TextContainer>
-          <h2>{playerObj.fullName}</h2>
-          <PlayerBioList>
-            <PlayerBioListItem>
-              Team: {playerObj.currentTeam.name} -{' '}
-              {playerObj.primaryPosition.abbreviation}
-            </PlayerBioListItem>
-            <PlayerBioListItem>
-              Bio: {playerObj.currentAge} yrs - {playerObj.height} ft -{' '}
-              {playerObj.weight} lbs
-            </PlayerBioListItem>
-            <PlayerBioListItem>Birthdate: {bDayStr}</PlayerBioListItem>
-            <PlayerBioListItem>
-              Birthplace: {playerObj.birthCity},
-              {playerObj.birthStateProvince &&
-                ` ${playerObj.birthStateProvince}, `}{' '}
-              {playerObj.birthCountry}
-            </PlayerBioListItem>
-          </PlayerBioList>
-          <ProfileStatTable stats={currentSeasonData} />
-          <RemovePlayerButton>
-            <IconButton
-              children={<CloseIcon fontSize="small" />}
-              color="secondary"
-              onClick={() => removePlayerList(userData)}
+    return (
+      <ProfileContainer key={playerObj.id}>
+        <PlayerIdent logoUrl={logoUrl}>
+          <ImageContainer>
+            <img
+              src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${
+                playerObj.id
+              }.jpg`}
+              alt={playerObj.playerName}
+              style={{
+                margin: '0',
+                borderRadius: '50%',
+                width: 'auto',
+                boxShadow: '0 0 5px black',
+              }}
             />
-          </RemovePlayerButton>
-        </TextContainer>
+            <div style={{ fontWeight: '600' }}>#{playerObj.primaryNumber}</div>
+          </ImageContainer>
+
+          <TextContainer>
+            <h2 style={{ marginBottom: '0.7rem' }}>{playerObj.fullName}</h2>
+            <PlayerBioList>
+              <PlayerBioListItem>
+                Team: {playerObj.currentTeam.name} -{' '}
+                {playerObj.primaryPosition.abbreviation}
+              </PlayerBioListItem>
+              <PlayerBioListItem>
+                Bio: {playerObj.currentAge} yrs - {playerObj.height} ft -{' '}
+                {playerObj.weight} lbs
+              </PlayerBioListItem>
+              <PlayerBioListItem>Birthdate: {bDayStr}</PlayerBioListItem>
+              <PlayerBioListItem>
+                Birthplace: {playerObj.birthCity},
+                {playerObj.birthStateProvince &&
+                  ` ${playerObj.birthStateProvince}, `}{' '}
+                {playerObj.birthCountry}
+              </PlayerBioListItem>
+            </PlayerBioList>
+          </TextContainer>
+        </PlayerIdent>
+        <ProfileStatTable stats={currentSeasonData} />
+        <RemovePlayerButton>
+          <IconButton
+            children={<CloseIcon fontSize="small" />}
+            color="secondary"
+            onClick={() => removePlayerList(userData)}
+          />
+        </RemovePlayerButton>
       </ProfileContainer>
     )
   })

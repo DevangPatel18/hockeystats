@@ -32,7 +32,7 @@ const ProfileStatTable = ({ stats }) => {
       style={{
         overflowX: 'auto',
         paddingLeft: '1rem',
-        margin: '1rem 0',
+        margin: '1rem',
       }}
     >
       <Table padding="checkbox">
