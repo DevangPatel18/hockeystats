@@ -21,6 +21,7 @@
     "express": "^4.16.4",
     "is-empty": "^1.2.0",
     "jsonwebtoken": "^8.4.0",
+    "mjml": "^4.4.0-beta.1",
     "mongoose": "^5.4.1",
     "nodemailer": "^5.1.1",
     "passport": "^0.4.0",

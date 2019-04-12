@@ -5,6 +5,8 @@ const Users = require('../../models/User');
 const crypto = require('crypto');
 const nodemail = require('nodemailer');
 
+const resetEmailTemplate = require('../../helper/resetEmailTemplate');
+
 router.post('/', async (req, res, next) => {
   try {
     let { email } = req.body;
@@ -36,10 +38,7 @@ router.post('/', async (req, res, next) => {
       from: process.env.EMAIL_ADDRESS,
       to: email,
       subject: `Password Reset Request`,
-      text:
-        `Hello, this email was sent because a request was made from your account to reset the password. Please follow the link below to reset your password within 1 hour, at which point the link will expire.\n\n` +
-        `${process.env.FRONTEND_URL}/passwordreset/${token}\n\n` +
-        `If you did not request this, please ignore this message and your password will remain the same.`,
+      html: resetEmailTemplate(process.env.FRONTEND_URL, token).html,
     };
 
     transporter.sendMail(mailOptions, function(err, response) {
