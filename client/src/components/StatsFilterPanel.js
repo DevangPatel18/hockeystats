@@ -152,7 +152,6 @@ const StatsFilterPanel = props => {
             <Switch
               checked={isAggregate}
               onChange={handleSwitchChange('isAggregate')}
-              style={{ margin: '0 1rem' }}
             />
           }
           label="Sum Results"
