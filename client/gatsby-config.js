@@ -14,7 +14,7 @@ module.exports = {
         background_color: '#156FA4',
         theme_color: '#156FA4',
         display: 'minimal-ui',
-        // icon: '', // This path is relative to the root of the site.
+        icon: 'graph_icon.png', // This path is relative to the root of the site.
       },
     },
     'gatsby-plugin-offline',
