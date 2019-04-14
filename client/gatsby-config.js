@@ -1,3 +1,9 @@
+if (process.env.NODE_ENV === 'development') {
+  require('dotenv').config({
+    path: `.env`,
+  })
+}
+
 module.exports = {
   siteMetadata: {
     title: 'Skates & Stats',
@@ -45,6 +51,6 @@ module.exports = {
   ],
   proxy: {
     prefix: '/api',
-    url: 'http://localhost:5000',
+    url: `${process.env.GATSBY_PROXY_URL}`,
   },
 }
