@@ -19,10 +19,12 @@ export const getPlayerList = userId => dispatch => {
         console.log(err)
       })
   } else {
-    dispatch({
-      type: GET_PLAYER_LIST,
-      payload: JSON.parse(localStorage.getItem('players')),
-    })
+    if (typeof window !== 'undefined') {
+      dispatch({
+        type: GET_PLAYER_LIST,
+        payload: JSON.parse(localStorage.getItem('players')),
+      })
+    }
   }
 }
 

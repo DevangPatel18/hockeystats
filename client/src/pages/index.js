@@ -15,29 +15,31 @@ const mobileWidth = '425px'
 const Charts =
   'https://res.cloudinary.com/dbeqp2lyo/image/upload/v1554606574/Hockey%20stats/Charts.svg'
 
-const token = localStorage.jwtToken
-// Check for token to keep user logged in
-if (token) {
-  // Set auth token header auth
-  setAuthToken(token)
-  // Decode token and get user info and exp
-  const decoded = jwt_decode(token)
-  // Set user and isAuthenticated
-  store.dispatch(setCurrentUser(decoded))
-  // Set trackedPlayers list from user id
-  store.dispatch(getPlayerList(decoded.id))
-  // Check for expired token
-  const currentTime = Date.now() / 1000 // to get in milliseconds
-  if (decoded.exp < currentTime) {
-    // Logout user
-    store.dispatch(logoutUser())
-    // Redirect to login
-    navigate(`app/login`)
-  }
-} else {
-  // Set trackedPlayers list from local storage
-  if (localStorage.hasOwnProperty('players')) {
-    store.dispatch(getPlayerList())
+if (typeof window !== 'undefined') {
+  const token = localStorage.jwtToken
+  // Check for token to keep user logged in
+  if (token) {
+    // Set auth token header auth
+    setAuthToken(token)
+    // Decode token and get user info and exp
+    const decoded = jwt_decode(token)
+    // Set user and isAuthenticated
+    store.dispatch(setCurrentUser(decoded))
+    // Set trackedPlayers list from user id
+    store.dispatch(getPlayerList(decoded.id))
+    // Check for expired token
+    const currentTime = Date.now() / 1000 // to get in milliseconds
+    if (decoded.exp < currentTime) {
+      // Logout user
+      store.dispatch(logoutUser())
+      // Redirect to login
+      navigate(`app/login`)
+    }
+  } else {
+    // Set trackedPlayers list from local storage
+    if (localStorage.hasOwnProperty('players')) {
+      store.dispatch(getPlayerList())
+    }
   }
 }
 

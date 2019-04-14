@@ -74,7 +74,9 @@ class PlayerStats extends Component {
 
   playersToLocalStorage() {
     const { trackedPlayers } = this.props.stats
-    localStorage.setItem('players', JSON.stringify(trackedPlayers))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('players', JSON.stringify(trackedPlayers))
+    }
   }
 
   componentWillUnmount() {
