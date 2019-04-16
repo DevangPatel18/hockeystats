@@ -46,6 +46,8 @@ class PlayerStats extends Component {
       yearEnd: '20182019',
       teamFilter: 'all',
       teams: '',
+      countryFilter: 'all',
+      countries: '',
       search: '',
       filterTracked: false,
       trackedPlayers: [],
@@ -195,13 +197,25 @@ class PlayerStats extends Component {
             .sort()
         : ''
 
+      const countries = stats
+        .reduce((acc, playerObj) => {
+          let country = playerObj.playerBirthCountry
+          if (country && !acc.includes(country)) {
+            acc.push(country)
+          }
+          return acc
+        }, [])
+        .sort()
+
       this.props.stopLoad()
       if (stats && this._isMounted) {
         this.setState({
           stats,
           teams,
+          countries,
           selectedPlayers: [],
           teamFilter: 'all',
+          countryFilter: 'all',
         })
       }
     })
@@ -237,6 +251,7 @@ class PlayerStats extends Component {
       order,
       orderBy,
       teamFilter,
+      countryFilter,
       yearStart,
       yearEnd,
       search,
@@ -259,6 +274,12 @@ class PlayerStats extends Component {
     dataDisplay = search
       ? dataDisplay.filter(obj => obj.playerName.toLowerCase().includes(search))
       : dataDisplay
+    dataDisplay =
+      countryFilter !== 'all'
+        ? dataDisplay.filter(
+            playerObj => playerObj.playerBirthCountry === countryFilter
+          )
+        : dataDisplay
 
     console.log('selectedPlayers:', selectedPlayers)
     console.log('trackedPlayers:', trackedPlayers)

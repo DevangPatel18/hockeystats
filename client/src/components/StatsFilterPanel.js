@@ -77,6 +77,8 @@ const StatsFilterPanel = props => {
     filterTracked,
     teamFilter,
     teams,
+    countryFilter,
+    countries,
     search,
   } = props.this
 
@@ -187,6 +189,22 @@ const StatsFilterPanel = props => {
             <option value={'R'}>Right Wing</option>
             <option value={'C'}>Center</option>
             <option value={'D'}>Defensemen</option>
+          </NativeSelect>
+        </FormControl>
+        <FormControl style={{ marginRight: '1rem' }}>
+          <InputLabel htmlFor="countryFilter">Country</InputLabel>
+          <NativeSelect
+            value={countryFilter}
+            onChange={handleRowFilter('countryFilter')}
+            input={<Input name="countryFilter" id="countryFilter" />}
+          >
+            <option value={'all'}>All Countries</option>
+            {countries &&
+              countries.map(countryCode => (
+                <option value={countryCode} key={countryCode}>
+                  {countryCode}
+                </option>
+              ))}
           </NativeSelect>
         </FormControl>
         <FormControlLabel
