@@ -340,7 +340,7 @@ class PlayerStats extends Component {
                 <TablePagination
                   rowsPerPageOptions={[5, 10, 25, 50]}
                   colSpan={3}
-                  count={stats.length}
+                  count={dataDisplay.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   SelectProps={{
