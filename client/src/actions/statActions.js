@@ -1,4 +1,4 @@
-import axios from 'axios'
+import API from '../utils/api'
 import {
   GET_PLAYER_LIST,
   ADD_PLAYER,
@@ -9,8 +9,7 @@ import {
 
 export const getPlayerList = userId => dispatch => {
   if (userId) {
-    axios
-      .get(`/api/playerList/${userId}`)
+    API.get(`/api/playerList/${userId}`)
       .then(res => {
         const { playerList } = res.data
         dispatch({ type: GET_PLAYER_LIST, payload: playerList })
@@ -32,8 +31,7 @@ export const addPlayerList = userData => dispatch => {
   const { userId, playerId } = userData
 
   if (userId) {
-    axios
-      .put(`/api/playerList/${userId}/${playerId}`)
+    API.put(`/api/playerList/${userId}/${playerId}`)
       .then(() => {
         dispatch({ type: ADD_PLAYER, payload: playerId })
       })
@@ -49,8 +47,7 @@ export const removePlayerList = userData => dispatch => {
   const { userId, playerId } = userData
 
   if (userId) {
-    axios
-      .delete(`/api/playerList/${userId}/${playerId}`)
+    API.delete(`/api/playerList/${userId}/${playerId}`)
       .then(() => {
         dispatch({ type: REMOVE_PLAYER, payload: playerId })
       })

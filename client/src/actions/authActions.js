@@ -1,4 +1,4 @@
-import axios from 'axios'
+import API from '../utils/api'
 import setAuthToken from '../utils/setAuthToken'
 import jwt_decode from 'jwt-decode'
 import { getPlayerList } from '../actions/statActions'
@@ -13,8 +13,7 @@ import { navigate } from 'gatsby'
 
 // Register User
 export const registerUser = userData => dispatch => {
-  axios
-    .post('/api/users/register', userData)
+  API.post('/api/users/register', userData)
     .then(() => {
       navigate(`/app/login`) // re-direct to login on successful register
     })
@@ -28,8 +27,7 @@ export const registerUser = userData => dispatch => {
 
 // Login - get user token
 export const loginUser = userData => dispatch => {
-  axios
-    .post('/api/users/login', userData)
+  API.post('/api/users/login', userData)
     .then(res => {
       // Save to localStorage
       // Set token to localStorage
@@ -94,8 +92,7 @@ export const logoutUser = () => dispatch => {
 // Send Password reset email
 export const sendResetEmail = email => dispatch => {
   dispatch(setUserLoading())
-  axios
-    .post('/api/sendResetEmail', email)
+  API.post('/api/sendResetEmail', email)
     .then(res => {
       const { message } = res.data
       dispatch({ type: SEND_EMAIL, message })
@@ -110,7 +107,7 @@ export const sendResetEmail = email => dispatch => {
 
 // Check for valid password reset page url
 export const tokenCheck = tokenUrl => dispatch => {
-  axios.get(`/api/resetUrlStatus/${tokenUrl}`).catch(err => {
+  API.get(`/api/resetUrlStatus/${tokenUrl}`).catch(err => {
     dispatch({ type: GET_ERRORS, payload: err.response.data })
   })
 }
@@ -120,8 +117,7 @@ export const passwordReset = resetData => dispatch => {
   dispatch(setUserLoading())
   const { userData, token } = resetData
 
-  axios
-    .put(`/api/passwordReset/${token}`, userData)
+  API.put(`/api/passwordReset/${token}`, userData)
     .then(res => {
       const { message } = res.data
       dispatch({ type: PASSWORD_RESET, message })

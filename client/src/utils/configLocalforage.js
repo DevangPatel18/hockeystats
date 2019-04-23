@@ -22,8 +22,9 @@ const configure = async () => {
   // Create 'axios' instance with pre-configured 'axios-cache-adapter' using a 'localforage' store
   return setup({
     // 'axios' options
-    // baseURL: 'http://some-rest.api',
-
+    ...(process.env.NODE_ENV === 'production' && {
+      baseURL: process.env.GATSBY_PROXY_URL,
+    }),
     // 'axios-cache-adapter' options
     cache: {
       maxAge: 12 * 60 * 60 * 1000,
