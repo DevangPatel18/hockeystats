@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const cors = require('cors');
 const { loginRequired } = require('./middleware/auth');
 
 dotenv.config();
@@ -14,6 +15,8 @@ const passwordReset = require('./routes/api/passwordReset');
 const statistics = require('./routes/api/statistics');
 const playerList = require('./routes/api/playerList');
 const app = express();
+
+app.use(cors());
 
 app.use(
   bodyParser.urlencoded({
