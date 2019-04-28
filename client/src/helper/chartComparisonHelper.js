@@ -3,6 +3,17 @@ const strToMin = timeStr => {
   return parseInt(sec) + parseInt(min * 60)
 }
 
+const decisionToPoints = decision => {
+  switch (decision) {
+    case 'W':
+      return 2
+    case 'O':
+      return 1
+    default:
+      return 0
+  }
+}
+
 export const skaterLogStats = [
   { key: 'points', label: 'Points' },
   { key: 'assists', label: 'Assists' },
@@ -28,7 +39,7 @@ export const skaterLogStats = [
 ]
 
 export const goalieLogStats = [
-  { key: 'decision', label: 'Decision' },
+  { key: 'decision', label: 'Points', format: decisionToPoints },
   { key: 'timeOnIce', label: 'TOI', format: strToMin },
   { key: 'ot', label: 'OT' },
   { key: 'shutouts', label: 'Shutouts' },

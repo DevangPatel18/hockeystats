@@ -189,7 +189,7 @@ class PlayerStats extends Component {
         ? stats
             .reduce((acc, playerObj) => {
               let team = playerObj.playerTeamsPlayedFor
-              if (team.length === 3 && !acc.includes(team)) {
+              if (team && team.length === 3 && !acc.includes(team)) {
                 acc.push(team)
               }
               return acc
