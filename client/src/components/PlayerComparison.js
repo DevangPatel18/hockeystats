@@ -35,16 +35,24 @@ class PlayerComparison extends Component {
             </Tabs>
           </Toolbar>
         </AppBar>
-        {value === 0 && (
-          <TableComparison selectedPlayers={selectedPlayers} data={data} />
-        )}
-        {value === 1 && (
-          <ChartComparison
-            selectedPlayers={selectedPlayers}
-            data={data}
-            yearStart={yearStart}
-            yearEnd={yearEnd}
-          />
+        {selectedPlayers.length === 0 ? (
+          <div style={{ padding: '2rem' }}>
+            Please select rows for comparison
+          </div>
+        ) : (
+          <>
+            {value === 0 && (
+              <TableComparison selectedPlayers={selectedPlayers} data={data} />
+            )}
+            {value === 1 && (
+              <ChartComparison
+                selectedPlayers={selectedPlayers}
+                data={data}
+                yearStart={yearStart}
+                yearEnd={yearEnd}
+              />
+            )}
+          </>
         )}
       </div>
     )

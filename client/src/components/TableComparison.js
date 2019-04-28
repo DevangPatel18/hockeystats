@@ -37,10 +37,6 @@ const TableComparison = ({ selectedPlayers, data }) => {
   })
 
   playersObj = playersObj.filter(x => x)
-  if (!playersObj.length)
-    return (
-      <div style={{ padding: '2rem' }}>Please select rows for comparison</div>
-    )
 
   let columnsMin = generateCols(playersObj)
 
