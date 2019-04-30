@@ -136,7 +136,7 @@ const HeaderNavItems = styled.li`
     margin: 0;
     padding: 0.2rem 0.4rem;
   }
-  margin: 0 1rem;
+  margin: 0 0.5rem;
   list-style: none;
   cursor: pointer;
   transition: all 0.2s ease;
