@@ -25,6 +25,7 @@ const StatsChart = props => {
     <VictoryChart
       theme={theme}
       scale={{ x: sameSeason ? 'time' : 'linear' }}
+      domainPadding={{ y: 5 }}
       events={[
         {
           childName: lineNames,

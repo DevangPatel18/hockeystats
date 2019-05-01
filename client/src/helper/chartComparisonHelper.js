@@ -39,7 +39,7 @@ export const skaterLogStats = [
 ]
 
 export const goalieLogStats = [
-  { key: 'decision', label: 'Points', format: decisionToPoints },
+  { key: 'decision', label: 'Points from (W-L-OT)', format: decisionToPoints },
   { key: 'timeOnIce', label: 'TOI', format: strToMin },
   { key: 'ot', label: 'OT' },
   { key: 'shutouts', label: 'Shutouts' },
