@@ -183,6 +183,10 @@ class PlayerStats extends Component {
           console.log(err)
         })
 
+      this.props.stopLoad()
+
+      if (!stats) return
+
       console.log(`Received data from ${yearStart} to ${yearEnd} seasons`)
 
       const teams = !isAggregate
@@ -207,7 +211,6 @@ class PlayerStats extends Component {
         }, [])
         .sort()
 
-      this.props.stopLoad()
       if (stats && this._isMounted) {
         this.setState({
           stats,
