@@ -305,6 +305,7 @@ class PlayerStats extends Component {
           style={{
             opacity: dataLoad ? '1' : '0',
             transition: 'all 0.5s',
+            marginBottom: '-3px',
           }}
         />
         <Paper style={{ overflowX: 'auto' }}>
