@@ -16,7 +16,11 @@ const statistics = require('./routes/api/statistics');
 const playerList = require('./routes/api/playerList');
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: process.env.FRONTEND_URL,
+};
+
+app.use(cors(corsOptions));
 
 app.use(
   bodyParser.urlencoded({
