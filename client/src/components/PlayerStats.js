@@ -270,8 +270,10 @@ class PlayerStats extends Component {
       : dataDisplay
     dataDisplay =
       teamFilter !== 'all'
-        ? dataDisplay.filter(playerObj =>
-            playerObj.playerTeamsPlayedFor.includes(teamFilter)
+        ? dataDisplay.filter(
+            playerObj =>
+              playerObj.playerTeamsPlayedFor &&
+              playerObj.playerTeamsPlayedFor.includes(teamFilter)
           )
         : dataDisplay
     dataDisplay = search
