@@ -48,7 +48,7 @@ class ChartComparison extends Component {
       playerData: [],
       playerStat: '',
       summed: true,
-      percentAvg: true,
+      percentAvg: false,
       activeLines: '',
       hover: '',
       statOptions: '',
@@ -256,7 +256,7 @@ class ChartComparison extends Component {
     const playerPointProgress = playerData.map(obj => {
       const { gameLog } = obj
       let total = 0
-      const orderedGameLog = gameLog.slice()
+      let orderedGameLog = gameLog.slice()
 
       let startDateIso
       let endDateIso
@@ -268,35 +268,47 @@ class ChartComparison extends Component {
 
       if (!Object.keys(gameLog[0].stat).includes(playerStat)) return []
 
-      if (statPercentage || !summed) {
+      // Filter games based on date selection for sameSeason comparisons
+      if (sameSeason) {
+        orderedGameLog = orderedGameLog.filter(
+          game => game.date > startDateIso && game.date < endDateIso
+        )
+      }
+
+      if ((statPercentage && !percentAvg) || !summed) {
         return sameSeason
-          ? orderedGameLog
-              .filter(
-                game => game.date > startDateIso && game.date < endDateIso
-              )
-              .map(game => {
-                let x = Date.parse(game.date)
-                return { x, y: formatter(game.stat[playerStat]) || 0 }
-              })
+          ? orderedGameLog.map(game => {
+              let x = Date.parse(game.date)
+              return { x, y: formatter(game.stat[playerStat]) || 0 }
+            })
           : orderedGameLog.map((game, i) => ({
               i,
               y: formatter(game.stat[playerStat]) || 0,
             }))
       } else {
-        return sameSeason
-          ? orderedGameLog
-              .filter(
-                game => game.date > startDateIso && game.date < endDateIso
-              )
-              .map(game => {
+        if (statPercentage && percentAvg) {
+          return sameSeason
+            ? orderedGameLog.map((game, i) => {
+                total += formatter(game.stat[playerStat]) || 0
+                let x = Date.parse(game.date)
+                return { x, y: total / (i + 1) }
+              })
+            : orderedGameLog.map((game, i) => {
+                total += formatter(game.stat[playerStat]) || 0
+                return { i, y: total / (i + 1) }
+              })
+        } else {
+          return sameSeason
+            ? orderedGameLog.map((game, i) => {
                 total += formatter(game.stat[playerStat])
                 let x = Date.parse(game.date)
                 return { x, y: total }
               })
-          : orderedGameLog.map((game, i) => {
-              total += formatter(game.stat[playerStat])
-              return { i, y: total }
-            })
+            : orderedGameLog.map((game, i) => {
+                total += formatter(game.stat[playerStat])
+                return { i, y: total }
+              })
+        }
       }
     })
 
