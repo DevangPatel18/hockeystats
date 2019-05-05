@@ -48,6 +48,7 @@ class ChartComparison extends Component {
       playerData: [],
       playerStat: '',
       summed: true,
+      percentAvg: true,
       activeLines: '',
       hover: '',
       statOptions: '',
@@ -220,6 +221,7 @@ class ChartComparison extends Component {
       playerData,
       playerStat,
       summed,
+      percentAvg,
       activeLines,
       hover,
       statOptions,
@@ -368,16 +370,29 @@ class ChartComparison extends Component {
                   alignItems: 'flex-end',
                 }}
               >
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={summed}
-                      onChange={this.handleSwitchChange('summed')}
-                      disabled={statPercentage}
-                    />
-                  }
-                  label="Sum Results"
-                />
+                {statPercentage ? (
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={percentAvg}
+                        onChange={this.handleSwitchChange('percentAvg')}
+                        disabled={!statPercentage}
+                      />
+                    }
+                    label="Running Average"
+                  />
+                ) : (
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={summed}
+                        onChange={this.handleSwitchChange('summed')}
+                        disabled={statPercentage}
+                      />
+                    }
+                    label="Sum Results"
+                  />
+                )}
                 <DatePicker
                   autoOk
                   label="To"
