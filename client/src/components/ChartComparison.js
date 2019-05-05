@@ -371,12 +371,15 @@ class ChartComparison extends Component {
                   animateYearScrolling={false}
                   minDate={minDate}
                   maxDate={endDate}
-                  style={{ marginRight: '1rem' }}
+                  style={{
+                    display: sameSeason ? 'flex' : 'none',
+                    marginRight: '1rem',
+                  }}
                 />
               </div>
               <div
                 style={{
-                  display: sameSeason ? 'flex' : 'none',
+                  display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   alignItems: 'flex-end',
@@ -414,6 +417,7 @@ class ChartComparison extends Component {
                   animateYearScrolling={false}
                   minDate={startDate}
                   maxDate={maxDate}
+                  style={{ display: sameSeason ? 'flex' : 'none' }}
                 />
               </div>
             </div>
