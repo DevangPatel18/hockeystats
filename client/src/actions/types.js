@@ -1,5 +1,6 @@
 export const GET_ERRORS = 'GET_ERRORS'
 export const USER_LOADING = 'USER_LOADING'
+export const TOKEN_CHECK = 'TOKEN_CHECK'
 export const SET_CURRENT_USER = 'SET_CURRENT_USER'
 export const PASSWORD_RESET = 'PASSWORD_RESET'
 export const SEND_EMAIL = 'SEND_EMAIL'

@@ -5,6 +5,7 @@ import { getPlayerList } from '../actions/statActions'
 import {
   GET_ERRORS,
   SET_CURRENT_USER,
+  TOKEN_CHECK,
   USER_LOADING,
   SEND_EMAIL,
   PASSWORD_RESET,
@@ -107,9 +108,11 @@ export const sendResetEmail = email => dispatch => {
 
 // Check for valid password reset page url
 export const tokenCheck = tokenUrl => dispatch => {
-  API.get(`/api/resetUrlStatus/${tokenUrl}`).catch(err => {
-    dispatch({ type: GET_ERRORS, payload: err.response.data })
-  })
+  API.get(`/api/resetUrlStatus/${tokenUrl}`)
+    .then(res => dispatch({ type: TOKEN_CHECK, tokenStatus: true }))
+    .catch(err => {
+      dispatch({ type: GET_ERRORS, payload: err.response.data })
+    })
 }
 
 // Reset User password

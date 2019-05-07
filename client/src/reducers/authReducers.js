@@ -1,5 +1,6 @@
 import {
   SET_CURRENT_USER,
+  TOKEN_CHECK,
   USER_LOADING,
   PASSWORD_RESET,
   SEND_EMAIL,
@@ -10,6 +11,7 @@ const initialState = {
   isAuthenticated: false,
   user: {},
   loading: false,
+  tokenStatus: '',
 }
 export default function(state = initialState, action) {
   switch (action.type) {
@@ -23,6 +25,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         loading: true,
+      }
+    case TOKEN_CHECK:
+      return {
+        ...state,
+        tokenStatus: action.tokenStatus,
       }
     case PASSWORD_RESET:
       return {
