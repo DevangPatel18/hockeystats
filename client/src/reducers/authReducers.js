@@ -39,6 +39,7 @@ export default function(state = initialState, action) {
     case GET_ERRORS:
       return {
         ...state,
+        message: '',
         loading: false,
       }
     default:
