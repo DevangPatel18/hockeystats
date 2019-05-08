@@ -60,7 +60,7 @@ class ChartComparison extends Component {
   }
 
   async componentDidMount() {
-    const { selectedPlayers, data, yearStart, yearEnd } = this.props
+    const { selectedPlayers, data, yearStart, yearEnd, dataType } = this.props
     this._isMounted = true
     const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
     let isAggregate = false
@@ -73,7 +73,7 @@ class ChartComparison extends Component {
             if (seasonId) {
               return api
                 .get(
-                  `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}`
+                  `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
                 )
                 .then(res => res.data.reverse())
             } else {
@@ -94,7 +94,7 @@ class ChartComparison extends Component {
                 seasonIdArr.map(async seasonId =>
                   api
                     .get(
-                      `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}`
+                      `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
                     )
                     .then(res => res.data.reverse())
                 )
@@ -158,7 +158,7 @@ class ChartComparison extends Component {
           : ''
 
         const presentDay = new Date()
-        const lastDay = new Date(parseInt(seasonIds[0].slice(4)), 3, 30)
+        const lastDay = new Date(parseInt(seasonIds[0].slice(4)), 5, 30)
 
         const endDate = sameSeason
           ? lastDay > presentDay

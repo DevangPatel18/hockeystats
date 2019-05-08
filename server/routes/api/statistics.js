@@ -72,14 +72,15 @@ router.get('/players/:playerId', async (req, res, next) => {
 
 // Retrieve player stats from individual games
 router.get(
-  '/players/gameLog/playerId/:playerId/seasonId/:seasonId',
+  '/players/gameLog/playerId/:playerId/seasonId/:seasonId/dataType/:dataType',
   async (req, res, next) => {
     try {
-      const { playerId, seasonId } = req.params;
+      const { playerId, seasonId, dataType } = req.params;
+      const statType = dataType === 'regular' ? 'gameLog' : 'playoffGameLog';
 
       const playerData = await axios
         .get(
-          `https://statsapi.web.nhl.com/api/v1/people/${playerId}/stats?stats=gameLog&season=${seasonId}`
+          `https://statsapi.web.nhl.com/api/v1/people/${playerId}/stats?stats=${statType}&season=${seasonId}`
         )
         .then(res => res.data.stats[0].splits);
 

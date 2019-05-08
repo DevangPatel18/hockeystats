@@ -45,6 +45,7 @@ class PlayerStats extends Component {
       yearStart: '20182019',
       yearEnd: '20182019',
       playoffs: false,
+      dataType: '',
       teamFilter: 'all',
       teams: '',
       countryFilter: 'all',
@@ -220,6 +221,7 @@ class PlayerStats extends Component {
           selectedPlayers: [],
           teamFilter: 'all',
           countryFilter: 'all',
+          dataType: playoffs ? 'playoffs' : 'regular',
         })
       }
     })
@@ -247,7 +249,6 @@ class PlayerStats extends Component {
     const {
       stats,
       isAggregate,
-      playoffs,
       playerPositionCode,
       filterTracked,
       selectedPlayers,
@@ -260,6 +261,7 @@ class PlayerStats extends Component {
       yearStart,
       yearEnd,
       search,
+      dataType,
     } = this.state
     const { dataLoad, trackedPlayers } = this.props.stats
 
@@ -385,6 +387,7 @@ class PlayerStats extends Component {
             data={dataDisplay}
             yearStart={yearStart}
             yearEnd={yearEnd}
+            dataType={dataType}
           />
         </Dialog>
       </div>
