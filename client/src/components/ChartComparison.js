@@ -109,15 +109,8 @@ class ChartComparison extends Component {
           )
         }
 
-        let allStatOptions
-        let playerStat
-        if (data[0].playerPositionCode !== 'G') {
-          allStatOptions = skaterLogStats
-          playerStat = 'points'
-        } else {
-          allStatOptions = goalieLogStats
-          playerStat = 'saves'
-        }
+        let allStatOptions =
+          data[0].playerPositionCode !== 'G' ? skaterLogStats : goalieLogStats
 
         let statOptions = []
         for (const playerLogs of playerGameLogs) {
@@ -131,6 +124,8 @@ class ChartComparison extends Component {
         statOptions = allStatOptions.filter(statObj =>
           statOptions.includes(statObj.key)
         )
+
+        let playerStat = statOptions[0].key
 
         const playerData = selectedPlayers.map((tag, i) => {
           const tableData = data.find(
@@ -240,11 +235,10 @@ class ChartComparison extends Component {
         </div>
       )
 
-    const statLabel = statOptions.find(obj => obj.key === playerStat).label
+    const statObj = statOptions.find(obj => obj.key === playerStat)
+    const statLabel = statObj.label
 
-    const formatter = statOptions.find(obj => obj.key === playerStat).format
-      ? statOptions.find(obj => obj.key === playerStat).format
-      : x => x
+    const formatter = statObj.format ? statObj.format : x => x
 
     const selectedPlayerData = playerData.filter(obj =>
       activeLines.includes(obj.tag)
