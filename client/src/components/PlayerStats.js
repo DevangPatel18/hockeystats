@@ -44,6 +44,7 @@ class PlayerStats extends Component {
       reportName: 'skatersummary',
       yearStart: '20182019',
       yearEnd: '20182019',
+      playoffs: false,
       teamFilter: 'all',
       teams: '',
       countryFilter: 'all',
@@ -170,13 +171,13 @@ class PlayerStats extends Component {
       e.preventDefault()
     }
 
-    const { isAggregate, reportName, yearStart, yearEnd } = this.state
+    const { isAggregate, reportName, yearStart, yearEnd, playoffs } = this.state
 
     this.props.startLoad()
     configure().then(async api => {
       const stats = await api
         .get(
-          `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}`
+          `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}/${playoffs}`
         )
         .then(res => res.data)
         .catch(err => {
@@ -246,6 +247,7 @@ class PlayerStats extends Component {
     const {
       stats,
       isAggregate,
+      playoffs,
       playerPositionCode,
       filterTracked,
       selectedPlayers,
