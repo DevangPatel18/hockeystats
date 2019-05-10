@@ -98,11 +98,15 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
       .find(obj => obj.type.displayName === 'yearByYear')
       .splits.find(
         obj =>
-          obj.season === '20182019' &&
+          obj.season === playerObj.seasonId.toString() &&
           obj.league.name === 'National Hockey League'
       ).stat
 
-    const userData = { userId: auth.user.id, playerId: playerObj.id }
+    const userData = {
+      userId: auth.user.id,
+      playerId: playerObj.id,
+      seasonId: playerObj.seasonId,
+    }
 
     const bDay = new Date(playerObj.birthDate)
     let bDayStr = bDay.toLocaleDateString('en-US', {
@@ -115,7 +119,7 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
     const logoUrl = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${playerObj.currentTeam.id}.svg`
 
     return (
-      <ProfileContainer key={playerObj.id}>
+      <ProfileContainer key={`${playerObj.id}-${playerObj.seasonId}`}>
         <PlayerIdent logoUrl={logoUrl}>
           <ImageContainer>
             <img
