@@ -52,6 +52,9 @@ const TableData = props => {
 
   const columns = generateCols(dataDisplay)
 
+  const favCheck = (playerId, seasonId, favList) =>
+    favList.some(obj => obj.playerId === playerId && obj.seasonId === seasonId)
+
   return (
     <>
       <TableHead>
@@ -157,12 +160,16 @@ const TableData = props => {
                     <Checkbox
                       icon={<StarBorder />}
                       checkedIcon={<Star />}
-                      checked={trackedPlayers.includes(row.playerId)}
+                      checked={favCheck(
+                        row.playerId,
+                        row.seasonId,
+                        trackedPlayers
+                      )}
                       onChange={() =>
                         updateTrackedPlayers(row.playerId, row.seasonId)
                       }
                       onClick={stopPropagation}
-                      style={{textAlign: 'center'}}
+                      style={{ textAlign: 'center' }}
                       classes={{
                         root: classes.root,
                         checked: classes.checked,

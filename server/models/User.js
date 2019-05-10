@@ -1,6 +1,17 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+const PlayerListSchema = new Schema({
+  playerId: {
+    type: String,
+    required: true,
+  },
+  seasonId: {
+    type: String,
+    required: true,
+  },
+});
+
 const UserSchema = new Schema({
   name: {
     type: String,
@@ -18,9 +29,7 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  playerList: {
-    type: Array,
-  },
+  playerList: [PlayerListSchema],
   resetPasswordToken: {
     type: String,
   },

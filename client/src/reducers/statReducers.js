@@ -30,7 +30,12 @@ export default function(state = initialState, action) {
       }
     case REMOVE_PLAYER:
       const trackedPlayers = [...state.trackedPlayers]
-      trackedPlayers.splice(trackedPlayers.indexOf(action.payload), 1)
+      const index = trackedPlayers.findIndex(
+        obj =>
+          obj.playerId === action.payload.playerId &&
+          obj.seasonId === action.payload.seasonId
+      )
+      trackedPlayers.splice(index, 1)
       return {
         ...state,
         trackedPlayers,

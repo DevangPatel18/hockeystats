@@ -3,25 +3,35 @@ const router = express.Router();
 
 const Users = require('../../models/User');
 
-// Adding player ids to playerList
+// Getting user playerList
 router.get('/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
 
     const user = await Users.findById(userId);
-    return res.status(200).json({ playerList: user.playerList });
+    const playerList = user.playerList.map(obj => {
+      const { playerId, seasonId } = obj;
+      return { playerId, seasonId };
+    });
+
+    return res.status(200).json({ playerList });
   } catch (err) {
     return res.status(400).json({ message: 'Problem retrieving player list.' });
   }
 });
 
 // Adding player ids to playerList
-router.put('/:userId/:playerId', async (req, res) => {
+router.put('/:userId/:playerId/:seasonId', async (req, res) => {
   try {
-    const { userId, playerId } = req.params;
+    const { userId, playerId, seasonId } = req.params;
 
     await Users.findByIdAndUpdate(userId, {
-      $addToSet: { playerList: parseInt(playerId) },
+      $addToSet: {
+        playerList: {
+          playerId: parseInt(playerId),
+          seasonId: parseInt(seasonId),
+        },
+      },
     });
     return res.status(200).json({ message: 'Player added to list!' });
   } catch (err) {
@@ -30,12 +40,17 @@ router.put('/:userId/:playerId', async (req, res) => {
 });
 
 // Removing player ids from playerList
-router.delete('/:userId/:playerId', async (req, res) => {
+router.delete('/:userId/:playerId/:seasonId', async (req, res) => {
   try {
-    const { userId, playerId } = req.params;
+    const { userId, playerId, seasonId } = req.params;
 
     await Users.findByIdAndUpdate(userId, {
-      $pull: { playerList: parseInt(playerId) },
+      $pull: {
+        playerList: {
+          playerId: parseInt(playerId),
+          seasonId: parseInt(seasonId),
+        },
+      },
     });
     return res.status(200).json({ message: 'Player removed from list!' });
   } catch (err) {

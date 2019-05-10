@@ -229,19 +229,20 @@ class PlayerStats extends Component {
 
   updateTrackedPlayers(playerId, seasonId) {
     const { trackedPlayers } = this.props.stats
-    const index = trackedPlayers.indexOf(playerId)
+    const index = trackedPlayers.findIndex(
+      obj => obj.playerId === playerId && obj.seasonId === seasonId
+    )
 
     const dispatchArgs = {
       userId: this.props.auth.user.id,
       playerId,
+      seasonId,
     }
 
-    if (seasonId === 20182019) {
-      if (index === -1) {
-        this.props.addPlayerList(dispatchArgs)
-      } else {
-        this.props.removePlayerList(dispatchArgs)
-      }
+    if (index === -1) {
+      this.props.addPlayerList(dispatchArgs)
+    } else {
+      this.props.removePlayerList(dispatchArgs)
     }
   }
 
