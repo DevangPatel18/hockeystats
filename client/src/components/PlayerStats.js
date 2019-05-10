@@ -271,7 +271,13 @@ class PlayerStats extends Component {
       ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
       : stats
     dataDisplay = filterTracked
-      ? dataDisplay.filter(obj => trackedPlayers.includes(obj.playerId))
+      ? dataDisplay.filter(obj =>
+          trackedPlayers.some(
+            listObj =>
+              listObj.playerId === obj.playerId &&
+              listObj.seasonId === obj.seasonId
+          )
+        )
       : dataDisplay
     dataDisplay =
       teamFilter !== 'all'
