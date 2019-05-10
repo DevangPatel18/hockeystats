@@ -144,6 +144,8 @@ export const ProfileSkateCol = [
   { key: 'hits', label: 'Hits' },
 ]
 
+const svPercentFormat = val => (val / 100).toFixed(3)
+
 export const ProfileGoalieCol = [
   { key: 'games', label: 'GP' },
   { key: 'gamesStarted', label: 'GS' },
@@ -160,11 +162,11 @@ export const ProfileGoalieCol = [
   { key: 'timeOnIce', label: 'TOI' },
   { key: 'powerPlayShots', label: 'PPSA' },
   { key: 'powerPlaySaves', label: 'PPS' },
-  { key: 'powerPlaySavePercentage', label: 'PPSv%' },
+  { key: 'powerPlaySavePercentage', label: 'PPSv%', format: svPercentFormat },
   { key: 'shortHandedShots', label: 'SHSA' },
   { key: 'shortHandedSaves', label: 'SHS' },
-  { key: 'shortHandedSavePercentage', label: 'SHSv%' },
+  { key: 'shortHandedSavePercentage', label: 'SHSv%', format: svPercentFormat },
   { key: 'evenShots', label: 'ESSA' },
   { key: 'evenSaves', label: 'ESS' },
-  { key: 'evenStrengthSavePercentage', label: 'ESSv%' },
+  { key: 'evenStrengthSavePercentage', label: 'ESSv%', format: svPercentFormat },
 ]
