@@ -65,6 +65,7 @@ const UserLabelItem = styled.li`
   padding: 0.3rem 1rem;
   list-style: none;
   cursor: pointer;
+  width: auto;
 
   div {
     display: flex;
@@ -79,6 +80,7 @@ const UserLabelItem = styled.li`
     flex-direction: column;
     align-items: center;
     padding: 0;
+    width: 100%;
 
     &:hover ul {
       height: auto;
@@ -102,6 +104,7 @@ const UserNavList = styled.ul`
   overflow: hidden;
 
   @media (max-width: ${mobileWidth}) {
+    width: 100%;
     background: none;
     position: static;
     height: auto;
@@ -116,6 +119,7 @@ const UserNavItems = styled.li`
   cursor: pointer;
   transition: all 0.2s ease;
   padding: 0.2rem 1rem;
+  width: auto;
 
   a {
     padding: 0.2rem 2rem;
@@ -127,6 +131,7 @@ const UserNavItems = styled.li`
   }
 
   @media (max-width: ${mobileWidth}) {
+    width: 100%;
     padding: 0;
   }
 `
@@ -140,9 +145,15 @@ const HeaderNavItems = styled.li`
   list-style: none;
   cursor: pointer;
   transition: all 0.2s ease;
+  width: auto;
 
   &:hover {
     background: #4787fe;
+  }
+
+  @media (max-width: ${mobileWidth}) {
+    width: 100%;
+    text-align: center;
   }
 `
 
@@ -182,7 +193,11 @@ class Header extends React.Component {
           </HeaderTitle>
           <div style={{ flexGrow: '1' }} />
           <NavStyled menuOpen={menuOpen}>
-            <HeaderNavList>
+            <HeaderNavList
+              onClick={() => {
+                this.setState({ menuOpen: false })
+              }}
+            >
               {this.props.auth.isAuthenticated ? (
                 <UserLabelItem>
                   <div>
