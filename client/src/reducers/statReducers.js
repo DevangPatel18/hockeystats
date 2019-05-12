@@ -14,9 +14,14 @@ const initialState = {
 export default function(state = initialState, action) {
   switch (action.type) {
     case GET_PLAYER_LIST:
+      const playerList = action.payload.map(obj => {
+        const playerId = parseInt(obj.playerId)
+        const seasonId = parseInt(obj.seasonId)
+        return { playerId, seasonId }
+      })
       return {
         ...state,
-        trackedPlayers: action.payload,
+        trackedPlayers: playerList,
       }
     case CLEAR_PLAYER_LIST:
       return {
