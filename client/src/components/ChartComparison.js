@@ -67,7 +67,7 @@ class ChartComparison extends Component {
     if (playerIds.length) {
       this.props.startLoad()
       await configure().then(async api => {
-        let playerGameLogs = await Promise.all(
+        let gameLogCollection = await Promise.all(
           playerIds.map(async playerArr => {
             const [playerId, seasonId] = playerArr
             if (seasonId) {
@@ -104,7 +104,7 @@ class ChartComparison extends Component {
         )
 
         if (isAggregate) {
-          playerGameLogs = playerGameLogs.map(singlePlayerLogs =>
+          gameLogCollection = gameLogCollection.map(singlePlayerLogs =>
             singlePlayerLogs.reduce((a, b) => a.concat(b))
           )
         }
@@ -113,10 +113,12 @@ class ChartComparison extends Component {
           data[0].playerPositionCode !== 'G' ? skaterLogStats : goalieLogStats
 
         let statOptions = []
-        for (const playerLogs of playerGameLogs) {
-          for (const statKey in playerLogs[0].stat) {
-            if (!statOptions.includes(statKey)) {
-              statOptions.push(statKey)
+        for (const playerGameLogArr of gameLogCollection) {
+          for (const playerGameLog of playerGameLogArr) {
+            for (const statKey in playerGameLog.stat) {
+              if (!statOptions.includes(statKey)) {
+                statOptions.push(statKey)
+              }
             }
           }
         }
@@ -134,7 +136,7 @@ class ChartComparison extends Component {
           return {
             tag,
             tableData,
-            gameLog: playerGameLogs[i],
+            gameLog: gameLogCollection[i],
           }
         })
 
@@ -238,7 +240,7 @@ class ChartComparison extends Component {
     const statObj = statOptions.find(obj => obj.key === playerStat)
     const statLabel = statObj.label
 
-    const formatter = statObj.format ? statObj.format : x => x
+    const formatter = statObj.format ? statObj.format : x => (x ? x : 0)
 
     const selectedPlayerData = playerData.filter(obj =>
       activeLines.includes(obj.tag)
@@ -260,8 +262,6 @@ class ChartComparison extends Component {
         endDateIso = endDate.toISOString().slice(0, 10)
       }
 
-      if (!Object.keys(gameLog[0].stat).includes(playerStat)) return []
-
       // Filter games based on date selection for sameSeason comparisons
       if (sameSeason) {
         orderedGameLog = orderedGameLog.filter(
@@ -273,22 +273,22 @@ class ChartComparison extends Component {
         return sameSeason
           ? orderedGameLog.map(game => {
               let x = Date.parse(game.date)
-              return { x, y: formatter(game.stat[playerStat]) || 0 }
+              return { x, y: formatter(game.stat[playerStat]) }
             })
           : orderedGameLog.map((game, i) => ({
               i,
-              y: formatter(game.stat[playerStat]) || 0,
+              y: formatter(game.stat[playerStat]),
             }))
       } else {
         if (statPercentage && percentAvg) {
           return sameSeason
             ? orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat]) || 0
+                total += formatter(game.stat[playerStat])
                 let x = Date.parse(game.date)
                 return { x, y: total / (i + 1) }
               })
             : orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat]) || 0
+                total += formatter(game.stat[playerStat])
                 return { i, y: total / (i + 1) }
               })
         } else {
