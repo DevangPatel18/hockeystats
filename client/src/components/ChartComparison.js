@@ -60,20 +60,20 @@ class ChartComparison extends Component {
   }
 
   async componentDidMount() {
-    const { selectedPlayers, data, yearStart, yearEnd } = this.props
+    const { selectedPlayers, data, yearStart, yearEnd, dataType } = this.props
     this._isMounted = true
     const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
     let isAggregate = false
     if (playerIds.length) {
       this.props.startLoad()
       await configure().then(async api => {
-        let playerGameLogs = await Promise.all(
+        let gameLogCollection = await Promise.all(
           playerIds.map(async playerArr => {
             const [playerId, seasonId] = playerArr
             if (seasonId) {
               return api
                 .get(
-                  `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}`
+                  `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
                 )
                 .then(res => res.data.reverse())
             } else {
@@ -94,7 +94,7 @@ class ChartComparison extends Component {
                 seasonIdArr.map(async seasonId =>
                   api
                     .get(
-                      `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}`
+                      `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
                     )
                     .then(res => res.data.reverse())
                 )
@@ -104,26 +104,21 @@ class ChartComparison extends Component {
         )
 
         if (isAggregate) {
-          playerGameLogs = playerGameLogs.map(singlePlayerLogs =>
+          gameLogCollection = gameLogCollection.map(singlePlayerLogs =>
             singlePlayerLogs.reduce((a, b) => a.concat(b))
           )
         }
 
-        let allStatOptions
-        let playerStat
-        if (data[0].playerPositionCode !== 'G') {
-          allStatOptions = skaterLogStats
-          playerStat = 'points'
-        } else {
-          allStatOptions = goalieLogStats
-          playerStat = 'saves'
-        }
+        let allStatOptions =
+          data[0].playerPositionCode !== 'G' ? skaterLogStats : goalieLogStats
 
         let statOptions = []
-        for (const playerLogs of playerGameLogs) {
-          for (const statKey in playerLogs[0].stat) {
-            if (!statOptions.includes(statKey)) {
-              statOptions.push(statKey)
+        for (const playerGameLogArr of gameLogCollection) {
+          for (const playerGameLog of playerGameLogArr) {
+            for (const statKey in playerGameLog.stat) {
+              if (!statOptions.includes(statKey)) {
+                statOptions.push(statKey)
+              }
             }
           }
         }
@@ -132,6 +127,8 @@ class ChartComparison extends Component {
           statOptions.includes(statObj.key)
         )
 
+        let playerStat = statOptions[0].key
+
         const playerData = selectedPlayers.map((tag, i) => {
           const tableData = data.find(
             playerObj => playerObj.playerId === parseInt(playerIds[i])
@@ -139,7 +136,7 @@ class ChartComparison extends Component {
           return {
             tag,
             tableData,
-            gameLog: playerGameLogs[i],
+            gameLog: gameLogCollection[i],
           }
         })
 
@@ -153,18 +150,22 @@ class ChartComparison extends Component {
           ? false
           : seasonIds.every(seasonId => seasonId === seasonIds[0])
 
-        const startDate = sameSeason
-          ? new Date(parseInt(seasonIds[0].slice(0, 4)), 9, 1)
-          : ''
+        let startDate = ''
+        let endDate = ''
+        if (sameSeason) {
+          let minDateArr = []
+          let maxDateArr = []
+          gameLogCollection.forEach(playerGameLogArr => {
+            minDateArr.push(playerGameLogArr[0].date)
+            maxDateArr.push(playerGameLogArr[playerGameLogArr.length - 1].date)
+          })
 
-        const presentDay = new Date()
-        const lastDay = new Date(parseInt(seasonIds[0].slice(4)), 3, 30)
+          const presentDay = new Date()
+          startDate = new Date(minDateArr.reduce((a, b) => (a < b ? a : b)))
+          endDate = new Date(maxDateArr.reduce((a, b) => (a > b ? a : b)))
 
-        const endDate = sameSeason
-          ? lastDay > presentDay
-            ? presentDay
-            : lastDay
-          : ''
+          endDate = endDate > presentDay ? presentDay : endDate
+        }
 
         if (this._isMounted) {
           this.setState(
@@ -240,11 +241,10 @@ class ChartComparison extends Component {
         </div>
       )
 
-    const statLabel = statOptions.find(obj => obj.key === playerStat).label
+    const statObj = statOptions.find(obj => obj.key === playerStat)
+    const statLabel = statObj.label
 
-    const formatter = statOptions.find(obj => obj.key === playerStat).format
-      ? statOptions.find(obj => obj.key === playerStat).format
-      : x => x
+    const formatter = statObj.format ? statObj.format : x => (x ? x : 0)
 
     const selectedPlayerData = playerData.filter(obj =>
       activeLines.includes(obj.tag)
@@ -266,8 +266,6 @@ class ChartComparison extends Component {
         endDateIso = endDate.toISOString().slice(0, 10)
       }
 
-      if (!Object.keys(gameLog[0].stat).includes(playerStat)) return []
-
       // Filter games based on date selection for sameSeason comparisons
       if (sameSeason) {
         orderedGameLog = orderedGameLog.filter(
@@ -279,22 +277,22 @@ class ChartComparison extends Component {
         return sameSeason
           ? orderedGameLog.map(game => {
               let x = Date.parse(game.date)
-              return { x, y: formatter(game.stat[playerStat]) || 0 }
+              return { x, y: formatter(game.stat[playerStat]) }
             })
           : orderedGameLog.map((game, i) => ({
               i,
-              y: formatter(game.stat[playerStat]) || 0,
+              y: formatter(game.stat[playerStat]),
             }))
       } else {
         if (statPercentage && percentAvg) {
           return sameSeason
             ? orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat]) || 0
+                total += formatter(game.stat[playerStat])
                 let x = Date.parse(game.date)
                 return { x, y: total / (i + 1) }
               })
             : orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat]) || 0
+                total += formatter(game.stat[playerStat])
                 return { i, y: total / (i + 1) }
               })
         } else {
@@ -371,12 +369,15 @@ class ChartComparison extends Component {
                   animateYearScrolling={false}
                   minDate={minDate}
                   maxDate={endDate}
-                  style={{ marginRight: '1rem' }}
+                  style={{
+                    display: sameSeason ? 'flex' : 'none',
+                    marginRight: '1rem',
+                  }}
                 />
               </div>
               <div
                 style={{
-                  display: sameSeason ? 'flex' : 'none',
+                  display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   alignItems: 'flex-end',
@@ -414,6 +415,7 @@ class ChartComparison extends Component {
                   animateYearScrolling={false}
                   minDate={startDate}
                   maxDate={maxDate}
+                  style={{ display: sameSeason ? 'flex' : 'none' }}
                 />
               </div>
             </div>

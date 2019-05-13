@@ -13,7 +13,7 @@ class PlayerComparison extends Component {
   }
   render() {
     const { value } = this.state
-    const { selectedPlayers, data, yearStart, yearEnd } = this.props
+    const { selectedPlayers, data, yearStart, yearEnd, dataType } = this.props
     return (
       <div>
         <AppBar position="static">
@@ -50,6 +50,7 @@ class PlayerComparison extends Component {
                 data={data}
                 yearStart={yearStart}
                 yearEnd={yearEnd}
+                dataType={dataType}
               />
             )}
           </>

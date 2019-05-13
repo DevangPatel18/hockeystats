@@ -24,8 +24,10 @@ class Dashboard extends Component {
     if (trackedPlayers.length) {
       await configure().then(async api => {
         const trackedPlayerData = await Promise.all(
-          trackedPlayers.map(playerId =>
-            api.get(`/api/statistics/players/${playerId}`).then(res => res.data)
+          trackedPlayers.map(obj =>
+            api
+              .get(`/api/statistics/players/${obj.playerId}`)
+              .then(res => ({ ...res.data, seasonId: obj.seasonId }))
           )
         )
         if (this._isMounted) {
@@ -64,8 +66,12 @@ class Dashboard extends Component {
   render() {
     const { trackedPlayerData } = this.state
     const { trackedPlayers } = this.props.stats
-    const filterTrackedPlayerData = trackedPlayerData.filter(
-      obj => trackedPlayers.indexOf(obj.id) !== -1
+    const filterTrackedPlayerData = trackedPlayerData.filter(dataObj =>
+      trackedPlayers.some(
+        listObj =>
+          listObj.playerId === dataObj.id &&
+          listObj.seasonId === dataObj.seasonId
+      )
     )
 
     return (

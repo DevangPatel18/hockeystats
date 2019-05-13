@@ -73,6 +73,7 @@ const StatsFilterPanel = props => {
     reportName,
     yearStart,
     yearEnd,
+    playoffs,
     playerPositionCode,
     filterTracked,
     teamFilter,
@@ -149,6 +150,15 @@ const StatsFilterPanel = props => {
             <option value="goaliesummary">Goaltenders</option>
           </NativeSelect>
         </FormControl>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={playoffs}
+              onChange={handleSwitchChange('playoffs')}
+            />
+          }
+          label={'Playoffs'}
+        />
         <FormControlLabel
           control={
             <Switch

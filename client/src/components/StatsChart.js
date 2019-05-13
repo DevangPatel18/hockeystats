@@ -77,7 +77,7 @@ const StatsChart = props => {
           name={`${playerData[i].tag}-line-name`}
           data={data}
           animate={{ duration: 2000, onLoad: { duration: 1000 } }}
-          interpolation="step"
+          interpolation="stepAfter"
           style={{
             data: {
               display: activeLines.includes(playerData[i].tag)

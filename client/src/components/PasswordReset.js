@@ -11,6 +11,8 @@ class PasswordReset extends Component {
       password: '',
       password2: '',
       errors: {},
+      serverResponse: false,
+      tokenStatus: '',
     }
   }
 
@@ -23,9 +25,11 @@ class PasswordReset extends Component {
     if (nextProps.auth.isAuthenticated) {
       navigate('/dashboard') // push user to dashboard when they access password reset page
     }
-    if (nextProps.errors) {
+    if (nextProps.errors || nextProps.auth.tokenStatus) {
       return {
         errors: nextProps.errors,
+        serverResponse: true,
+        tokenStatus: nextProps.auth.tokenStatus,
       }
     }
   }
@@ -46,10 +50,11 @@ class PasswordReset extends Component {
   }
 
   render() {
-    const { errors } = this.state
+    const { errors, serverResponse, tokenStatus } = this.state
 
-    if (errors.message)
-      return <span className="red-text">{errors.message}</span>
+    if (!serverResponse) return <div>Loading...</div>
+
+    if (!tokenStatus) return <span className="red-text">{errors.message}</span>
 
     return (
       <div>

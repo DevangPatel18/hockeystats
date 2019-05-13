@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link, navigate } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { sendResetEmail } from '../actions/authActions'
+import { sendResetEmail, clearErrors } from '../actions/authActions'
 
 class RequestReset extends Component {
   constructor() {
@@ -18,6 +18,7 @@ class RequestReset extends Component {
     if (this.props.auth.isAuthenticated) {
       navigate('/app/home')
     }
+    this.props.clearErrors()
   }
 
   static getDerivedStateFromProps(nextProps) {
@@ -115,6 +116,7 @@ const styles = {
 
 RequestReset.propTypes = {
   sendResetEmail: PropTypes.func.isRequired,
+  clearErrors: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
 }
@@ -126,5 +128,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { sendResetEmail }
+  { sendResetEmail, clearErrors }
 )(RequestReset)

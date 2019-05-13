@@ -7,6 +7,7 @@ import IconButton from '@material-ui/core/IconButton'
 import CloseIcon from '@material-ui/icons/Close'
 import { connect } from 'react-redux'
 import { removePlayerList } from '../actions/statActions'
+import { yearFormatter } from '../helper/columnLabels'
 
 const mobileWidth = '425px'
 const tabletWidth = '800px'
@@ -94,15 +95,19 @@ const RemovePlayerButton = styled.div`
 
 const PlayerProfiles = ({ players, auth, removePlayerList }) => {
   const profiles = players.map(playerObj => {
-    const currentSeasonData = playerObj.stats
+    const seasonData = playerObj.stats
       .find(obj => obj.type.displayName === 'yearByYear')
       .splits.find(
         obj =>
-          obj.season === '20182019' &&
+          obj.season === playerObj.seasonId.toString() &&
           obj.league.name === 'National Hockey League'
-      ).stat
+      )
 
-    const userData = { userId: auth.user.id, playerId: playerObj.id }
+    const userData = {
+      userId: auth.user.id,
+      playerId: playerObj.id,
+      seasonId: playerObj.seasonId,
+    }
 
     const bDay = new Date(playerObj.birthDate)
     let bDayStr = bDay.toLocaleDateString('en-US', {
@@ -112,10 +117,12 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
       timeZone: 'UTC',
     })
 
-    const logoUrl = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${playerObj.currentTeam.id}.svg`
+    const logoUrl = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${
+      seasonData.team.id
+    }.svg`
 
     return (
-      <ProfileContainer key={playerObj.id}>
+      <ProfileContainer key={`${playerObj.id}-${playerObj.seasonId}`}>
         <PlayerIdent logoUrl={logoUrl}>
           <ImageContainer>
             <img
@@ -134,10 +141,12 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
           </ImageContainer>
 
           <TextContainer>
-            <h2 style={{ marginBottom: '0.7rem' }}>{playerObj.fullName}</h2>
+            <h2 style={{ marginBottom: '0.7rem' }}>
+              {playerObj.fullName} ({yearFormatter(playerObj.seasonId)})
+            </h2>
             <PlayerBioList>
               <PlayerBioListItem>
-                Team: {playerObj.currentTeam.name} -{' '}
+                Team: {seasonData.team.name} -{' '}
                 {playerObj.primaryPosition.abbreviation}
               </PlayerBioListItem>
               <PlayerBioListItem>
@@ -154,7 +163,7 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
             </PlayerBioList>
           </TextContainer>
         </PlayerIdent>
-        <ProfileStatTable stats={currentSeasonData} />
+        <ProfileStatTable stats={seasonData.stat} />
         <RemovePlayerButton>
           <IconButton
             children={<CloseIcon fontSize="small" />}

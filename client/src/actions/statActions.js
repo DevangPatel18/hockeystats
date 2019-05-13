@@ -28,43 +28,41 @@ export const getPlayerList = userId => dispatch => {
 }
 
 export const addPlayerList = userData => dispatch => {
-  const { userId, playerId } = userData
+  const { userId, playerId, seasonId } = userData
 
   if (userId) {
-    API.put(`/api/playerList/${userId}/${playerId}`)
+    API.put(`/api/playerList/${userId}/${playerId}/${seasonId}`)
       .then(() => {
-        dispatch({ type: ADD_PLAYER, payload: playerId })
+        dispatch({ type: ADD_PLAYER, payload: { playerId, seasonId } })
       })
       .catch(err => {
         console.log(err)
       })
   } else {
-    dispatch({ type: ADD_PLAYER, payload: playerId })
+    dispatch({ type: ADD_PLAYER, payload: { playerId, seasonId } })
   }
 }
 
 export const removePlayerList = userData => dispatch => {
-  const { userId, playerId } = userData
+  const { userId, playerId, seasonId } = userData
 
   if (userId) {
-    API.delete(`/api/playerList/${userId}/${playerId}`)
+    API.delete(`/api/playerList/${userId}/${playerId}/${seasonId}`)
       .then(() => {
-        dispatch({ type: REMOVE_PLAYER, payload: playerId })
+        dispatch({ type: REMOVE_PLAYER, payload: { playerId, seasonId } })
       })
       .catch(err => {
         console.log(err)
       })
   } else {
-    dispatch({ type: REMOVE_PLAYER, payload: playerId })
+    dispatch({ type: REMOVE_PLAYER, payload: { playerId, seasonId } })
   }
 }
 
 export const startLoad = event => dispatch => {
-  console.log('start loading from dfunction')
   dispatch({ type: DATA_LOADING })
 }
 
 export const stopLoad = event => dispatch => {
-  console.log('stop loading from dfunction')
   dispatch({ type: DATA_LOADED })
 }

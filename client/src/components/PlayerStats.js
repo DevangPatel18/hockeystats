@@ -44,6 +44,8 @@ class PlayerStats extends Component {
       reportName: 'skatersummary',
       yearStart: '20182019',
       yearEnd: '20182019',
+      playoffs: false,
+      dataType: '',
       teamFilter: 'all',
       teams: '',
       countryFilter: 'all',
@@ -170,13 +172,13 @@ class PlayerStats extends Component {
       e.preventDefault()
     }
 
-    const { isAggregate, reportName, yearStart, yearEnd } = this.state
+    const { isAggregate, reportName, yearStart, yearEnd, playoffs } = this.state
 
     this.props.startLoad()
     configure().then(async api => {
       const stats = await api
         .get(
-          `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}`
+          `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}/${playoffs}`
         )
         .then(res => res.data)
         .catch(err => {
@@ -186,8 +188,6 @@ class PlayerStats extends Component {
       this.props.stopLoad()
 
       if (!stats) return
-
-      console.log(`Received data from ${yearStart} to ${yearEnd} seasons`)
 
       const teams = !isAggregate
         ? stats
@@ -219,6 +219,7 @@ class PlayerStats extends Component {
           selectedPlayers: [],
           teamFilter: 'all',
           countryFilter: 'all',
+          dataType: playoffs ? 'playoffs' : 'regular',
         })
       }
     })
@@ -226,19 +227,20 @@ class PlayerStats extends Component {
 
   updateTrackedPlayers(playerId, seasonId) {
     const { trackedPlayers } = this.props.stats
-    const index = trackedPlayers.indexOf(playerId)
+    const index = trackedPlayers.findIndex(
+      obj => obj.playerId === playerId && obj.seasonId === seasonId
+    )
 
     const dispatchArgs = {
       userId: this.props.auth.user.id,
       playerId,
+      seasonId,
     }
 
-    if (seasonId === 20182019) {
-      if (index === -1) {
-        this.props.addPlayerList(dispatchArgs)
-      } else {
-        this.props.removePlayerList(dispatchArgs)
-      }
+    if (index === -1) {
+      this.props.addPlayerList(dispatchArgs)
+    } else {
+      this.props.removePlayerList(dispatchArgs)
     }
   }
 
@@ -258,6 +260,7 @@ class PlayerStats extends Component {
       yearStart,
       yearEnd,
       search,
+      dataType,
     } = this.state
     const { dataLoad, trackedPlayers } = this.props.stats
 
@@ -266,7 +269,13 @@ class PlayerStats extends Component {
       ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
       : stats
     dataDisplay = filterTracked
-      ? dataDisplay.filter(obj => trackedPlayers.includes(obj.playerId))
+      ? dataDisplay.filter(obj =>
+          trackedPlayers.some(
+            listObj =>
+              listObj.playerId === obj.playerId &&
+              listObj.seasonId === obj.seasonId
+          )
+        )
       : dataDisplay
     dataDisplay =
       teamFilter !== 'all'
@@ -286,8 +295,6 @@ class PlayerStats extends Component {
           )
         : dataDisplay
 
-    console.log('selectedPlayers:', selectedPlayers)
-    console.log('trackedPlayers:', trackedPlayers)
     return (
       <div>
         <h1>Player Statistics</h1>
@@ -383,6 +390,7 @@ class PlayerStats extends Component {
             data={dataDisplay}
             yearStart={yearStart}
             yearEnd={yearEnd}
+            dataType={dataType}
           />
         </Dialog>
       </div>

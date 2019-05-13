@@ -10,23 +10,7 @@ import {
 import { ProfileSkateCol, ProfileGoalieCol } from '../helper/columnLabels'
 
 const ProfileStatTable = ({ stats }) => {
-  let keyCols, playerData
-  if (stats.wins) {
-    keyCols = ProfileGoalieCol
-    playerData = {
-      ...stats,
-      powerPlaySavePercentage: (stats.powerPlaySavePercentage / 100).toFixed(3),
-      shortHandedSavePercentage: (
-        stats.shortHandedSavePercentage / 100
-      ).toFixed(3),
-      evenStrengthSavePercentage: (
-        stats.evenStrengthSavePercentage / 100
-      ).toFixed(3),
-    }
-  } else {
-    keyCols = ProfileSkateCol
-    playerData = stats
-  }
+  const keyCols = stats.wins ? ProfileGoalieCol : ProfileSkateCol
   return (
     <Paper
       style={{
@@ -53,7 +37,7 @@ const ProfileStatTable = ({ stats }) => {
           <TableRow style={{ height: 'auto' }}>
             {keyCols.map(obj => (
               <TableCell align="center" key={obj.key}>
-                {playerData[obj.key]}
+                {obj.format ? obj.format(stats[obj.key]) : stats[obj.key]}
               </TableCell>
             ))}
           </TableRow>
