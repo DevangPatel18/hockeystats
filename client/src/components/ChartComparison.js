@@ -150,18 +150,22 @@ class ChartComparison extends Component {
           ? false
           : seasonIds.every(seasonId => seasonId === seasonIds[0])
 
-        const startDate = sameSeason
-          ? new Date(parseInt(seasonIds[0].slice(0, 4)), 9, 1)
-          : ''
+        let startDate = ''
+        let endDate = ''
+        if (sameSeason) {
+          let minDateArr = []
+          let maxDateArr = []
+          gameLogCollection.forEach(playerGameLogArr => {
+            minDateArr.push(playerGameLogArr[0].date)
+            maxDateArr.push(playerGameLogArr[playerGameLogArr.length - 1].date)
+          })
 
-        const presentDay = new Date()
-        const lastDay = new Date(parseInt(seasonIds[0].slice(4)), 5, 30)
+          const presentDay = new Date()
+          startDate = new Date(minDateArr.reduce((a, b) => (a < b ? a : b)))
+          endDate = new Date(maxDateArr.reduce((a, b) => (a > b ? a : b)))
 
-        const endDate = sameSeason
-          ? lastDay > presentDay
-            ? presentDay
-            : lastDay
-          : ''
+          endDate = endDate > presentDay ? presentDay : endDate
+        }
 
         if (this._isMounted) {
           this.setState(
