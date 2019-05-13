@@ -60,11 +60,9 @@ export const removePlayerList = userData => dispatch => {
 }
 
 export const startLoad = event => dispatch => {
-  console.log('start loading from dfunction')
   dispatch({ type: DATA_LOADING })
 }
 
 export const stopLoad = event => dispatch => {
-  console.log('stop loading from dfunction')
   dispatch({ type: DATA_LOADED })
 }

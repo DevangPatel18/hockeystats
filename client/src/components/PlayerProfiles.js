@@ -117,7 +117,6 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
       timeZone: 'UTC',
     })
 
-    console.log(playerObj)
     const logoUrl = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${
       seasonData.team.id
     }.svg`

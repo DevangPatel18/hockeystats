@@ -7,7 +7,6 @@ import { Button } from '@material-ui/core/'
 const Home = props => {
   const { auth } = props
   const { email, name } = auth.user
-  console.log(auth.user)
   return (
     <div>
       <h1>Profile Details</h1>

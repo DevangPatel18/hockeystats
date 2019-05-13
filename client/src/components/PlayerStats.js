@@ -189,8 +189,6 @@ class PlayerStats extends Component {
 
       if (!stats) return
 
-      console.log(`Received data from ${yearStart} to ${yearEnd} seasons`)
-
       const teams = !isAggregate
         ? stats
             .reduce((acc, playerObj) => {
@@ -297,8 +295,6 @@ class PlayerStats extends Component {
           )
         : dataDisplay
 
-    console.log('selectedPlayers:', selectedPlayers)
-    console.log('trackedPlayers:', trackedPlayers)
     return (
       <div>
         <h1>Player Statistics</h1>
