@@ -59,8 +59,8 @@ export const bioCol = [
 ]
 
 export const draftCol = [
-  { title: 'Draft #', id: 'playerDraftOverallPickNo' },
-  { title: 'Draft Round', id: 'playerDraftRoundNo' },
+  { title: 'Draft #', id: 'playerDraftOverallPickNo', sortReverse: true },
+  { title: 'Draft Round', id: 'playerDraftRoundNo', sortReverse: true },
   { title: 'Draft Year', id: 'playerDraftYear' },
 ]
 
@@ -168,5 +168,9 @@ export const ProfileGoalieCol = [
   { key: 'shortHandedSavePercentage', label: 'SHSv%', format: svPercentFormat },
   { key: 'evenShots', label: 'ESSA' },
   { key: 'evenSaves', label: 'ESS' },
-  { key: 'evenStrengthSavePercentage', label: 'ESSv%', format: svPercentFormat },
+  {
+    key: 'evenStrengthSavePercentage',
+    label: 'ESSv%',
+    format: svPercentFormat,
+  },
 ]

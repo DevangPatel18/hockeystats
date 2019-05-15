@@ -64,7 +64,10 @@ const TableComparison = ({ selectedPlayers, data }) => {
               minArray.push(i)
             }
           })
-          minMax[attr.id] = { max: maxArray, min: minArray }
+
+          minMax[attr.id] = attr.sortReverse
+            ? { max: minArray, min: maxArray }
+            : { max: maxArray, min: minArray }
         }
       }
     })
