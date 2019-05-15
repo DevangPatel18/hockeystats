@@ -1,6 +1,7 @@
 export const seasonCol = [
   { title: 'Season', id: 'seasonId' },
   { title: 'Track', id: 'track' }, // For adding current season players to dashboard
+  { title: 'Logs', id: 'gameLogs' },
   { title: 'Team', id: 'playerTeamsPlayedFor' },
 ]
 

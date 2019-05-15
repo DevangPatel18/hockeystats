@@ -2,12 +2,13 @@ import React from 'react'
 import {
   TableHead,
   Checkbox,
+  IconButton,
   TableBody,
   TableCell,
   TableRow,
   TableSortLabel,
 } from '@material-ui/core'
-import { Star, StarBorder } from '@material-ui/icons'
+import { Star, StarBorder, TableChart } from '@material-ui/icons'
 import { amber, grey } from '@material-ui/core/colors'
 import { withStyles } from '@material-ui/core/styles'
 import {
@@ -176,10 +177,21 @@ const TableData = props => {
                       }}
                     />
                   </TableCell>
+                  <TableCell align="center">
+                    <IconButton
+                      children={<TableChart />}
+                      classes={{ root: classes.root }}
+                      onClick={() => {
+                        console.log('table chart clicked')
+                      }}
+                    />
+                  </TableCell>
                 </>
               )}
               {columns
-                .filter(obj => !['seasonId', 'track'].includes(obj.id))
+                .filter(
+                  obj => !['seasonId', 'track', 'gameLogs'].includes(obj.id)
+                )
                 .map(col => (
                   <TableCell
                     key={`${row.playerId}-${col.title}`}
