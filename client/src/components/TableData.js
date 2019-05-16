@@ -45,6 +45,7 @@ const TableData = props => {
     updateTrackedPlayers,
     classes,
     handleRequestSort,
+    handlePlayerLogModal,
   } = props
 
   const aggregateTable = !(dataDisplay[0]
@@ -181,9 +182,7 @@ const TableData = props => {
                     <IconButton
                       children={<TableChart />}
                       classes={{ root: classes.root }}
-                      onClick={() => {
-                        console.log('table chart clicked')
-                      }}
+                      onClick={event => handlePlayerLogModal(event, row)}
                     />
                   </TableCell>
                 </>

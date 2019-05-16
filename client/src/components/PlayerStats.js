@@ -57,6 +57,8 @@ class PlayerStats extends Component {
       page: 0,
       rowsPerPage: 10,
       modal: false,
+      playerLogModal: false,
+      playerLogData: {},
     }
 
     this._isMounted = false
@@ -159,12 +161,12 @@ class PlayerStats extends Component {
     this.setState({ order, orderBy })
   }
 
-  handleModalOpen = () => {
-    this.setState({ modal: true })
+  handleModalOpen = modal => {
+    this.setState({ [modal]: true })
   }
 
-  handleModalClose = () => {
-    this.setState({ modal: false })
+  handleModalClose = modal => {
+    this.setState({ [modal]: false })
   }
 
   submitQuery = e => {
@@ -261,6 +263,7 @@ class PlayerStats extends Component {
       yearEnd,
       search,
       dataType,
+      playerLogData,
     } = this.state
     const { dataLoad, trackedPlayers } = this.props.stats
 
@@ -305,7 +308,7 @@ class PlayerStats extends Component {
           handleSwitchChange={this.handleSwitchChange}
           handleSeasonChange={this.handleSeasonChange}
           submitQuery={this.submitQuery}
-          handleModalOpen={this.handleModalOpen}
+          handleModalOpen={() => this.handleModalOpen('modal')}
         />
         <PlayerTags
           selectedPlayers={selectedPlayers}
@@ -347,6 +350,10 @@ class PlayerStats extends Component {
               handleRequestSort={(event, property) =>
                 this.handleRequestSort(event, property)
               }
+              handlePlayerLogModal={(event, row) => {
+                event.stopPropagation()
+                this.setState({ playerLogData: row, playerLogModal: true })
+              }}
             />
             <TableFooter>
               <TableRow>
@@ -380,18 +387,33 @@ class PlayerStats extends Component {
         <Dialog
           fullScreen
           open={this.state.modal}
-          onClose={this.handleModalClose}
           scroll="paper"
           TransitionComponent={Transition}
         >
           <PlayerComparison
-            onClose={this.handleModalClose}
+            onClose={() => this.handleModalClose('modal')}
             selectedPlayers={selectedPlayers}
             data={dataDisplay}
             yearStart={yearStart}
             yearEnd={yearEnd}
             dataType={dataType}
           />
+        </Dialog>
+        <Dialog
+          fullScreen
+          open={this.state.playerLogModal}
+          scroll="paper"
+          TransitionComponent={Transition}
+        >
+          <Button
+            onClick={() => this.handleModalClose('playerLogModal')}
+            color="primary"
+            variant="contained"
+            children={'Close'}
+          />
+          <h1>
+            {playerLogData.playerName} - ({playerLogData.seasonId})
+          </h1>
         </Dialog>
       </div>
     )
