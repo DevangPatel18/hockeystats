@@ -83,4 +83,28 @@ router.get(
   }
 );
 
+// Retrieve team schedule for given timeframe
+router.get(
+  '/team/:teamId/startDate/:startDate/endDate/:endDate',
+  async (req, res, next) => {
+    try {
+      const { teamId, startDate, endDate } = req.params;
+
+      const teamSchedule = await axios
+        .get(`https://statsapi.web.nhl.com/api/v1/schedule`, {
+          params: {
+            teamId,
+            startDate,
+            endDate,
+          },
+        })
+        .then(res => res.data);
+
+      return res.status(200).json(teamSchedule);
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
 module.exports = router;
