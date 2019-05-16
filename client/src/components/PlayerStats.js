@@ -26,6 +26,7 @@ import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
 import PlayerComparison from './PlayerComparison'
 import PlayerTags from './PlayerTags'
+import PlayerGameLog from './PlayerGameLog'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -405,15 +406,10 @@ class PlayerStats extends Component {
           scroll="paper"
           TransitionComponent={Transition}
         >
-          <Button
-            onClick={() => this.handleModalClose('playerLogModal')}
-            color="primary"
-            variant="contained"
-            children={'Close'}
+          <PlayerGameLog
+            onClose={() => this.handleModalClose('playerLogModal')}
+            playerObj={playerLogData}
           />
-          <h1>
-            {playerLogData.playerName} - ({playerLogData.seasonId})
-          </h1>
         </Dialog>
       </div>
     )
