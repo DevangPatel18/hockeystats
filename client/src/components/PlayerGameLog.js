@@ -9,6 +9,7 @@ class PlayerGameLog extends Component {
     super(props)
     this.state = {
       playerGameLogData: [],
+      teamSchedule: [],
     }
 
     this._isMounted = false
@@ -25,7 +26,52 @@ class PlayerGameLog extends Component {
         )
         .then(res => res.data.reverse())
 
-      this.setState({ playerGameLogData })
+      let tempInterval = {
+        teamId: playerGameLogData[0].team.id,
+        startDate: playerGameLogData[0].season.slice(0, 4) + '-09-20',
+      }
+
+      const teamIntervals = playerGameLogData.reduce((acc, gameLog, i) => {
+        if (gameLog.team.id !== tempInterval.teamId) {
+          tempInterval.endDate = playerGameLogData[i - 1].date
+          acc.push(tempInterval)
+          tempInterval = {
+            teamId: gameLog.team.id,
+            startDate: gameLog.date,
+          }
+        }
+        return acc
+      }, [])
+
+      tempInterval.endDate = playerGameLogData[0].season.slice(4) + '-04-20'
+
+      teamIntervals.push(tempInterval)
+
+      let teamSchedule = await Promise.all(
+        teamIntervals.map(async intervalParams => {
+          const { teamId, startDate, endDate } = intervalParams
+          return api
+            .get(
+              `/api/statistics/team/${teamId}/startDate/${startDate}/endDate/${endDate}`
+            )
+            .then(res =>
+              res.data.dates
+                .filter(gameSchedule => gameSchedule.games[0].gameType === 'R')
+                .map(gameSchedule => ({
+                  date: gameSchedule.date,
+                  home: gameSchedule.games[0].teams.home,
+                  away: gameSchedule.games[0].teams.away,
+                }))
+            )
+        })
+      )
+
+      teamSchedule = teamSchedule.reduce(
+        (acc, schedule) => acc.concat(...schedule),
+        []
+      )
+
+      this.setState({ playerGameLogData, teamSchedule })
     })
   }
 
@@ -35,9 +81,7 @@ class PlayerGameLog extends Component {
 
   render() {
     const { onClose, playerObj } = this.props
-    const { playerGameLogData } = this.state
-
-    console.log(playerGameLogData)
+    const { playerGameLogData, teamSchedule } = this.state
 
     return (
       <div>
