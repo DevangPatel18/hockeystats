@@ -8,8 +8,7 @@ class PlayerGameLog extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      playerGameLogData: [],
-      teamSchedule: [],
+      tableData: [],
     }
 
     this._isMounted = false
@@ -47,7 +46,7 @@ class PlayerGameLog extends Component {
 
       teamIntervals.push(tempInterval)
 
-      let teamSchedule = await Promise.all(
+      let tableData = await Promise.all(
         teamIntervals.map(async intervalParams => {
           const { teamId, startDate, endDate } = intervalParams
           return api
@@ -66,12 +65,19 @@ class PlayerGameLog extends Component {
         })
       )
 
-      teamSchedule = teamSchedule.reduce(
+      tableData = tableData.reduce(
         (acc, schedule) => acc.concat(...schedule),
         []
       )
 
-      this.setState({ playerGameLogData, teamSchedule })
+      let temp
+
+      playerGameLogData.forEach((gameLog, i) => {
+        temp = tableData.find(game => game.date === gameLog.date)
+        temp.playerData = { ...gameLog, game: i + 1 }
+      })
+
+      this.setState({ tableData })
     })
   }
 
@@ -81,7 +87,7 @@ class PlayerGameLog extends Component {
 
   render() {
     const { onClose, playerObj } = this.props
-    const { playerGameLogData, teamSchedule } = this.state
+    const { tableData } = this.state
 
     return (
       <div>
