@@ -145,7 +145,7 @@ export const ProfileSkateCol = [
   { key: 'hits', label: 'Hits' },
 ]
 
-const svPercentFormat = val => (val / 100).toFixed(3)
+const svPercentFormat = val => (val ? (val / 100).toFixed(3) : '')
 
 export const ProfileGoalieCol = [
   { key: 'games', label: 'GP' },
@@ -156,7 +156,7 @@ export const ProfileGoalieCol = [
   { key: 'ot', label: 'OT' },
   { key: 'shotsAgainst', label: 'SA' },
   { key: 'saves', label: 'S' },
-  { key: 'savePercentage', label: 'Sv%' },
+  { key: 'savePercentage', label: 'Sv%', format: val => val.toFixed(3) },
   { key: 'goalsAgainst', label: 'GA' },
   { key: 'goalAgainstAverage', label: 'GAA' },
   { key: 'shutouts', label: 'SO' },

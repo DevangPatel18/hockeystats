@@ -1,8 +1,37 @@
 import React, { Component } from 'react'
-import { AppBar, IconButton, Toolbar } from '@material-ui/core/'
+import {
+  AppBar,
+  IconButton,
+  Toolbar,
+  CircularProgress,
+  Table,
+  TableHead,
+  TableBody,
+  TableCell,
+  TableRow,
+} from '@material-ui/core/'
 import CloseIcon from '@material-ui/icons/Close'
 import configure from '../utils/configLocalforage'
-import { yearFormatter } from '../helper/columnLabels'
+import {
+  yearFormatter,
+  ProfileSkateCol,
+  ProfileGoalieCol,
+} from '../helper/columnLabels'
+
+const tableHeaders = ['Game', 'Date', 'Home', 'HG', 'AG', 'Away']
+
+const headerStyle = {
+  background: '#C0C0C0',
+  fontWeight: '800',
+  padding: '0 5px',
+}
+
+const tableCellStyle = {
+  fontSize: '0.65rem',
+  padding: '0 5px',
+  borderBottom: '1px solid black',
+  borderRight: '1px solid black',
+}
 
 class PlayerGameLog extends Component {
   constructor(props) {
@@ -77,7 +106,18 @@ class PlayerGameLog extends Component {
         temp.playerData = { ...gameLog, game: i + 1 }
       })
 
-      this.setState({ tableData })
+      let playerCols =
+        playerObj.playerPositionCode !== 'G'
+          ? ProfileSkateCol
+          : ProfileGoalieCol
+      playerCols = playerCols.filter(
+        obj =>
+          !['games', 'wins', 'losses', 'ties', 'goalAgainstAverage'].includes(
+            obj.key
+          )
+      )
+
+      this.setState({ tableData, playerCols })
     })
   }
 
@@ -87,7 +127,7 @@ class PlayerGameLog extends Component {
 
   render() {
     const { onClose, playerObj } = this.props
-    const { tableData } = this.state
+    const { tableData, playerCols } = this.state
 
     return (
       <div>
@@ -106,6 +146,116 @@ class PlayerGameLog extends Component {
             </div>
           </Toolbar>
         </AppBar>
+
+        <div
+          style={{
+            overflow: 'auto',
+            height: 'calc(100vh - 65px - 2rem)',
+            margin: '1rem',
+            border: tableData.length ? '1px solid' : '',
+            textAlign: 'center',
+          }}
+        >
+          {tableData.length ? (
+            <Table padding="none" style={{ margin: '0' }}>
+              <TableHead>
+                <TableRow style={{ height: 'auto' }}>
+                  <TableCell
+                    style={{
+                      ...headerStyle,
+                      ...tableCellStyle,
+                      paddingLeft: '0.5rem',
+                    }}
+                  >
+                    Rank
+                  </TableCell>
+                  {tableHeaders.map(colHeader => (
+                    <TableCell
+                      key={colHeader}
+                      align="center"
+                      style={{ ...headerStyle, ...tableCellStyle }}
+                    >
+                      {colHeader}
+                    </TableCell>
+                  ))}
+                  {playerCols.map(statCol => (
+                    <TableCell
+                      key={`${statCol.label}-header`}
+                      align="center"
+                      style={{ ...headerStyle, ...tableCellStyle }}
+                    >
+                      {statCol.label}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {tableData.map((game, i) => (
+                  <TableRow
+                    key={`game-${i + 1}`}
+                    style={{ height: 'auto' }}
+                    hover={true}
+                  >
+                    <TableCell
+                      align="center"
+                      style={{ ...tableCellStyle, paddingLeft: '0.5rem' }}
+                    >
+                      {i + 1}
+                    </TableCell>
+                    <TableCell align="center" style={tableCellStyle}>
+                      {game.playerData ? game.playerData.game : ''}
+                    </TableCell>
+                    <TableCell
+                      style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
+                    >
+                      {game.date}
+                    </TableCell>
+                    <TableCell
+                      style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
+                    >
+                      {game.home.team.name}
+                    </TableCell>
+                    <TableCell align="center" style={tableCellStyle}>
+                      {game.home.score}
+                    </TableCell>
+                    <TableCell align="center" style={tableCellStyle}>
+                      {game.away.score}
+                    </TableCell>
+                    <TableCell
+                      align="right"
+                      style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
+                    >
+                      {game.away.team.name}
+                    </TableCell>
+                    {game.playerData ? (
+                      playerCols.map(statCol => (
+                        <TableCell
+                          align="center"
+                          key={`${statCol.label}-g${game.playerData.game}`}
+                          style={tableCellStyle}
+                        >
+                          {statCol.format
+                            ? statCol.format(game.playerData.stat[statCol.key])
+                            : game.playerData.stat[statCol.key]}
+                        </TableCell>
+                      ))
+                    ) : (
+                      <TableCell
+                        colSpan={playerCols.length}
+                        align="center"
+                        style={tableCellStyle}
+                      >
+                        INACTIVE
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <CircularProgress />
+          )}
+        </div>
       </div>
     )
   }
