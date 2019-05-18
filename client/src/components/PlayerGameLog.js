@@ -17,6 +17,7 @@ import {
   ProfileSkateCol,
   ProfileGoalieCol,
 } from '../helper/columnLabels'
+import { teamCodes } from '../helper/teamCodes'
 
 const tableHeaders = ['Game', 'Date', 'Home', 'HG', 'AG', 'Away']
 
@@ -213,7 +214,7 @@ class PlayerGameLog extends Component {
                     <TableCell
                       style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
                     >
-                      {game.home.team.name}
+                      {teamCodes[game.home.team.id]}
                     </TableCell>
                     <TableCell align="center" style={tableCellStyle}>
                       {game.home.score}
@@ -225,7 +226,7 @@ class PlayerGameLog extends Component {
                       align="right"
                       style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
                     >
-                      {game.away.team.name}
+                      {teamCodes[game.away.team.id]}
                     </TableCell>
                     {game.playerData ? (
                       playerCols.map(statCol => (
