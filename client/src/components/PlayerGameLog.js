@@ -19,7 +19,7 @@ import {
 } from '../helper/columnLabels'
 import { teamCodes } from '../helper/teamCodes'
 
-const tableHeaders = ['Game', 'Date', 'Home', 'HG', 'AG', 'Away']
+const tableHeaders = ['Game', 'Date', 'Team', 'TG', '-', 'OG', 'Opp', 'Diff']
 
 const headerStyle = {
   background: '#C0C0C0',
@@ -76,7 +76,7 @@ class PlayerGameLog extends Component {
 
       teamIntervals.push(tempInterval)
 
-      let tableData = await Promise.all(
+      let teamSchedule = await Promise.all(
         teamIntervals.map(async intervalParams => {
           const { teamId, startDate, endDate } = intervalParams
           return api
@@ -95,7 +95,7 @@ class PlayerGameLog extends Component {
         })
       )
 
-      tableData = tableData.reduce(
+      teamSchedule = teamSchedule.reduce(
         (acc, schedule) => acc.concat(...schedule),
         []
       )
@@ -103,7 +103,7 @@ class PlayerGameLog extends Component {
       let temp
 
       playerGameLogData.forEach((gameLog, i) => {
-        temp = tableData.find(game => game.date === gameLog.date)
+        temp = teamSchedule.find(game => game.date === gameLog.date)
         temp.playerData = { ...gameLog, game: i + 1 }
       })
 
@@ -117,6 +117,49 @@ class PlayerGameLog extends Component {
             obj.key
           )
       )
+
+      let date
+      let team
+      let opponent
+      let teamScore
+      let opponentScore
+      let isHome
+      let diff
+      let intervalIdx
+
+      let tableData = teamSchedule.map(game => {
+        date = game.date
+        if (game.playerData) {
+          isHome = game.home.team.id === team
+          team = game.playerData.team.id
+          opponent = game.playerData.opponent.id
+        } else {
+          intervalIdx = teamIntervals.findIndex(
+            interval => date >= interval.startDate && date <= interval.endDate
+          )
+          team = teamIntervals[intervalIdx].teamId
+          isHome = team === game.home.team.id
+          opponent = isHome ? game.away.team.id : game.home.team.id
+        }
+        if (isHome) {
+          teamScore = game.home.score
+          opponentScore = game.away.score
+        } else {
+          teamScore = game.away.score
+          opponentScore = game.home.score
+        }
+        diff = teamScore - opponentScore
+        return {
+          date,
+          team,
+          teamScore,
+          opponent,
+          opponentScore,
+          isHome,
+          diff,
+          playerData: game.playerData,
+        }
+      })
 
       this.setState({ tableData, playerCols })
     })
@@ -214,19 +257,25 @@ class PlayerGameLog extends Component {
                     <TableCell
                       style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
                     >
-                      {teamCodes[game.home.team.id]}
+                      {teamCodes[game.team]}
                     </TableCell>
                     <TableCell align="center" style={tableCellStyle}>
-                      {game.home.score}
+                      {game.teamScore}
                     </TableCell>
                     <TableCell align="center" style={tableCellStyle}>
-                      {game.away.score}
+                      {game.isHome ? '' : '@'}
+                    </TableCell>
+                    <TableCell align="center" style={tableCellStyle}>
+                      {game.opponentScore}
                     </TableCell>
                     <TableCell
                       align="right"
                       style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
                     >
-                      {teamCodes[game.away.team.id]}
+                      {teamCodes[game.opponent]}
+                    </TableCell>
+                    <TableCell align="center" style={tableCellStyle}>
+                      {game.diff}
                     </TableCell>
                     {game.playerData ? (
                       playerCols.map(statCol => (
