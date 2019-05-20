@@ -25,6 +25,7 @@ const headerStyle = {
   background: '#C0C0C0',
   fontWeight: '800',
   padding: '0 5px',
+  color: 'rgba(0,0,0,0.54)',
 }
 
 const tableCellStyle = {
@@ -33,6 +34,38 @@ const tableCellStyle = {
   borderBottom: '1px solid #D0D0D0',
   borderRight: '1px solid #D0D0D0',
 }
+
+const tableRowHeader = (index, playerCols) => (
+  <TableRow style={{ height: 'auto' }}>
+    <TableCell
+      style={{
+        ...headerStyle,
+        ...tableCellStyle,
+        paddingLeft: '0.5rem',
+      }}
+    >
+      Rank
+    </TableCell>
+    {tableHeaders.map(colHeader => (
+      <TableCell
+        key={`${colHeader}-${index}`}
+        align="center"
+        style={{ ...headerStyle, ...tableCellStyle }}
+      >
+        {colHeader}
+      </TableCell>
+    ))}
+    {playerCols.map(statCol => (
+      <TableCell
+        key={`${statCol.label}-header-${index}`}
+        align="center"
+        style={{ ...headerStyle, ...tableCellStyle }}
+      >
+        {statCol.label}
+      </TableCell>
+    ))}
+  </TableRow>
+)
 
 class PlayerGameLog extends Component {
   constructor(props) {
@@ -202,103 +235,78 @@ class PlayerGameLog extends Component {
         >
           {tableData.length ? (
             <Table padding="none" style={{ margin: '0' }}>
-              <TableHead>
-                <TableRow style={{ height: 'auto' }}>
-                  <TableCell
-                    style={{
-                      ...headerStyle,
-                      ...tableCellStyle,
-                      paddingLeft: '0.5rem',
-                    }}
-                  >
-                    Rank
-                  </TableCell>
-                  {tableHeaders.map(colHeader => (
-                    <TableCell
-                      key={colHeader}
-                      align="center"
-                      style={{ ...headerStyle, ...tableCellStyle }}
-                    >
-                      {colHeader}
-                    </TableCell>
-                  ))}
-                  {playerCols.map(statCol => (
-                    <TableCell
-                      key={`${statCol.label}-header`}
-                      align="center"
-                      style={{ ...headerStyle, ...tableCellStyle }}
-                    >
-                      {statCol.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
+              <TableHead>{tableRowHeader('header', playerCols)}</TableHead>
               <TableBody>
                 {tableData.map((game, i) => (
-                  <TableRow
-                    key={`game-${i + 1}`}
-                    style={{ height: 'auto' }}
-                    hover={true}
-                  >
-                    <TableCell
-                      align="center"
-                      style={{ ...tableCellStyle, paddingLeft: '0.5rem' }}
+                  <>
+                    {i > 0 && i % 25 === 0 && tableRowHeader(i, playerCols)}
+                    <TableRow
+                      key={`game-${i + 1}`}
+                      style={{ height: 'auto' }}
+                      hover={true}
                     >
-                      {i + 1}
-                    </TableCell>
-                    <TableCell align="center" style={tableCellStyle}>
-                      {game.playerData ? game.playerData.game : ''}
-                    </TableCell>
-                    <TableCell
-                      style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
-                    >
-                      {game.date}
-                    </TableCell>
-                    <TableCell
-                      style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
-                    >
-                      {teamCodes[game.team]}
-                    </TableCell>
-                    <TableCell align="center" style={tableCellStyle}>
-                      {game.teamScore}
-                    </TableCell>
-                    <TableCell align="center" style={tableCellStyle}>
-                      {game.isHome ? '' : '@'}
-                    </TableCell>
-                    <TableCell align="center" style={tableCellStyle}>
-                      {game.opponentScore}
-                    </TableCell>
-                    <TableCell
-                      align="right"
-                      style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
-                    >
-                      {teamCodes[game.opponent]}
-                    </TableCell>
-                    <TableCell align="center" style={tableCellStyle}>
-                      {game.diff}
-                    </TableCell>
-                    {game.playerData ? (
-                      playerCols.map(statCol => (
+                      <TableCell
+                        align="center"
+                        style={{ ...tableCellStyle, paddingLeft: '0.5rem' }}
+                      >
+                        {i + 1}
+                      </TableCell>
+                      <TableCell align="center" style={tableCellStyle}>
+                        {game.playerData ? game.playerData.game : ''}
+                      </TableCell>
+                      <TableCell
+                        style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
+                      >
+                        {game.date}
+                      </TableCell>
+                      <TableCell
+                        style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
+                      >
+                        {teamCodes[game.team]}
+                      </TableCell>
+                      <TableCell align="center" style={tableCellStyle}>
+                        {game.teamScore}
+                      </TableCell>
+                      <TableCell align="center" style={tableCellStyle}>
+                        {game.isHome ? '' : '@'}
+                      </TableCell>
+                      <TableCell align="center" style={tableCellStyle}>
+                        {game.opponentScore}
+                      </TableCell>
+                      <TableCell
+                        align="right"
+                        style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
+                      >
+                        {teamCodes[game.opponent]}
+                      </TableCell>
+                      <TableCell align="center" style={tableCellStyle}>
+                        {game.diff}
+                      </TableCell>
+                      {game.playerData ? (
+                        playerCols.map(statCol => (
+                          <TableCell
+                            align="center"
+                            key={`${statCol.label}-g${game.playerData.game}`}
+                            style={tableCellStyle}
+                          >
+                            {statCol.format
+                              ? statCol.format(
+                                  game.playerData.stat[statCol.key]
+                                )
+                              : game.playerData.stat[statCol.key]}
+                          </TableCell>
+                        ))
+                      ) : (
                         <TableCell
+                          colSpan={playerCols.length}
                           align="center"
-                          key={`${statCol.label}-g${game.playerData.game}`}
                           style={tableCellStyle}
                         >
-                          {statCol.format
-                            ? statCol.format(game.playerData.stat[statCol.key])
-                            : game.playerData.stat[statCol.key]}
+                          INACTIVE
                         </TableCell>
-                      ))
-                    ) : (
-                      <TableCell
-                        colSpan={playerCols.length}
-                        align="center"
-                        style={tableCellStyle}
-                      >
-                        INACTIVE
-                      </TableCell>
-                    )}
-                  </TableRow>
+                      )}
+                    </TableRow>
+                  </>
                 ))}
               </TableBody>
             </Table>
