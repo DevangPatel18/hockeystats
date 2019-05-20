@@ -30,8 +30,8 @@ const headerStyle = {
 const tableCellStyle = {
   fontSize: '0.65rem',
   padding: '0 5px',
-  borderBottom: '1px solid black',
-  borderRight: '1px solid black',
+  borderBottom: '1px solid #D0D0D0',
+  borderRight: '1px solid #D0D0D0',
 }
 
 class PlayerGameLog extends Component {
