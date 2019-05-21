@@ -26,6 +26,7 @@ const headerStyle = {
   fontWeight: '800',
   padding: '0 5px',
   color: 'rgba(0,0,0,0.54)',
+  cursor: 'pointer',
 }
 
 const tableCellStyle = {
@@ -35,43 +36,13 @@ const tableCellStyle = {
   borderRight: '1px solid #D0D0D0',
 }
 
-const tableRowHeader = (index, playerCols) => (
-  <TableRow style={{ height: 'auto' }}>
-    <TableCell
-      style={{
-        ...headerStyle,
-        ...tableCellStyle,
-        paddingLeft: '0.5rem',
-      }}
-    >
-      Rank
-    </TableCell>
-    {tableHeaders.map(colHeader => (
-      <TableCell
-        key={`${colHeader}-${index}`}
-        align="center"
-        style={{ ...headerStyle, ...tableCellStyle }}
-      >
-        {colHeader}
-      </TableCell>
-    ))}
-    {playerCols.map(statCol => (
-      <TableCell
-        key={`${statCol.label}-header-${index}`}
-        align="center"
-        style={{ ...headerStyle, ...tableCellStyle }}
-      >
-        {statCol.label}
-      </TableCell>
-    ))}
-  </TableRow>
-)
-
 class PlayerGameLog extends Component {
   constructor(props) {
     super(props)
     this.state = {
       tableData: [],
+      order: '',
+      orderBy: '',
     }
 
     this._isMounted = false
@@ -202,9 +173,68 @@ class PlayerGameLog extends Component {
     this._isMounted = false
   }
 
+  tableRowHeader = (index, playerCols, sortFunc) => (
+    <TableRow style={{ height: 'auto' }} key={`row-${index}`}>
+      <TableCell
+        style={{
+          ...headerStyle,
+          ...tableCellStyle,
+          paddingLeft: '0.5rem',
+        }}
+      >
+        Rank
+      </TableCell>
+      {tableHeaders.map(colHeader => (
+        <TableCell
+          key={`${colHeader}-${index}`}
+          align="center"
+          style={{ ...headerStyle, ...tableCellStyle }}
+        >
+          {colHeader}
+        </TableCell>
+      ))}
+      {playerCols.map(statCol => (
+        <TableCell
+          key={`${statCol.label}-header-${index}`}
+          align="center"
+          style={{ ...headerStyle, ...tableCellStyle }}
+          onClick={() => sortFunc(statCol.key)}
+        >
+          {statCol.label}
+        </TableCell>
+      ))}
+    </TableRow>
+  )
+
+  handleRequestSort = property => {
+    const orderBy = property
+    let order = 'desc'
+
+    if (this.state.orderBy === property && this.state.order === 'desc') {
+      order = 'asc'
+    }
+
+    this.setState({ order, orderBy })
+  }
+
   render() {
     const { onClose, playerObj } = this.props
-    const { tableData, playerCols } = this.state
+    const { tableData, playerCols, order, orderBy } = this.state
+    const sortSign = order === 'desc' ? -1 : 1
+
+    let tableDataDisplay = orderBy
+      ? tableData.sort((logA, logB) => {
+          if (!logB.playerData) {
+            return -1
+          }
+          if (!logA.playerData && logB.playerData) {
+            return 1
+          }
+          return logA.playerData.stat[orderBy] > logB.playerData.stat[orderBy]
+            ? sortSign
+            : -1 * sortSign
+        })
+      : tableData
 
     return (
       <div>
@@ -229,22 +259,30 @@ class PlayerGameLog extends Component {
             overflow: 'auto',
             height: 'calc(100vh - 65px - 2rem)',
             margin: '1rem',
-            border: tableData.length ? '1px solid' : '',
+            border: tableDataDisplay.length ? '1px solid' : '',
             textAlign: 'center',
           }}
         >
-          {tableData.length ? (
+          {tableDataDisplay.length ? (
             <Table padding="none" style={{ margin: '0' }}>
-              <TableHead>{tableRowHeader('header', playerCols)}</TableHead>
+              <TableHead>
+                {this.tableRowHeader(
+                  'header',
+                  playerCols,
+                  this.handleRequestSort
+                )}
+              </TableHead>
               <TableBody>
-                {tableData.map((game, i) => (
-                  <>
-                    {i > 0 && i % 25 === 0 && tableRowHeader(i, playerCols)}
-                    <TableRow
-                      key={`game-${i + 1}`}
-                      style={{ height: 'auto' }}
-                      hover={true}
-                    >
+                {tableDataDisplay.map((game, i) => (
+                  <React.Fragment key={`gameLogRow-${i}`}>
+                    {i > 0 &&
+                      i % 25 === 0 &&
+                      this.tableRowHeader(
+                        i,
+                        playerCols,
+                        this.handleRequestSort
+                      )}
+                    <TableRow style={{ height: 'auto' }} hover={true}>
                       <TableCell
                         align="center"
                         style={{ ...tableCellStyle, paddingLeft: '0.5rem' }}
@@ -306,7 +344,7 @@ class PlayerGameLog extends Component {
                         </TableCell>
                       )}
                     </TableRow>
-                  </>
+                  </React.Fragment>
                 ))}
               </TableBody>
             </Table>
