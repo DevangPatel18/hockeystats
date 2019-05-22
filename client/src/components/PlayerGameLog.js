@@ -35,6 +35,8 @@ const tableCellStyle = {
   borderRight: '1px solid #D0D0D0',
 }
 
+const gameLogTableColumnsKeys = gameLogTableColumns.map(gameCol => gameCol.key)
+
 class PlayerGameLog extends Component {
   constructor(props) {
     super(props)
@@ -136,8 +138,8 @@ class PlayerGameLog extends Component {
       let tableData = teamSchedule.map(gameLog => {
         date = gameLog.date
         if (gameLog.playerData) {
-          isHome = gameLog.home.team.id === team
           team = gameLog.playerData.team.id
+          isHome = gameLog.home.team.id === team
           opponent = gameLog.playerData.opponent.id
           playerStats = gameLog.playerData.stat
           game = gameLog.playerData.game
@@ -237,11 +239,16 @@ class PlayerGameLog extends Component {
 
     let tableDataDisplay = orderBy
       ? tableData.sort((logA, logB) => {
-          if (!logB.game) {
-            return -1
+          if (!gameLogTableColumnsKeys.includes(orderBy)) {
+            if (!logB.game) {
+              return -1
+            }
+            if (!logA.game && logB.game) {
+              return 1
+            }
           }
-          if (!logA.game && logB.game) {
-            return 1
+          if (logA[orderBy] === logB[orderBy]) {
+            return logA.date > logB.date ? 1 : -1
           }
           return logA[orderBy] > logB[orderBy] ? sortSign : -1 * sortSign
         })
