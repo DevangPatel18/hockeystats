@@ -9,7 +9,9 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  TableSortLabel,
 } from '@material-ui/core/'
+import Tooltip from '@material-ui/core/Tooltip'
 import CloseIcon from '@material-ui/icons/Close'
 import configure from '../utils/configLocalforage'
 import {
@@ -42,7 +44,7 @@ class PlayerGameLog extends Component {
     super(props)
     this.state = {
       tableData: [],
-      order: '',
+      order: 'asc',
       orderBy: '',
     }
 
@@ -188,7 +190,7 @@ class PlayerGameLog extends Component {
   }
 
   tableRowHeader = index => {
-    const { playerCols } = this.state
+    const { playerCols, order, orderBy } = this.state
     return (
       <TableRow style={{ height: 'auto' }} key={`row-${index}`}>
         <TableCell
@@ -205,9 +207,18 @@ class PlayerGameLog extends Component {
             key={`${colHeader.label}-${index}`}
             align="center"
             style={{ ...headerStyle, ...tableCellStyle }}
-            onClick={() => this.handleRequestSort(colHeader.key)}
+            sortDirection={orderBy === colHeader.key ? order : false}
           >
-            {colHeader.label}
+            <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
+              <TableSortLabel
+                active={orderBy === colHeader.key}
+                direction={order}
+                onClick={() => this.handleRequestSort(colHeader.key)}
+                hideSortIcon={true}
+              >
+                {colHeader.label}
+              </TableSortLabel>
+            </Tooltip>
           </TableCell>
         ))}
         {playerCols.map(statCol => (
@@ -215,9 +226,16 @@ class PlayerGameLog extends Component {
             key={`${statCol.label}-${index}`}
             align="center"
             style={{ ...headerStyle, ...tableCellStyle }}
-            onClick={() => this.handleRequestSort(statCol.key)}
+            sortDirection={orderBy === statCol.key ? order : false}
           >
-            {statCol.label}
+            <TableSortLabel
+              active={orderBy === statCol.key}
+              direction={order}
+              onClick={() => this.handleRequestSort(statCol.key)}
+              hideSortIcon={true}
+            >
+              {statCol.label}
+            </TableSortLabel>
           </TableCell>
         ))}
       </TableRow>
