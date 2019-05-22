@@ -175,3 +175,13 @@ export const ProfileGoalieCol = [
     format: svPercentFormat,
   },
 ]
+
+export const gameLogTableColumns = [
+  { key: 'date', label: 'Date' },
+  { key: 'team', label: 'Team' },
+  { key: 'teamScore', label: 'TG' },
+  { key: 'isHome', label: '-' },
+  { key: 'opponentScore', label: 'OG' },
+  { key: 'opponent', label: 'Opp' },
+  { key: 'diff', label: 'Diff' },
+]

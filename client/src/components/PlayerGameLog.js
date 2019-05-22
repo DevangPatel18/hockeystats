@@ -16,10 +16,9 @@ import {
   yearFormatter,
   ProfileSkateCol,
   ProfileGoalieCol,
+  gameLogTableColumns,
 } from '../helper/columnLabels'
 import { teamCodes } from '../helper/teamCodes'
-
-const tableHeaders = ['Game', 'Date', 'Team', 'TG', '-', 'OG', 'Opp', 'Diff']
 
 const headerStyle = {
   background: '#C0C0C0',
@@ -121,6 +120,7 @@ class PlayerGameLog extends Component {
             obj.key
           )
       )
+      playerCols.splice(0, 0, { key: 'game', label: 'Game' })
 
       let date
       let team
@@ -130,29 +130,40 @@ class PlayerGameLog extends Component {
       let isHome
       let diff
       let intervalIdx
+      let playerStats
+      let game
 
-      let tableData = teamSchedule.map(game => {
-        date = game.date
-        if (game.playerData) {
-          isHome = game.home.team.id === team
-          team = game.playerData.team.id
-          opponent = game.playerData.opponent.id
+      let tableData = teamSchedule.map(gameLog => {
+        date = gameLog.date
+        if (gameLog.playerData) {
+          isHome = gameLog.home.team.id === team
+          team = gameLog.playerData.team.id
+          opponent = gameLog.playerData.opponent.id
+          playerStats = gameLog.playerData.stat
+          game = gameLog.playerData.game
         } else {
           intervalIdx = teamIntervals.findIndex(
             interval => date >= interval.startDate && date <= interval.endDate
           )
           team = teamIntervals[intervalIdx].teamId
-          isHome = team === game.home.team.id
-          opponent = isHome ? game.away.team.id : game.home.team.id
+          isHome = team === gameLog.home.team.id
+          opponent = isHome ? gameLog.away.team.id : gameLog.home.team.id
+          playerStats = null
+          game = null
         }
         if (isHome) {
-          teamScore = game.home.score
-          opponentScore = game.away.score
+          teamScore = gameLog.home.score
+          opponentScore = gameLog.away.score
         } else {
-          teamScore = game.away.score
-          opponentScore = game.home.score
+          teamScore = gameLog.away.score
+          opponentScore = gameLog.home.score
         }
+
+        team = teamCodes[team]
+        opponent = teamCodes[opponent]
+        isHome = isHome ? '' : '@'
         diff = teamScore - opponentScore
+
         return {
           date,
           team,
@@ -161,7 +172,8 @@ class PlayerGameLog extends Component {
           opponentScore,
           isHome,
           diff,
-          playerData: game.playerData,
+          game,
+          ...playerStats,
         }
       })
 
@@ -184,18 +196,19 @@ class PlayerGameLog extends Component {
       >
         Rank
       </TableCell>
-      {tableHeaders.map(colHeader => (
+      {gameLogTableColumns.map(colHeader => (
         <TableCell
-          key={`${colHeader}-${index}`}
+          key={`${colHeader.label}-${index}`}
           align="center"
           style={{ ...headerStyle, ...tableCellStyle }}
+          onClick={() => sortFunc(colHeader.key)}
         >
-          {colHeader}
+          {colHeader.label}
         </TableCell>
       ))}
       {playerCols.map(statCol => (
         <TableCell
-          key={`${statCol.label}-header-${index}`}
+          key={`${statCol.label}-${index}`}
           align="center"
           style={{ ...headerStyle, ...tableCellStyle }}
           onClick={() => sortFunc(statCol.key)}
@@ -224,15 +237,13 @@ class PlayerGameLog extends Component {
 
     let tableDataDisplay = orderBy
       ? tableData.sort((logA, logB) => {
-          if (!logB.playerData) {
+          if (!logB.game) {
             return -1
           }
-          if (!logA.playerData && logB.playerData) {
+          if (!logA.game && logB.game) {
             return 1
           }
-          return logA.playerData.stat[orderBy] > logB.playerData.stat[orderBy]
-            ? sortSign
-            : -1 * sortSign
+          return logA[orderBy] > logB[orderBy] ? sortSign : -1 * sortSign
         })
       : tableData
 
@@ -289,49 +300,25 @@ class PlayerGameLog extends Component {
                       >
                         {i + 1}
                       </TableCell>
-                      <TableCell align="center" style={tableCellStyle}>
-                        {game.playerData ? game.playerData.game : ''}
-                      </TableCell>
-                      <TableCell
-                        style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
-                      >
-                        {game.date}
-                      </TableCell>
-                      <TableCell
-                        style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
-                      >
-                        {teamCodes[game.team]}
-                      </TableCell>
-                      <TableCell align="center" style={tableCellStyle}>
-                        {game.teamScore}
-                      </TableCell>
-                      <TableCell align="center" style={tableCellStyle}>
-                        {game.isHome ? '' : '@'}
-                      </TableCell>
-                      <TableCell align="center" style={tableCellStyle}>
-                        {game.opponentScore}
-                      </TableCell>
-                      <TableCell
-                        align="right"
-                        style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
-                      >
-                        {teamCodes[game.opponent]}
-                      </TableCell>
-                      <TableCell align="center" style={tableCellStyle}>
-                        {game.diff}
-                      </TableCell>
-                      {game.playerData ? (
+                      {gameLogTableColumns.map(gameCol => (
+                        <TableCell
+                          align="center"
+                          key={`${gameCol.label}-${i}`}
+                          style={{ ...tableCellStyle, whiteSpace: 'nowrap' }}
+                        >
+                          {game[gameCol.key]}
+                        </TableCell>
+                      ))}
+                      {game['game'] ? (
                         playerCols.map(statCol => (
                           <TableCell
                             align="center"
-                            key={`${statCol.label}-g${game.playerData.game}`}
+                            key={`${statCol.label}-g${game['game']}`}
                             style={tableCellStyle}
                           >
                             {statCol.format
-                              ? statCol.format(
-                                  game.playerData.stat[statCol.key]
-                                )
-                              : game.playerData.stat[statCol.key]}
+                              ? statCol.format(game[statCol.key])
+                              : game[statCol.key]}
                           </TableCell>
                         ))
                       ) : (
