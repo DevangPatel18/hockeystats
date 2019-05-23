@@ -324,7 +324,7 @@ class PlayerStats extends Component {
             marginBottom: '-3px',
           }}
         />
-        <Paper style={{ overflowX: 'auto' }}>
+        <Paper>
           <div
             style={{
               position: 'absolute',
@@ -336,44 +336,42 @@ class PlayerStats extends Component {
               transition: 'all 0.5s',
             }}
           />
-          <Table padding="checkbox">
-            <TableData
-              dataDisplay={dataDisplay}
-              page={page}
-              order={order}
-              orderBy={orderBy}
-              rowsPerPage={rowsPerPage}
-              trackedPlayers={trackedPlayers}
-              selectedPlayers={selectedPlayers}
-              isAggregate={isAggregate}
-              handleRowClick={(event, x) => this.handleRowClick(event, x)}
-              updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
-              handleRequestSort={(event, property) =>
-                this.handleRequestSort(event, property)
-              }
-              handlePlayerLogModal={(event, row) => {
-                event.stopPropagation()
-                this.setState({ playerLogData: row, playerLogModal: true })
-              }}
-            />
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 50]}
-                  colSpan={3}
-                  count={dataDisplay.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  SelectProps={{
-                    native: true,
-                  }}
-                  onChangePage={this.handleChangePage}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
+          <div style={{ overflowX: 'auto' }}>
+            <Table padding="checkbox">
+              <TableData
+                dataDisplay={dataDisplay}
+                page={page}
+                order={order}
+                orderBy={orderBy}
+                rowsPerPage={rowsPerPage}
+                trackedPlayers={trackedPlayers}
+                selectedPlayers={selectedPlayers}
+                isAggregate={isAggregate}
+                handleRowClick={(event, x) => this.handleRowClick(event, x)}
+                updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
+                handleRequestSort={(event, property) =>
+                  this.handleRequestSort(event, property)
+                }
+                handlePlayerLogModal={(event, row) => {
+                  event.stopPropagation()
+                  this.setState({ playerLogData: row, playerLogModal: true })
+                }}
+              />
+            </Table>
+          </div>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            component="div"
+            count={dataDisplay.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            SelectProps={{
+              native: true,
+            }}
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            ActionsComponent={TablePaginationActions}
+          />
         </Paper>
         <br />
         <Button

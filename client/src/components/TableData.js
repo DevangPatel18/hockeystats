@@ -100,6 +100,7 @@ const TableData = props => {
                   style={{
                     color: 'white',
                   }}
+                  hideSortIcon={true}
                 >
                   {col.title}
                 </TableSortLabel>
