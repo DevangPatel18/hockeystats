@@ -52,13 +52,13 @@ class PlayerGameLog extends Component {
   }
 
   async componentDidMount() {
-    const { playerObj } = this.props
+    const { playerObj, dataType } = this.props
     const { playerId, seasonId } = playerObj
 
     configure().then(async api => {
       const playerGameLogData = await api
         .get(
-          `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/regular`
+          `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
         )
         .then(res => res.data.reverse())
 
@@ -79,9 +79,11 @@ class PlayerGameLog extends Component {
         return acc
       }, [])
 
-      tempInterval.endDate = playerGameLogData[0].season.slice(4) + '-04-20'
+      tempInterval.endDate = playerGameLogData[0].season.slice(4) + '-06-20'
 
       teamIntervals.push(tempInterval)
+
+      let gVar = dataType === 'regular' ? 'R' : 'P'
 
       let teamSchedule = await Promise.all(
         teamIntervals.map(async intervalParams => {
@@ -92,7 +94,7 @@ class PlayerGameLog extends Component {
             )
             .then(res =>
               res.data.dates
-                .filter(gameSchedule => gameSchedule.games[0].gameType === 'R')
+                .filter(gameSchedule => gameSchedule.games[0].gameType === gVar)
                 .map(gameSchedule => ({
                   date: gameSchedule.date,
                   home: gameSchedule.games[0].teams.home,

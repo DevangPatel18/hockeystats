@@ -409,6 +409,7 @@ class PlayerStats extends Component {
           <PlayerGameLog
             onClose={() => this.handleModalClose('playerLogModal')}
             playerObj={playerLogData}
+            dataType={dataType}
           />
         </Dialog>
       </div>
