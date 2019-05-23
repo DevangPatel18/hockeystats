@@ -20,9 +20,17 @@ router.get(
       let gameTypeId = playoffs === 'true' ? 3 : 2;
 
       let data = await axios
-        .get(
-          `http://www.nhl.com/stats/rest/skaters?isAggregate=${isAggregate}&reportType=${reportType}&isGame=false&reportName=${reportName}&sort=%5B%7B%22property%22:%22points%22,%22direction%22:%22DESC%22%7D,%7B%22property%22:%22goals%22,%22direction%22:%22DESC%22%7D,%7B%22property%22:%22assists%22,%22direction%22:%22DESC%22%7D%5D&cayenneExp=gameTypeId=${gameTypeId}%20and%20seasonId%3E=${yearStart}%20and%20seasonId%3C=${yearEnd}`
-        )
+        .get(`http://www.nhl.com/stats/rest/skaters`, {
+          params: {
+            isAggregate,
+            reportType,
+            isGame: false,
+            reportName,
+            sort:
+              '[{"property":"points","direction":"DESC"},{"property":"goals","direction":"DESC"},{"property":"assists","direction":"DESC"}]',
+            cayenneExp: `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
+          },
+        })
         .then(res => {
           return res.data.data;
         });
@@ -34,25 +42,6 @@ router.get(
   }
 );
 
-// Retrieve columns for dataset
-router.get('/:reportName', async (req, res, next) => {
-  try {
-    const { reportName } = req.params;
-
-    let columns = await axios
-      .get(
-        `https://assets.nhle.com/projects/ice3-stats/utility/locales/en_US/reports/players/${reportName}.json`
-      )
-      .then(res => {
-        return res.data.data;
-      });
-
-    return res.status(200).json(columns);
-  } catch (err) {
-    return next(err);
-  }
-});
-
 // Retrieve individual player stats
 router.get('/players/:playerId', async (req, res, next) => {
   try {
@@ -60,7 +49,7 @@ router.get('/players/:playerId', async (req, res, next) => {
 
     const playerData = await axios
       .get(
-        `https://statsapi.web.nhl.com/api/v1/people/${playerId}?expand=person.stats&stats=yearByYear,careerRegularSeason&expand=stats.team&site=en_nhlCA`
+        `https://statsapi.web.nhl.com/api/v1/people/${playerId}?expand=person.stats&stats=yearByYear`
       )
       .then(res => res.data.people[0]);
 
@@ -79,12 +68,39 @@ router.get(
       const statType = dataType === 'regular' ? 'gameLog' : 'playoffGameLog';
 
       const playerData = await axios
-        .get(
-          `https://statsapi.web.nhl.com/api/v1/people/${playerId}/stats?stats=${statType}&season=${seasonId}`
-        )
+        .get(`https://statsapi.web.nhl.com/api/v1/people/${playerId}/stats`, {
+          params: {
+            stats: statType,
+            season: seasonId,
+          },
+        })
         .then(res => res.data.stats[0].splits);
 
       return res.status(200).json(playerData);
+    } catch (err) {
+      return next(err);
+    }
+  }
+);
+
+// Retrieve team schedule for given timeframe
+router.get(
+  '/team/:teamId/startDate/:startDate/endDate/:endDate',
+  async (req, res, next) => {
+    try {
+      const { teamId, startDate, endDate } = req.params;
+
+      const teamSchedule = await axios
+        .get(`https://statsapi.web.nhl.com/api/v1/schedule`, {
+          params: {
+            teamId,
+            startDate,
+            endDate,
+          },
+        })
+        .then(res => res.data);
+
+      return res.status(200).json(teamSchedule);
     } catch (err) {
       return next(err);
     }

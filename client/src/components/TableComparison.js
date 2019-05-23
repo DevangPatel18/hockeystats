@@ -40,7 +40,7 @@ const TableComparison = ({ selectedPlayers, data }) => {
 
   let columnsMin = generateCols(playersObj)
 
-  columnsMin = columnsMin.filter(obj => obj.id !== 'track')
+  columnsMin = columnsMin.filter(obj => !['track', 'gameLogs'].includes(obj.id))
   columnsMin.unshift({ title: 'Name', id: 'playerName' })
 
   let minMax = {}
@@ -64,7 +64,10 @@ const TableComparison = ({ selectedPlayers, data }) => {
               minArray.push(i)
             }
           })
-          minMax[attr.id] = { max: maxArray, min: minArray }
+
+          minMax[attr.id] = attr.sortReverse
+            ? { max: minArray, min: maxArray }
+            : { max: maxArray, min: minArray }
         }
       }
     })

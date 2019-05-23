@@ -26,6 +26,7 @@ import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
 import PlayerComparison from './PlayerComparison'
 import PlayerTags from './PlayerTags'
+import PlayerGameLog from './PlayerGameLog'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -57,6 +58,8 @@ class PlayerStats extends Component {
       page: 0,
       rowsPerPage: 10,
       modal: false,
+      playerLogModal: false,
+      playerLogData: {},
     }
 
     this._isMounted = false
@@ -159,12 +162,12 @@ class PlayerStats extends Component {
     this.setState({ order, orderBy })
   }
 
-  handleModalOpen = () => {
-    this.setState({ modal: true })
+  handleModalOpen = modal => {
+    this.setState({ [modal]: true })
   }
 
-  handleModalClose = () => {
-    this.setState({ modal: false })
+  handleModalClose = modal => {
+    this.setState({ [modal]: false })
   }
 
   submitQuery = e => {
@@ -261,6 +264,7 @@ class PlayerStats extends Component {
       yearEnd,
       search,
       dataType,
+      playerLogData,
     } = this.state
     const { dataLoad, trackedPlayers } = this.props.stats
 
@@ -305,7 +309,7 @@ class PlayerStats extends Component {
           handleSwitchChange={this.handleSwitchChange}
           handleSeasonChange={this.handleSeasonChange}
           submitQuery={this.submitQuery}
-          handleModalOpen={this.handleModalOpen}
+          handleModalOpen={() => this.handleModalOpen('modal')}
         />
         <PlayerTags
           selectedPlayers={selectedPlayers}
@@ -320,7 +324,7 @@ class PlayerStats extends Component {
             marginBottom: '-3px',
           }}
         />
-        <Paper style={{ overflowX: 'auto' }}>
+        <Paper>
           <div
             style={{
               position: 'absolute',
@@ -332,40 +336,42 @@ class PlayerStats extends Component {
               transition: 'all 0.5s',
             }}
           />
-          <Table padding="checkbox">
-            <TableData
-              dataDisplay={dataDisplay}
-              page={page}
-              order={order}
-              orderBy={orderBy}
-              rowsPerPage={rowsPerPage}
-              trackedPlayers={trackedPlayers}
-              selectedPlayers={selectedPlayers}
-              isAggregate={isAggregate}
-              handleRowClick={(event, x) => this.handleRowClick(event, x)}
-              updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
-              handleRequestSort={(event, property) =>
-                this.handleRequestSort(event, property)
-              }
-            />
-            <TableFooter>
-              <TableRow>
-                <TablePagination
-                  rowsPerPageOptions={[5, 10, 25, 50]}
-                  colSpan={3}
-                  count={dataDisplay.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  SelectProps={{
-                    native: true,
-                  }}
-                  onChangePage={this.handleChangePage}
-                  onChangeRowsPerPage={this.handleChangeRowsPerPage}
-                  ActionsComponent={TablePaginationActions}
-                />
-              </TableRow>
-            </TableFooter>
-          </Table>
+          <div style={{ overflowX: 'auto' }}>
+            <Table padding="checkbox">
+              <TableData
+                dataDisplay={dataDisplay}
+                page={page}
+                order={order}
+                orderBy={orderBy}
+                rowsPerPage={rowsPerPage}
+                trackedPlayers={trackedPlayers}
+                selectedPlayers={selectedPlayers}
+                isAggregate={isAggregate}
+                handleRowClick={(event, x) => this.handleRowClick(event, x)}
+                updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
+                handleRequestSort={(event, property) =>
+                  this.handleRequestSort(event, property)
+                }
+                handlePlayerLogModal={(event, row) => {
+                  event.stopPropagation()
+                  this.setState({ playerLogData: row, playerLogModal: true })
+                }}
+              />
+            </Table>
+          </div>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25, 50]}
+            component="div"
+            count={dataDisplay.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            SelectProps={{
+              native: true,
+            }}
+            onChangePage={this.handleChangePage}
+            onChangeRowsPerPage={this.handleChangeRowsPerPage}
+            ActionsComponent={TablePaginationActions}
+          />
         </Paper>
         <br />
         <Button
@@ -380,16 +386,27 @@ class PlayerStats extends Component {
         <Dialog
           fullScreen
           open={this.state.modal}
-          onClose={this.handleModalClose}
           scroll="paper"
           TransitionComponent={Transition}
         >
           <PlayerComparison
-            onClose={this.handleModalClose}
+            onClose={() => this.handleModalClose('modal')}
             selectedPlayers={selectedPlayers}
             data={dataDisplay}
             yearStart={yearStart}
             yearEnd={yearEnd}
+            dataType={dataType}
+          />
+        </Dialog>
+        <Dialog
+          fullScreen
+          open={this.state.playerLogModal}
+          scroll="paper"
+          TransitionComponent={Transition}
+        >
+          <PlayerGameLog
+            onClose={() => this.handleModalClose('playerLogModal')}
+            playerObj={playerLogData}
             dataType={dataType}
           />
         </Dialog>

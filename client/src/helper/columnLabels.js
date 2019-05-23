@@ -1,6 +1,7 @@
 export const seasonCol = [
   { title: 'Season', id: 'seasonId' },
   { title: 'Track', id: 'track' }, // For adding current season players to dashboard
+  { title: 'Game logs', id: 'gameLogs' },
   { title: 'Team', id: 'playerTeamsPlayedFor' },
 ]
 
@@ -59,8 +60,8 @@ export const bioCol = [
 ]
 
 export const draftCol = [
-  { title: 'Draft #', id: 'playerDraftOverallPickNo' },
-  { title: 'Draft Round', id: 'playerDraftRoundNo' },
+  { title: 'Draft #', id: 'playerDraftOverallPickNo', sortReverse: true },
+  { title: 'Draft Round', id: 'playerDraftRoundNo', sortReverse: true },
   { title: 'Draft Year', id: 'playerDraftYear' },
 ]
 
@@ -144,7 +145,7 @@ export const ProfileSkateCol = [
   { key: 'hits', label: 'Hits' },
 ]
 
-const svPercentFormat = val => (val / 100).toFixed(3)
+const svPercentFormat = val => (val ? (val / 100).toFixed(3) : '')
 
 export const ProfileGoalieCol = [
   { key: 'games', label: 'GP' },
@@ -155,7 +156,7 @@ export const ProfileGoalieCol = [
   { key: 'ot', label: 'OT' },
   { key: 'shotsAgainst', label: 'SA' },
   { key: 'saves', label: 'S' },
-  { key: 'savePercentage', label: 'Sv%' },
+  { key: 'savePercentage', label: 'Sv%', format: val => val.toFixed(3) },
   { key: 'goalsAgainst', label: 'GA' },
   { key: 'goalAgainstAverage', label: 'GAA' },
   { key: 'shutouts', label: 'SO' },
@@ -168,5 +169,19 @@ export const ProfileGoalieCol = [
   { key: 'shortHandedSavePercentage', label: 'SHSv%', format: svPercentFormat },
   { key: 'evenShots', label: 'ESSA' },
   { key: 'evenSaves', label: 'ESS' },
-  { key: 'evenStrengthSavePercentage', label: 'ESSv%', format: svPercentFormat },
+  {
+    key: 'evenStrengthSavePercentage',
+    label: 'ESSv%',
+    format: svPercentFormat,
+  },
+]
+
+export const gameLogTableColumns = [
+  { key: 'date', label: 'Date' },
+  { key: 'team', label: 'Team' },
+  { key: 'teamScore', label: 'TG' },
+  { key: 'isHome', label: '-' },
+  { key: 'opponentScore', label: 'OG' },
+  { key: 'opponent', label: 'Opp' },
+  { key: 'diff', label: 'Diff' },
 ]
