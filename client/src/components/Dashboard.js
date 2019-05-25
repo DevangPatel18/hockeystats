@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { Link } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { getPlayerList } from '../actions/statActions'
 import configure from '../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
 import { CircularProgress, Button } from '@material-ui/core/'
@@ -107,7 +106,6 @@ class Dashboard extends Component {
 }
 
 Dashboard.propTypes = {
-  getPlayerList: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   stats: PropTypes.object.isRequired,
 }
@@ -117,7 +115,4 @@ const mapStateToProps = state => ({
   stats: state.stats,
 })
 
-export default connect(
-  mapStateToProps,
-  { getPlayerList }
-)(Dashboard)
+export default connect(mapStateToProps)(Dashboard)

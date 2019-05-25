@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import PlayerProfiles from './PlayerProfiles'
 
 const DashboardProfiles = ({ trackedPlayerData }) => {
@@ -27,6 +28,10 @@ const DashboardProfiles = ({ trackedPlayerData }) => {
       )}
     </>
   )
+}
+
+DashboardProfiles.propTypes = {
+  trackedPlayerData: PropTypes.array.isRequired,
 }
 
 export default DashboardProfiles

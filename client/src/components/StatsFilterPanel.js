@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {
   FormControl,
   FormControlLabel,
@@ -266,6 +267,16 @@ const StatsFilterPanel = props => {
       </div>
     </div>
   )
+}
+
+StatsFilterPanel.propTypes = {
+  this: PropTypes.object.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleRowFilter: PropTypes.func.isRequired,
+  handleSwitchChange: PropTypes.func.isRequired,
+  handleSeasonChange: PropTypes.func.isRequired,
+  submitQuery: PropTypes.func.isRequired,
+  handleModalOpen: PropTypes.func.isRequired,
 }
 
 export default StatsFilterPanel

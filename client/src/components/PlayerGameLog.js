@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
   AppBar,
   IconButton,
@@ -360,6 +361,12 @@ class PlayerGameLog extends Component {
       </div>
     )
   }
+}
+
+PlayerGameLog.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  playerObj: PropTypes.object.isRequired,
+  dataType: PropTypes.string.isRequired,
 }
 
 export default PlayerGameLog

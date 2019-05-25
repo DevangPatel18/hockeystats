@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {
   Paper,
   Table,
@@ -45,6 +46,10 @@ const ProfileStatTable = ({ stats }) => {
       </Table>
     </Paper>
   )
+}
+
+ProfileStatTable.propTypes = {
+  stats: PropTypes.object.isRequired,
 }
 
 export default ProfileStatTable

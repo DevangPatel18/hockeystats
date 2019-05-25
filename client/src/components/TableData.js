@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {
   TableHead,
   Checkbox,
@@ -208,6 +209,21 @@ const TableData = props => {
       </TableBody>
     </>
   )
+}
+
+TableData.propTypes = {
+  dataDisplay: PropTypes.array.isRequired,
+  page: PropTypes.number.isRequired,
+  order: PropTypes.string,
+  orderBy: PropTypes.string,
+  rowsPerPage: PropTypes.number.isRequired,
+  trackedPlayers: PropTypes.array.isRequired,
+  selectedPlayers: PropTypes.array.isRequired,
+  isAggregate: PropTypes.bool.isRequired,
+  handleRowClick: PropTypes.func.isRequired,
+  updateTrackedPlayers: PropTypes.func.isRequired,
+  handleRequestSort: PropTypes.func.isRequired,
+  handlePlayerLogModal: PropTypes.func.isRequired,
 }
 
 export default withStyles(styles)(TableData)
