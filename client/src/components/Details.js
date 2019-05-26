@@ -22,6 +22,17 @@ const Home = props => {
       >
         Home
       </Button>
+      <br />
+      <Button
+        component={Link}
+        to="/app/deleteacct"
+        color="primary"
+        variant="contained"
+        size="large"
+        style={{ marginTop: '1rem' }}
+      >
+        Delete Account
+      </Button>
     </div>
   )
 }
