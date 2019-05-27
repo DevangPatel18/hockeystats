@@ -2,6 +2,14 @@ import React, { Component } from 'react'
 import { navigate } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from '@material-ui/core'
 
 class DeleteAcct extends Component {
   constructor() {
@@ -11,6 +19,7 @@ class DeleteAcct extends Component {
       password2: '',
       errors: {},
       serverResponse: false,
+      prompt: false,
     }
   }
 
@@ -26,6 +35,9 @@ class DeleteAcct extends Component {
 
   checkPassword = e => {
     e.preventDefault()
+
+    this.handleClose()
+
     // Run action creator that validates password
     const userData = {
       password: this.state.password,
@@ -35,12 +47,17 @@ class DeleteAcct extends Component {
     // Dispatch action to verify account deletion
   }
 
+  handleClickOpen = () => this.setState({ prompt: true })
+
+  handleClose = () => this.setState({ prompt: false })
+
   render() {
-    const { errors, serverResponse } = this.state
+    const { errors, prompt, serverResponse } = this.state
 
     return (
       <div>
         <h1>Delete Account</h1>
+        <p>Please enter your password twice to verify account deletion.</p>
         <form
           noValidate
           onSubmit={this.checkPassword}
@@ -77,10 +94,33 @@ class DeleteAcct extends Component {
           ) : (
             <span style={styles.success}>{this.props.auth.message}</span>
           )}
-          <div style={styles.button} onClick={this.checkPassword}>
+          <div style={styles.button} onClick={this.handleClickOpen}>
             <span style={styles.buttonText}>Delete Account</span>
           </div>
         </form>
+
+        <Dialog
+          open={prompt}
+          onClose={this.handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">WARNING</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              All user data will be deleted, including userId, email address,
+              and player list. Click 'Confirm' to continue account deletion.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.checkPassword} color="primary" autoFocus>
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     )
   }
