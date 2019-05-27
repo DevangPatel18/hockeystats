@@ -18,15 +18,14 @@ const Home = props => {
         color="primary"
         variant="contained"
         size="large"
-        style={{ marginTop: '1rem' }}
+        style={{ marginTop: '1rem', marginRight: '1rem' }}
       >
         Home
       </Button>
-      <br />
       <Button
         component={Link}
         to="/app/deleteacct"
-        color="primary"
+        color="secondary"
         variant="contained"
         size="large"
         style={{ marginTop: '1rem' }}
