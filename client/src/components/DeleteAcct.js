@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { navigate } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import {
@@ -10,6 +9,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from '@material-ui/core'
+import { deleteUser } from '../actions/authActions'
 
 class DeleteAcct extends Component {
   constructor() {
@@ -42,9 +42,11 @@ class DeleteAcct extends Component {
     const userData = {
       password: this.state.password,
       password2: this.state.password2,
+      userId: this.props.auth.user.id,
     }
 
     // Dispatch action to verify account deletion
+    this.props.deleteUser(userData)
   }
 
   handleClickOpen = () => this.setState({ prompt: true })
@@ -102,12 +104,12 @@ class DeleteAcct extends Component {
         <Dialog
           open={prompt}
           onClose={this.handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
+          aria-labelledby="deleteaccount-title"
+          aria-describedby="deleteaccount-description"
         >
-          <DialogTitle id="alert-dialog-title">WARNING</DialogTitle>
+          <DialogTitle id="deleteaccount-title">WARNING</DialogTitle>
           <DialogContent>
-            <DialogContentText id="alert-dialog-description">
+            <DialogContentText id="deleteaccount-description">
               All user data will be deleted, including userId, email address,
               and player list. Click 'Confirm' to continue account deletion.
             </DialogContentText>
@@ -162,6 +164,7 @@ const styles = {
 DeleteAcct.propTypes = {
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
+  deleteUser: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => ({
@@ -169,4 +172,7 @@ const mapStateToProps = state => ({
   errors: state.errors,
 })
 
-export default connect(mapStateToProps)(DeleteAcct)
+export default connect(
+  mapStateToProps,
+  { deleteUser }
+)(DeleteAcct)

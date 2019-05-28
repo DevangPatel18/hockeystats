@@ -52,6 +52,25 @@ export const loginUser = userData => dispatch => {
     )
 }
 
+// Delete user account
+export const deleteUser = userData => dispatch => {
+  const { userId, password, password2 } = userData
+
+  API.delete(`/api/userActions/delete/${userId}`, {
+    data: { password, password2 },
+  })
+    .then(() => {
+      dispatch(logoutUser())
+      // Dispatch action showing successful account deletion message
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      })
+    )
+}
+
 // Set logged in user
 export const setCurrentUser = decoded => {
   return {
