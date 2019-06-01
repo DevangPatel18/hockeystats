@@ -4,11 +4,10 @@ import { Trail, animated } from 'react-spring/renderprops'
 import PropTypes from 'prop-types'
 import ProfileStatTable from './ProfileStatTable'
 import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close'
+import { TableChart, Close } from '@material-ui/icons'
 import { connect } from 'react-redux'
-import { removePlayerList } from '../actions/statActions'
+import { removePlayerList, openPlayerModal } from '../actions/statActions'
 import { yearFormatter } from '../helper/columnLabels'
-
 const mobileWidth = '425px'
 const tabletWidth = '800px'
 
@@ -93,7 +92,12 @@ const RemovePlayerButton = styled.div`
   cursor: pointer;
 `
 
-const PlayerProfiles = ({ players, auth, removePlayerList }) => {
+const PlayerProfiles = ({
+  players,
+  auth,
+  removePlayerList,
+  openPlayerModal,
+}) => {
   const profiles = players.map(playerObj => {
     const seasonData = playerObj.stats
       .find(obj => obj.type.displayName === 'yearByYear')
@@ -107,6 +111,8 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
       userId: auth.user.id,
       playerId: playerObj.id,
       seasonId: playerObj.seasonId,
+      playerPositionCode: playerObj.playerPositionCode,
+      playerName: playerObj.fullName,
     }
 
     const bDay = new Date(playerObj.birthDate)
@@ -160,13 +166,21 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
                   ` ${playerObj.birthStateProvince}, `}{' '}
                 {playerObj.birthCountry}
               </PlayerBioListItem>
+              <PlayerBioListItem>
+                Player game log ▶
+                <IconButton
+                  children={<TableChart />}
+                  style={{ padding: '0', marginLeft: '0.5rem' }}
+                  onClick={event => openPlayerModal(userData)}
+                />
+              </PlayerBioListItem>
             </PlayerBioList>
           </TextContainer>
         </PlayerIdent>
         <ProfileStatTable stats={seasonData.stat} />
         <RemovePlayerButton>
           <IconButton
-            children={<CloseIcon fontSize="small" />}
+            children={<Close fontSize="small" />}
             color="secondary"
             onClick={() => removePlayerList(userData)}
           />
@@ -199,6 +213,7 @@ const PlayerProfiles = ({ players, auth, removePlayerList }) => {
 
 PlayerProfiles.propTypes = {
   removePlayerList: PropTypes.func.isRequired,
+  openPlayerModal: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   players: PropTypes.array.isRequired,
 }
@@ -209,5 +224,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { removePlayerList }
+  { removePlayerList, openPlayerModal }
 )(PlayerProfiles)

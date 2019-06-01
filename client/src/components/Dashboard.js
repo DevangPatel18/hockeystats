@@ -77,12 +77,8 @@ class Dashboard extends Component {
 
   render() {
     const { trackedPlayerData } = this.state
-    const {
-      trackedPlayers,
-      modalOpen,
-      playerObj,
-      closePlayerModal,
-    } = this.props.stats
+    const { closePlayerModal, stats } = this.props
+    const { trackedPlayers, modalOpen, playerObj } = stats
     const filterTrackedPlayerData = trackedPlayerData.filter(dataObj =>
       trackedPlayers.some(
         listObj =>

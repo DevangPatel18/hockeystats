@@ -261,6 +261,10 @@ class PlayerGameLog extends Component {
     const { tableData, playerCols, order, orderBy } = this.state
     const sortSign = order === 'desc' ? -1 : 1
 
+    if (Object.keys(playerObj).length === 0) {
+      return null
+    }
+
     let tableDataDisplay = orderBy
       ? tableData.sort((logA, logB) => {
           if (!gameLogTableColumnsKeys.includes(orderBy)) {
