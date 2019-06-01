@@ -4,7 +4,13 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
-import { CircularProgress, Button } from '@material-ui/core/'
+import { CircularProgress, Button, Dialog, Slide } from '@material-ui/core/'
+import { closePlayerModal } from '../actions/statActions'
+import PlayerGameLog from './PlayerGameLog'
+
+function Transition(props) {
+  return <Slide direction="up" {...props} />
+}
 
 class Dashboard extends Component {
   constructor() {
@@ -14,6 +20,13 @@ class Dashboard extends Component {
     }
 
     this._isMounted = false
+  }
+
+  static getDerivedStateFromProps(nextProps) {
+    return {
+      modalOpen: nextProps.stats.modalOpen,
+      playerObj: nextProps.stats.playerObj,
+    }
   }
 
   async componentDidMount() {
@@ -64,7 +77,12 @@ class Dashboard extends Component {
 
   render() {
     const { trackedPlayerData } = this.state
-    const { trackedPlayers } = this.props.stats
+    const {
+      trackedPlayers,
+      modalOpen,
+      playerObj,
+      closePlayerModal,
+    } = this.props.stats
     const filterTrackedPlayerData = trackedPlayerData.filter(dataObj =>
       trackedPlayers.some(
         listObj =>
@@ -100,6 +118,18 @@ class Dashboard extends Component {
             Player Statistics
           </Button>
         </div>
+        <Dialog
+          fullScreen
+          open={modalOpen}
+          scroll="paper"
+          TransitionComponent={Transition}
+        >
+          <PlayerGameLog
+            onClose={() => closePlayerModal()}
+            playerObj={playerObj}
+            dataType="regular"
+          />
+        </Dialog>
       </div>
     )
   }
@@ -108,6 +138,7 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   auth: PropTypes.object.isRequired,
   stats: PropTypes.object.isRequired,
+  closePlayerModal: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => ({
@@ -115,4 +146,7 @@ const mapStateToProps = state => ({
   stats: state.stats,
 })
 
-export default connect(mapStateToProps)(Dashboard)
+export default connect(
+  mapStateToProps,
+  { closePlayerModal }
+)(Dashboard)
