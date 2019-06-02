@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import {
   TableHead,
   Checkbox,
@@ -20,6 +21,7 @@ import {
   generateCols,
 } from '../helper/columnLabels'
 import Tooltip from '@material-ui/core/Tooltip'
+import { openPlayerModal } from '../actions/statActions'
 
 const styles = {
   root: {
@@ -46,7 +48,7 @@ const TableData = props => {
     updateTrackedPlayers,
     classes,
     handleRequestSort,
-    handlePlayerLogModal,
+    openPlayerModal,
   } = props
 
   const aggregateTable = !(dataDisplay[0]
@@ -184,7 +186,10 @@ const TableData = props => {
                     <IconButton
                       children={<TableChart />}
                       classes={{ root: classes.root }}
-                      onClick={event => handlePlayerLogModal(event, row)}
+                      onClick={event => {
+                        event.stopPropagation()
+                        openPlayerModal(row)
+                      }}
                     />
                   </TableCell>
                 </>
@@ -223,7 +228,12 @@ TableData.propTypes = {
   handleRowClick: PropTypes.func.isRequired,
   updateTrackedPlayers: PropTypes.func.isRequired,
   handleRequestSort: PropTypes.func.isRequired,
-  handlePlayerLogModal: PropTypes.func.isRequired,
+  openPlayerModal: PropTypes.func.isRequired,
 }
 
-export default withStyles(styles)(TableData)
+export default withStyles(styles)(
+  connect(
+    null,
+    { openPlayerModal }
+  )(TableData)
+)

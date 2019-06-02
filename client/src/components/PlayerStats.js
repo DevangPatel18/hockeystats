@@ -18,6 +18,7 @@ import {
   removePlayerList,
   startLoad,
   stopLoad,
+  closePlayerModal,
 } from '../actions/statActions'
 import TablePaginationActions from './TablePaginationActions'
 import StatsFilterPanel from './StatsFilterPanel'
@@ -74,6 +75,13 @@ class PlayerStats extends Component {
         'beforeunload',
         this.playersToLocalStorage.bind(this)
       )
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps) {
+    return {
+      playerLogModal: nextProps.stats.modalOpen,
+      playerLogData: nextProps.stats.playerObj,
     }
   }
 
@@ -262,8 +270,10 @@ class PlayerStats extends Component {
       yearEnd,
       search,
       dataType,
+      playerLogModal,
       playerLogData,
     } = this.state
+    const { closePlayerModal } = this.props
     const { dataLoad, trackedPlayers } = this.props.stats
 
     const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
@@ -350,10 +360,6 @@ class PlayerStats extends Component {
                 handleRequestSort={(event, property) =>
                   this.handleRequestSort(event, property)
                 }
-                handlePlayerLogModal={(event, row) => {
-                  event.stopPropagation()
-                  this.setState({ playerLogData: row, playerLogModal: true })
-                }}
               />
             </Table>
           </div>
@@ -398,12 +404,12 @@ class PlayerStats extends Component {
         </Dialog>
         <Dialog
           fullScreen
-          open={this.state.playerLogModal}
+          open={playerLogModal}
           scroll="paper"
           TransitionComponent={Transition}
         >
           <PlayerGameLog
-            onClose={() => this.handleModalClose('playerLogModal')}
+            onClose={() => closePlayerModal()}
             playerObj={playerLogData}
             dataType={dataType}
           />
@@ -417,6 +423,7 @@ PlayerStats.propTypes = {
   getPlayerList: PropTypes.func.isRequired,
   addPlayerList: PropTypes.func.isRequired,
   removePlayerList: PropTypes.func.isRequired,
+  closePlayerModal: PropTypes.func.isRequired,
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
@@ -431,5 +438,12 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getPlayerList, addPlayerList, removePlayerList, startLoad, stopLoad }
+  {
+    getPlayerList,
+    addPlayerList,
+    removePlayerList,
+    startLoad,
+    stopLoad,
+    closePlayerModal,
+  }
 )(PlayerStats)
