@@ -95,7 +95,7 @@ const TableData = props => {
               }}
               sortDirection={orderBy === col.id ? order : false}
             >
-              <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
+              <Tooltip title={col.id} placement={'bottom-end'} enterDelay={300}>
                 <TableSortLabel
                   active={orderBy === col.id}
                   direction={order}

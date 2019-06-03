@@ -7,6 +7,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Tooltip,
 } from '@material-ui/core'
 import { ProfileSkateCol, ProfileGoalieCol } from '../helper/columnLabels'
 
@@ -29,7 +30,13 @@ const ProfileStatTable = ({ stats }) => {
                 key={obj.label}
                 style={{ fontWeight: 'bolder' }}
               >
-                {obj.label}
+                <Tooltip
+                  title={obj.key}
+                  placement={'bottom-end'}
+                  enterDelay={300}
+                >
+                  <span>{obj.label}</span>
+                </Tooltip>
               </TableCell>
             ))}
           </TableRow>
