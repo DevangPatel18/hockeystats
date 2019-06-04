@@ -1,8 +1,9 @@
 import React from 'react'
-import { StaticQuery, graphql } from 'gatsby'
+import { StaticQuery, graphql, Link } from 'gatsby'
 import Img from 'gatsby-image'
 import jwt_decode from 'jwt-decode'
 import styled from 'styled-components'
+import { Button } from '@material-ui/core/'
 import store from '../store'
 import setAuthToken from '../utils/setAuthToken'
 import { setCurrentUser, logoutUser } from '../actions/authActions'
@@ -120,6 +121,15 @@ const IndexPage = () => (
                 <HeroText>
                   Select, track, and compare players in different categories
                 </HeroText>
+                <Button
+                  component={Link}
+                  to="/app/playerstats"
+                  color="primary"
+                  variant="contained"
+                  size="large"
+                >
+                  View statistics
+                </Button>
               </div>
               <ChartImg src={Charts} size="400px" alt="Charts" />
             </HeroContent>
