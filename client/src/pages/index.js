@@ -14,7 +14,7 @@ import Layout from '../components/layout'
 const heroBreak = '770px'
 const mobileWidth = '425px'
 const Charts =
-  'https://res.cloudinary.com/dbeqp2lyo/image/upload/v1554606574/Hockey%20stats/Charts.svg'
+  'https://res.cloudinary.com/dbeqp2lyo/image/upload/v1559749878/Hockey%20stats/Charts.svg'
 
 if (typeof window !== 'undefined') {
   const token = localStorage.jwtToken
@@ -52,6 +52,26 @@ const HeroBackground = styled(Img)`
   z-index: -1;
 `
 
+const HeroBackgroundContainer = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+
+  &:after {
+    position: absolute;
+    content: '';
+    z-index: -1;
+    width: 100%;
+    height: 100vh;
+    background-image: linear-gradient(
+      to bottom right,
+      white 40%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+`
 const HeroContent = styled.div`
   position: relative;
   height: 100%;
@@ -66,6 +86,7 @@ const HeroContent = styled.div`
   @media (max-width: ${heroBreak}) {
     flex-direction: column;
     flex-wrap: wrap;
+    text-align: center;
   }
 `
 
@@ -113,7 +134,9 @@ const IndexPage = () => (
 
       return (
         <Layout>
-          <HeroBackground fluid={imgURL} style={{ position: 'absolute' }} />
+          <HeroBackgroundContainer>
+            <HeroBackground fluid={imgURL} style={{ position: 'absolute' }} />
+          </HeroBackgroundContainer>
           <HeroContainer>
             <HeroContent>
               <div>
@@ -127,6 +150,7 @@ const IndexPage = () => (
                   color="primary"
                   variant="contained"
                   size="large"
+                  style={{marginBottom: '2rem'}}
                 >
                   View statistics
                 </Button>
