@@ -13,10 +13,10 @@ const mobileWidth = '900px'
 
 const HeaderMain = styled.div`
   background: #333333;
-  z-index: 5;
 `
 
 const HeaderContainer = styled.div`
+  z-index: 5;
   margin: 0 auto;
   max-width: 960px;
   min-height: 70px;

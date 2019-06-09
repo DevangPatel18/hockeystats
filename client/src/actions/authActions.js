@@ -1,4 +1,5 @@
 import API from '../utils/api'
+import axios from 'axios'
 import setAuthToken from '../utils/setAuthToken'
 import jwt_decode from 'jwt-decode'
 import { getPlayerList } from '../actions/statActions'
@@ -43,6 +44,23 @@ export const loginUser = userData => dispatch => {
       // Set current user
       dispatch(setCurrentUser(decoded))
       dispatch(getPlayerList(decoded.id))
+    })
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data,
+      })
+    )
+}
+
+// Delete user account
+export const deleteUser = userData => dispatch => {
+  const { userId, password, password2 } = userData
+
+  API.post(`/api/userActions/delete/${userId}`, { password, password2 })
+    .then(() => {
+      dispatch(logoutUser())
+      // Dispatch action showing successful account deletion message
     })
     .catch(err =>
       dispatch({

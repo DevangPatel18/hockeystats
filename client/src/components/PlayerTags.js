@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { yearFormatter } from '../helper/columnLabels'
 import { teamColors } from '../helper/teamColors'
@@ -80,6 +81,12 @@ const PlayerTags = ({ selectedPlayers, stats, handleRowClick }) => {
       })}
     </PlayerTagContainerStyles>
   )
+}
+
+PlayerTags.propTypes = {
+  selectedPlayers: PropTypes.array.isRequired,
+  stats: PropTypes.array.isRequired,
+  handleRowClick: PropTypes.func.isRequired,
 }
 
 export default PlayerTags

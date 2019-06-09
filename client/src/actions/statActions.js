@@ -5,6 +5,8 @@ import {
   REMOVE_PLAYER,
   DATA_LOADING,
   DATA_LOADED,
+  OPEN_MODAL,
+  CLOSE_MODAL,
 } from './types'
 
 export const getPlayerList = userId => dispatch => {
@@ -65,4 +67,12 @@ export const startLoad = event => dispatch => {
 
 export const stopLoad = event => dispatch => {
   dispatch({ type: DATA_LOADED })
+}
+
+export const openPlayerModal = playerObj => dispatch => {
+  dispatch({ type: OPEN_MODAL, payload: { playerObj } })
+}
+
+export const closePlayerModal = () => dispatch => {
+  dispatch({ type: CLOSE_MODAL })
 }

@@ -1,4 +1,6 @@
 import React from 'react'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import {
   TableHead,
   Checkbox,
@@ -19,6 +21,7 @@ import {
   generateCols,
 } from '../helper/columnLabels'
 import Tooltip from '@material-ui/core/Tooltip'
+import { openPlayerModal } from '../actions/statActions'
 
 const styles = {
   root: {
@@ -45,7 +48,7 @@ const TableData = props => {
     updateTrackedPlayers,
     classes,
     handleRequestSort,
-    handlePlayerLogModal,
+    openPlayerModal,
   } = props
 
   const aggregateTable = !(dataDisplay[0]
@@ -92,7 +95,7 @@ const TableData = props => {
               }}
               sortDirection={orderBy === col.id ? order : false}
             >
-              <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
+              <Tooltip title={col.id} placement={'bottom-end'} enterDelay={300}>
                 <TableSortLabel
                   active={orderBy === col.id}
                   direction={order}
@@ -183,7 +186,10 @@ const TableData = props => {
                     <IconButton
                       children={<TableChart />}
                       classes={{ root: classes.root }}
-                      onClick={event => handlePlayerLogModal(event, row)}
+                      onClick={event => {
+                        event.stopPropagation()
+                        openPlayerModal(row)
+                      }}
                     />
                   </TableCell>
                 </>
@@ -210,4 +216,24 @@ const TableData = props => {
   )
 }
 
-export default withStyles(styles)(TableData)
+TableData.propTypes = {
+  dataDisplay: PropTypes.array.isRequired,
+  page: PropTypes.number.isRequired,
+  order: PropTypes.string,
+  orderBy: PropTypes.string,
+  rowsPerPage: PropTypes.number.isRequired,
+  trackedPlayers: PropTypes.array.isRequired,
+  selectedPlayers: PropTypes.array.isRequired,
+  isAggregate: PropTypes.bool.isRequired,
+  handleRowClick: PropTypes.func.isRequired,
+  updateTrackedPlayers: PropTypes.func.isRequired,
+  handleRequestSort: PropTypes.func.isRequired,
+  openPlayerModal: PropTypes.func.isRequired,
+}
+
+export default withStyles(styles)(
+  connect(
+    null,
+    { openPlayerModal }
+  )(TableData)
+)

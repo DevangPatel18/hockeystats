@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import {
   Paper,
   Table,
@@ -6,6 +7,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Tooltip,
 } from '@material-ui/core'
 import { ProfileSkateCol, ProfileGoalieCol } from '../helper/columnLabels'
 
@@ -28,7 +30,13 @@ const ProfileStatTable = ({ stats }) => {
                 key={obj.label}
                 style={{ fontWeight: 'bolder' }}
               >
-                {obj.label}
+                <Tooltip
+                  title={obj.key}
+                  placement={'bottom-end'}
+                  enterDelay={300}
+                >
+                  <span>{obj.label}</span>
+                </Tooltip>
               </TableCell>
             ))}
           </TableRow>
@@ -45,6 +53,10 @@ const ProfileStatTable = ({ stats }) => {
       </Table>
     </Paper>
   )
+}
+
+ProfileStatTable.propTypes = {
+  stats: PropTypes.object.isRequired,
 }
 
 export default ProfileStatTable

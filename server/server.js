@@ -14,6 +14,7 @@ const resetUrlStatus = require('./routes/api/resetUrlStatus');
 const passwordReset = require('./routes/api/passwordReset');
 const statistics = require('./routes/api/statistics');
 const playerList = require('./routes/api/playerList');
+const userActions = require('./routes/api/userActions');
 const app = express();
 
 const corsOptions = {
@@ -52,6 +53,8 @@ app.use('/api/passwordReset', passwordReset);
 app.use('/api/statistics', statistics);
 
 app.use('/api/playerList', loginRequired, playerList);
+
+app.use('/api/userActions', loginRequired, userActions);
 
 const port = process.env.PORT || 5000;
 

@@ -2,10 +2,15 @@ import React, { Component } from 'react'
 import { Link } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { getPlayerList } from '../actions/statActions'
 import configure from '../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
-import { CircularProgress, Button } from '@material-ui/core/'
+import { CircularProgress, Button, Dialog, Slide } from '@material-ui/core/'
+import { closePlayerModal } from '../actions/statActions'
+import PlayerGameLog from './PlayerGameLog'
+
+function Transition(props) {
+  return <Slide direction="up" {...props} />
+}
 
 class Dashboard extends Component {
   constructor() {
@@ -15,6 +20,13 @@ class Dashboard extends Component {
     }
 
     this._isMounted = false
+  }
+
+  static getDerivedStateFromProps(nextProps) {
+    return {
+      modalOpen: nextProps.stats.modalOpen,
+      playerObj: nextProps.stats.playerObj,
+    }
   }
 
   async componentDidMount() {
@@ -65,7 +77,8 @@ class Dashboard extends Component {
 
   render() {
     const { trackedPlayerData } = this.state
-    const { trackedPlayers } = this.props.stats
+    const { closePlayerModal, stats } = this.props
+    const { trackedPlayers, modalOpen, playerObj } = stats
     const filterTrackedPlayerData = trackedPlayerData.filter(dataObj =>
       trackedPlayers.some(
         listObj =>
@@ -101,15 +114,27 @@ class Dashboard extends Component {
             Player Statistics
           </Button>
         </div>
+        <Dialog
+          fullScreen
+          open={modalOpen}
+          scroll="paper"
+          TransitionComponent={Transition}
+        >
+          <PlayerGameLog
+            onClose={() => closePlayerModal()}
+            playerObj={playerObj}
+            dataType="regular"
+          />
+        </Dialog>
       </div>
     )
   }
 }
 
 Dashboard.propTypes = {
-  getPlayerList: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   stats: PropTypes.object.isRequired,
+  closePlayerModal: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => ({
@@ -119,5 +144,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getPlayerList }
+  { closePlayerModal }
 )(Dashboard)

@@ -183,5 +183,5 @@ export const gameLogTableColumns = [
   { key: 'isHome', label: '-' },
   { key: 'opponentScore', label: 'OG' },
   { key: 'opponent', label: 'Opp' },
-  { key: 'diff', label: 'Diff' },
+  { key: 'goalDifference', label: 'Diff' },
 ]

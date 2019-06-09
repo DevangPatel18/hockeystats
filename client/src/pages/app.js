@@ -4,6 +4,7 @@ import DateFnsUtils from '@date-io/date-fns'
 import { MuiPickersUtilsProvider } from 'material-ui-pickers'
 import Layout from '../components/layout'
 import Details from '../components/Details'
+import DeleteAcct from '../components/DeleteAcct'
 import Home from '../components/Home'
 import Login from '../components/Login'
 import SignUp from '../components/SignUp'
@@ -19,6 +20,7 @@ const App = () => (
       <Router>
         <PrivateRoute path="/app/home" component={Home} />
         <PrivateRoute path="/app/profile" component={Details} />
+        <PrivateRoute path="/app/deleteacct" component={DeleteAcct} />
         <Login path="/app/login" />
         <SignUp path="/app/signup" />
         <RequestReset path="/app/requestreset" />

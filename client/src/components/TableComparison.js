@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { yearFormatter } from '../helper/columnLabels'
 import { generateCols } from '../helper/columnLabels'
 import { Table, TableBody, TableRow, TableCell } from '@material-ui/core'
@@ -134,6 +135,11 @@ const TableComparison = ({ selectedPlayers, data }) => {
       </TableBody>
     </Table>
   )
+}
+
+TableComparison.propTypes = {
+  selectedPlayers: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
 }
 
 export default TableComparison

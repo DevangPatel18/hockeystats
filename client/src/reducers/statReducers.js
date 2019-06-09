@@ -5,10 +5,14 @@ import {
   DATA_LOADING,
   DATA_LOADED,
   CLEAR_PLAYER_LIST,
+  OPEN_MODAL,
+  CLOSE_MODAL,
 } from '../actions/types'
 const initialState = {
   trackedPlayers: [],
   dataLoad: false,
+  modalOpen: false,
+  playerObj: {},
 }
 
 export default function(state = initialState, action) {
@@ -54,6 +58,18 @@ export default function(state = initialState, action) {
       return {
         ...state,
         dataLoad: false,
+      }
+    case OPEN_MODAL:
+      return {
+        ...state,
+        modalOpen: true,
+        playerObj: action.payload.playerObj,
+      }
+    case CLOSE_MODAL:
+      return {
+        ...state,
+        modalOpen: false,
+        playerObj: {},
       }
     default:
       return state

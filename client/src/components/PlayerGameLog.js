@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import {
   AppBar,
   IconButton,
@@ -10,8 +11,8 @@ import {
   TableCell,
   TableRow,
   TableSortLabel,
+  Tooltip,
 } from '@material-ui/core/'
-import Tooltip from '@material-ui/core/Tooltip'
 import CloseIcon from '@material-ui/icons/Close'
 import configure from '../utils/configLocalforage'
 import {
@@ -134,7 +135,7 @@ class PlayerGameLog extends Component {
       let teamScore
       let opponentScore
       let isHome
-      let diff
+      let goalDifference
       let intervalIdx
       let playerStats
       let game
@@ -168,7 +169,7 @@ class PlayerGameLog extends Component {
         team = teamCodes[team]
         opponent = teamCodes[opponent]
         isHome = isHome ? '' : '@'
-        diff = teamScore - opponentScore
+        goalDifference = teamScore - opponentScore
 
         return {
           date,
@@ -177,7 +178,7 @@ class PlayerGameLog extends Component {
           opponent,
           opponentScore,
           isHome,
-          diff,
+          goalDifference,
           game,
           ...playerStats,
         }
@@ -211,7 +212,11 @@ class PlayerGameLog extends Component {
             style={{ ...headerStyle, ...tableCellStyle }}
             sortDirection={orderBy === colHeader.key ? order : false}
           >
-            <Tooltip title="Sort" placement={'bottom-end'} enterDelay={300}>
+            <Tooltip
+              title={colHeader.key}
+              placement={'bottom-end'}
+              enterDelay={300}
+            >
               <TableSortLabel
                 active={orderBy === colHeader.key}
                 direction={order}
@@ -230,14 +235,20 @@ class PlayerGameLog extends Component {
             style={{ ...headerStyle, ...tableCellStyle }}
             sortDirection={orderBy === statCol.key ? order : false}
           >
-            <TableSortLabel
-              active={orderBy === statCol.key}
-              direction={order}
-              onClick={() => this.handleRequestSort(statCol.key)}
-              hideSortIcon={true}
+            <Tooltip
+              title={statCol.key}
+              placement={'bottom-end'}
+              enterDelay={300}
             >
-              {statCol.label}
-            </TableSortLabel>
+              <TableSortLabel
+                active={orderBy === statCol.key}
+                direction={order}
+                onClick={() => this.handleRequestSort(statCol.key)}
+                hideSortIcon={true}
+              >
+                {statCol.label}
+              </TableSortLabel>
+            </Tooltip>
           </TableCell>
         ))}
       </TableRow>
@@ -259,6 +270,10 @@ class PlayerGameLog extends Component {
     const { onClose, playerObj } = this.props
     const { tableData, playerCols, order, orderBy } = this.state
     const sortSign = order === 'desc' ? -1 : 1
+
+    if (Object.keys(playerObj).length === 0) {
+      return null
+    }
 
     let tableDataDisplay = orderBy
       ? tableData.sort((logA, logB) => {
@@ -360,6 +375,12 @@ class PlayerGameLog extends Component {
       </div>
     )
   }
+}
+
+PlayerGameLog.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  playerObj: PropTypes.object.isRequired,
+  dataType: PropTypes.string.isRequired,
 }
 
 export default PlayerGameLog
