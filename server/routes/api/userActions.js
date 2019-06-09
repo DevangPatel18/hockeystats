@@ -6,7 +6,7 @@ const validatePasswordReset = require('../../validation/passwordReset');
 const Users = require('../../models/User');
 
 // Delete user account
-router.delete('/delete/:userId', async (req, res) => {
+router.post('/delete/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
     const { password, password2 } = req.body;

@@ -1,4 +1,5 @@
 import API from '../utils/api'
+import axios from 'axios'
 import setAuthToken from '../utils/setAuthToken'
 import jwt_decode from 'jwt-decode'
 import { getPlayerList } from '../actions/statActions'
@@ -56,9 +57,7 @@ export const loginUser = userData => dispatch => {
 export const deleteUser = userData => dispatch => {
   const { userId, password, password2 } = userData
 
-  API.delete(`/api/userActions/delete/${userId}`, {
-    data: { password, password2 },
-  })
+  API.post(`/api/userActions/delete/${userId}`, { password, password2 })
     .then(() => {
       dispatch(logoutUser())
       // Dispatch action showing successful account deletion message
