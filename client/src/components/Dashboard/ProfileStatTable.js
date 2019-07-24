@@ -9,7 +9,7 @@ import {
   TableBody,
   Tooltip,
 } from '@material-ui/core'
-import { ProfileSkateCol, ProfileGoalieCol } from '../helper/columnLabels'
+import { ProfileSkateCol, ProfileGoalieCol } from '../../helper/columnLabels'
 
 const ProfileStatTable = ({ stats }) => {
   const keyCols = stats.wins ? ProfileGoalieCol : ProfileSkateCol

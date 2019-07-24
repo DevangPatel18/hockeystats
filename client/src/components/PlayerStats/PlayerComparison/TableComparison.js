@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { yearFormatter } from '../helper/columnLabels'
-import { generateCols } from '../helper/columnLabels'
+import { yearFormatter } from '../../../helper/columnLabels'
+import { generateCols } from '../../../helper/columnLabels'
 import { Table, TableBody, TableRow, TableCell } from '@material-ui/core'
 
 const cellBackground = (obj, i) => {

@@ -2,11 +2,11 @@ import React, { Component } from 'react'
 import { Link } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import configure from '../utils/configLocalforage'
+import configure from '../../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
 import { CircularProgress, Button, Dialog, Slide } from '@material-ui/core/'
-import { closePlayerModal } from '../actions/statActions'
-import PlayerGameLog from './PlayerGameLog'
+import { closePlayerModal } from '../../actions/statActions'
+import PlayerGameLog from '../PlayerGameLog'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />

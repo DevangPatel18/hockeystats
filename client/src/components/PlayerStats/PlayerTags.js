@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import { yearFormatter } from '../helper/columnLabels'
-import { teamColors } from '../helper/teamColors'
+import { yearFormatter } from '../../helper/columnLabels'
+import { teamColors } from '../../helper/teamColors'
 
 const PlayerTagContainerStyles = styled.div`
   display: flex;
