@@ -1,5 +1,4 @@
 import API from '../utils/api'
-import axios from 'axios'
 import setAuthToken from '../utils/setAuthToken'
 import jwt_decode from 'jwt-decode'
 import { getPlayerList } from '../actions/statActions'
