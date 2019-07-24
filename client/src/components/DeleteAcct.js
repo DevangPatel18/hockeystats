@@ -54,7 +54,7 @@ class DeleteAcct extends Component {
   handleClose = () => this.setState({ prompt: false })
 
   render() {
-    const { errors, prompt, serverResponse } = this.state
+    const { errors, prompt } = this.state
 
     return (
       <div>

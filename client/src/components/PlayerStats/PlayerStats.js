@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import configure from '../utils/configLocalforage'
+import configure from '../../utils/configLocalforage'
 import {
   getPlayerList,
   addPlayerList,
@@ -19,13 +19,13 @@ import {
   startLoad,
   stopLoad,
   closePlayerModal,
-} from '../actions/statActions'
+} from '../../actions/statActions'
 import TablePaginationActions from './TablePaginationActions'
 import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
-import PlayerComparison from './PlayerComparison'
+import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
-import PlayerGameLog from './PlayerGameLog'
+import PlayerGameLog from '../PlayerGameLog'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -375,6 +375,7 @@ class PlayerStats extends Component {
             onChangePage={this.handleChangePage}
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
             ActionsComponent={TablePaginationActions}
+            style={{ overflow: 'auto' }}
           />
         </Paper>
         <br />

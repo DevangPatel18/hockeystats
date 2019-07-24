@@ -14,9 +14,9 @@ import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons'
 import chroma from 'chroma-js'
 import styled from 'styled-components'
 import { DatePicker } from 'material-ui-pickers'
-import configure from '../utils/configLocalforage'
-import { startLoad, stopLoad } from '../actions/statActions'
-import { skaterLogStats, goalieLogStats } from '../helper/chartComparisonHelper'
+import configure from '../../../utils/configLocalforage'
+import { startLoad, stopLoad } from '../../../actions/statActions'
+import { skaterLogStats, goalieLogStats } from '../../../helper/chartComparisonHelper'
 import StatsChart from './StatsChart'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])

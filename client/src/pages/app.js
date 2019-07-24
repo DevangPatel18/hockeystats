@@ -11,8 +11,8 @@ import SignUp from '../components/SignUp'
 import PrivateRoute from '../components/PrivateRoute'
 import RequestReset from '../components/RequestReset'
 import PasswordReset from '../components/PasswordReset'
-import PlayerStats from '../components/PlayerStats'
-import Dashboard from '../components/Dashboard'
+import PlayerStats from '../components/PlayerStats/PlayerStats'
+import Dashboard from '../components/Dashboard/Dashboard'
 
 const App = () => (
   <MuiPickersUtilsProvider utils={DateFnsUtils}>

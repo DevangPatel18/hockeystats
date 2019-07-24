@@ -1,8 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryLabel } from 'victory'
-import chartTheme from '../helper/chartTheme'
-import { secToString } from '../helper/columnLabels'
+import chartTheme from '../../../helper/chartTheme'
+import { secToString } from '../../../helper/columnLabels'
 import chroma from 'chroma-js'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])

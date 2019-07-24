@@ -19,9 +19,9 @@ import {
   stableSort,
   getSorting,
   generateCols,
-} from '../helper/columnLabels'
+} from '../../helper/columnLabels'
 import Tooltip from '@material-ui/core/Tooltip'
-import { openPlayerModal } from '../actions/statActions'
+import { openPlayerModal } from '../../actions/statActions'
 
 const styles = {
   root: {

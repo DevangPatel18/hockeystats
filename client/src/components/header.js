@@ -33,6 +33,10 @@ const HeaderTitle = styled.h1`
     color: white;
     text-decoration: none;
   }
+
+  @media (max-width: 360px) {
+    font-size: 9.6vw;
+  }
 `
 
 const HeaderNavList = styled.ul`
