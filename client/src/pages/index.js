@@ -105,6 +105,9 @@ const ChartImg = styled.img`
 
   @media (max-width: ${mobileWidth}) {
     width: auto;
+    position: absolute;
+    opacity: 0.3;
+    z-index: -1;
   }
 `
 
