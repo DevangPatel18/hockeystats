@@ -375,6 +375,7 @@ class PlayerStats extends Component {
             onChangePage={this.handleChangePage}
             onChangeRowsPerPage={this.handleChangeRowsPerPage}
             ActionsComponent={TablePaginationActions}
+            style={{ overflow: 'auto' }}
           />
         </Paper>
         <br />
