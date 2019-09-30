@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, navigate } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import styles from './styles/SignUpStyles'
 import { registerUser, clearErrors } from '../actions/authActions'
 
 const initialState = {
@@ -115,33 +116,6 @@ class SignUp extends React.Component {
       </div>
     )
   }
-}
-
-const styles = {
-  input: {
-    height: 40,
-    margin: '10px 0px',
-    padding: 7,
-  },
-  formContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  button: {
-    backgroundColor: 'royalblue',
-    padding: '15px 7px',
-    cursor: 'pointer',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  buttonText: {
-    color: 'white',
-  },
-  error: {
-    color: 'red',
-    fontSize: '0.7em',
-    float: 'right',
-  },
 }
 
 SignUp.propTypes = {
