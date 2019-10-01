@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'gatsby'
 import {
-  Table,
   TablePagination,
   Paper,
   Dialog,
@@ -344,25 +343,21 @@ class PlayerStats extends Component {
               transition: 'all 0.5s',
             }}
           />
-          <div style={{ overflowX: 'auto' }}>
-            <Table padding="checkbox">
-              <TableData
-                dataDisplay={dataDisplay}
-                page={page}
-                order={order}
-                orderBy={orderBy}
-                rowsPerPage={rowsPerPage}
-                trackedPlayers={trackedPlayers}
-                selectedPlayers={selectedPlayers}
-                isAggregate={isAggregate}
-                handleRowClick={(event, x) => this.handleRowClick(event, x)}
-                updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
-                handleRequestSort={(event, property) =>
-                  this.handleRequestSort(event, property)
-                }
-              />
-            </Table>
-          </div>
+          <TableData
+            dataDisplay={dataDisplay}
+            page={page}
+            order={order}
+            orderBy={orderBy}
+            rowsPerPage={rowsPerPage}
+            trackedPlayers={trackedPlayers}
+            selectedPlayers={selectedPlayers}
+            isAggregate={isAggregate}
+            handleRowClick={(event, x) => this.handleRowClick(event, x)}
+            updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
+            handleRequestSort={(event, property) =>
+              this.handleRequestSort(event, property)
+            }
+          />
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 50]}
             component="div"
