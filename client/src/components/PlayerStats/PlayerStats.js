@@ -40,7 +40,6 @@ class PlayerStats extends Component {
       stats: [],
       playerPositionCode: 'LRCD',
       isAggregate: false,
-      reportName: 'skatersummary',
       playoffs: false,
       dataType: '',
       teamFilter: 'all',
@@ -167,8 +166,8 @@ class PlayerStats extends Component {
       e.preventDefault()
     }
 
-    const { isAggregate, reportName, playoffs } = this.state
-    const { yearStart, yearEnd } = this.props.tableSettings
+    const { isAggregate, playoffs } = this.state
+    const { yearStart, yearEnd, reportName } = this.props.tableSettings
 
     this.props.startLoad()
     configure().then(async api => {
@@ -257,7 +256,6 @@ class PlayerStats extends Component {
       dataType,
       playerLogModal,
       playerLogData,
-      reportName,
       playoffs,
       teams,
       countries,
@@ -298,7 +296,6 @@ class PlayerStats extends Component {
 
     const statsFilterPanelProps = {
       isAggregate,
-      reportName,
       playoffs,
       playerPositionCode,
       filterTracked,

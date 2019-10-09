@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { changeSeason } from '../../actions/tableSettingsActions'
+import { changeSeason, changeField } from '../../actions/tableSettingsActions'
 import PropTypes from 'prop-types'
 import {
   FormControl,
@@ -23,10 +23,13 @@ class StatsFilterPanel extends Component {
     this.props.changeSeason(name, event.target.value)
   }
 
+  handleChange = name => event => {
+    this.props.changeField(name, event.target.value)
+  }
+
   render() {
     const {
       isAggregate,
-      reportName,
       playoffs,
       playerPositionCode,
       filterTracked,
@@ -45,7 +48,7 @@ class StatsFilterPanel extends Component {
       handleModalOpen,
     } = this.props
 
-    const { yearStart, yearEnd } = this.props.tableSettings
+    const { yearStart, yearEnd, reportName } = this.props.tableSettings
 
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
     let optionsStart = []
@@ -98,7 +101,7 @@ class StatsFilterPanel extends Component {
             <InputLabel htmlFor="reportName">Report Type</InputLabel>
             <NativeSelect
               value={reportName}
-              onChange={handleChange('reportName')}
+              onChange={this.handleChange('reportName')}
               input={<Input name="reportName" id="reportName" />}
               name="reportName"
             >
@@ -241,5 +244,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { changeSeason }
+  { changeSeason, changeField }
 )(StatsFilterPanel)
