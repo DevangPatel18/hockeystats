@@ -41,8 +41,6 @@ class PlayerStats extends Component {
       playerPositionCode: 'LRCD',
       isAggregate: false,
       reportName: 'skatersummary',
-      yearStart: '20182019',
-      yearEnd: '20182019',
       playoffs: false,
       dataType: '',
       teamFilter: 'all',
@@ -125,17 +123,6 @@ class PlayerStats extends Component {
     this.setState({ [name]: event.target.checked })
   }
 
-  handleSeasonChange = name => event => {
-    if (name === 'yearStart' && event.target.value > this.state.yearEnd) {
-      this.setState({
-        yearStart: event.target.value,
-        yearEnd: event.target.value,
-      })
-    } else {
-      this.setState({ [name]: event.target.value })
-    }
-  }
-
   handleChangePage = (event, page) => {
     this.setState({ page })
   }
@@ -180,7 +167,8 @@ class PlayerStats extends Component {
       e.preventDefault()
     }
 
-    const { isAggregate, reportName, yearStart, yearEnd, playoffs } = this.state
+    const { isAggregate, reportName, playoffs } = this.state
+    const { yearStart, yearEnd } = this.props.tableSettings
 
     this.props.startLoad()
     configure().then(async api => {
@@ -265,8 +253,6 @@ class PlayerStats extends Component {
       orderBy,
       teamFilter,
       countryFilter,
-      yearStart,
-      yearEnd,
       search,
       dataType,
       playerLogModal,
@@ -313,8 +299,6 @@ class PlayerStats extends Component {
     const statsFilterPanelProps = {
       isAggregate,
       reportName,
-      yearStart,
-      yearEnd,
       playoffs,
       playerPositionCode,
       filterTracked,
@@ -333,7 +317,6 @@ class PlayerStats extends Component {
           handleChange={this.handleChange}
           handleRowFilter={this.handleRowFilter}
           handleSwitchChange={this.handleSwitchChange}
-          handleSeasonChange={this.handleSeasonChange}
           submitQuery={this.submitQuery}
           handleModalOpen={() => this.handleModalOpen('modal')}
         />
@@ -412,8 +395,6 @@ class PlayerStats extends Component {
             onClose={() => this.handleModalClose('modal')}
             selectedPlayers={selectedPlayers}
             data={dataDisplay}
-            yearStart={yearStart}
-            yearEnd={yearEnd}
             dataType={dataType}
           />
         </Dialog>
@@ -449,6 +430,7 @@ const mapStateToProps = state => ({
   auth: state.auth,
   errors: state.errors,
   stats: state.stats,
+  tableSettings: state.tableSettings,
 })
 
 export default connect(

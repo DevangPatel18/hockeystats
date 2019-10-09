@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { changeSeason } from '../../actions/tableSettingsActions'
 import PropTypes from 'prop-types'
 import {
   FormControl,
@@ -17,12 +19,14 @@ import {
 } from '../styles/StatsFilterPanelStyles'
 
 class StatsFilterPanel extends Component {
+  handleSeasonChange = name => event => {
+    this.props.changeSeason(name, event.target.value)
+  }
+
   render() {
     const {
       isAggregate,
       reportName,
-      yearStart,
-      yearEnd,
       playoffs,
       playerPositionCode,
       filterTracked,
@@ -37,10 +41,11 @@ class StatsFilterPanel extends Component {
       handleChange,
       handleRowFilter,
       handleSwitchChange,
-      handleSeasonChange,
       submitQuery,
       handleModalOpen,
     } = this.props
+
+    const { yearStart, yearEnd } = this.props.tableSettings
 
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
     let optionsStart = []
@@ -70,7 +75,7 @@ class StatsFilterPanel extends Component {
                 <InputLabel htmlFor="yearStart">Year start</InputLabel>
                 <NativeSelect
                   value={yearStart}
-                  onChange={handleSeasonChange('yearStart')}
+                  onChange={this.handleSeasonChange('yearStart')}
                   input={<Input name="yearStart" id="yearStart" />}
                 >
                   {optionsStart.map(option => option)}
@@ -81,7 +86,7 @@ class StatsFilterPanel extends Component {
                 <InputLabel htmlFor="yearEnd">Year End</InputLabel>
                 <NativeSelect
                   value={yearEnd}
-                  onChange={handleSeasonChange('yearEnd')}
+                  onChange={this.handleSeasonChange('yearEnd')}
                   input={<Input name="yearEnd" id="yearEnd" />}
                 >
                   {optionsEnd.map(option => option)}
@@ -226,9 +231,15 @@ StatsFilterPanel.propTypes = {
   handleChange: PropTypes.func.isRequired,
   handleRowFilter: PropTypes.func.isRequired,
   handleSwitchChange: PropTypes.func.isRequired,
-  handleSeasonChange: PropTypes.func.isRequired,
   submitQuery: PropTypes.func.isRequired,
   handleModalOpen: PropTypes.func.isRequired,
 }
 
-export default StatsFilterPanel
+const mapStateToProps = state => ({
+  tableSettings: state.tableSettings,
+})
+
+export default connect(
+  mapStateToProps,
+  { changeSeason }
+)(StatsFilterPanel)
