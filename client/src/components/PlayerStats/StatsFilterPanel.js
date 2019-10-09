@@ -30,7 +30,7 @@ const StatsFilterPanel = props => {
     countryFilter,
     countries,
     search,
-  } = props.this
+  } = props
 
   const {
     handleChange,
@@ -218,7 +218,6 @@ const StatsFilterPanel = props => {
 }
 
 StatsFilterPanel.propTypes = {
-  this: PropTypes.object.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleRowFilter: PropTypes.func.isRequired,
   handleSwitchChange: PropTypes.func.isRequired,

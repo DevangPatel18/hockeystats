@@ -271,6 +271,10 @@ class PlayerStats extends Component {
       dataType,
       playerLogModal,
       playerLogData,
+      reportName,
+      playoffs,
+      teams,
+      countries,
     } = this.state
     const { closePlayerModal } = this.props
     const { dataLoad, trackedPlayers } = this.props.stats
@@ -306,11 +310,26 @@ class PlayerStats extends Component {
           )
         : dataDisplay
 
+    const statsFilterPanelProps = {
+      isAggregate,
+      reportName,
+      yearStart,
+      yearEnd,
+      playoffs,
+      playerPositionCode,
+      filterTracked,
+      teamFilter,
+      teams,
+      countryFilter,
+      countries,
+      search,
+    }
+
     return (
       <div>
         <h1>Player Statistics</h1>
         <StatsFilterPanel
-          this={this.state}
+          {...statsFilterPanelProps}
           handleChange={this.handleChange}
           handleRowFilter={this.handleRowFilter}
           handleSwitchChange={this.handleSwitchChange}
