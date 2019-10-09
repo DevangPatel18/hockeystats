@@ -10,11 +10,16 @@ const initialState = {
 
 export default function(state = initialState, action) {
   switch (action.type) {
-    case types.CHANGE_YEARS:      
+    case types.CHANGE_YEARS:
       return {
         ...state,
         yearStart: action.yearStart || state.yearStart,
         yearEnd: action.yearEnd || state.yearEnd,
+      }
+    case types.CHANGE_FIELD:
+      return {
+        ...state,
+        [action.name]: action.value,
       }
     default:
       return state

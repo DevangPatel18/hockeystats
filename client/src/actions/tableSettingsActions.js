@@ -1,4 +1,4 @@
-import { CHANGE_YEARS } from './types'
+import { CHANGE_YEARS, CHANGE_FIELD } from './types'
 import store from '../store'
 
 export const changeSeason = (name, year) => dispatch => {
@@ -15,4 +15,12 @@ export const changeSeason = (name, year) => dispatch => {
       [name]: year,
     })
   }
+}
+
+export const changeField = (name, value) => dispatch => {
+  dispatch({
+    type: CHANGE_FIELD,
+    name,
+    value,
+  })
 }
