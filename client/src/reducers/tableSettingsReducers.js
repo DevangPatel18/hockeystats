@@ -21,6 +21,11 @@ export default function(state = initialState, action) {
         ...state,
         [action.name]: action.value,
       }
+    case types.TOGGLE_SWITCH:
+      return {
+        ...state,
+        [action.name]: !state[action.name],
+      }
     default:
       return state
   }

@@ -1,4 +1,4 @@
-import { CHANGE_YEARS, CHANGE_FIELD } from './types'
+import { CHANGE_YEARS, CHANGE_FIELD, TOGGLE_SWITCH } from './types'
 import store from '../store'
 
 export const changeSeason = (name, year) => dispatch => {
@@ -22,5 +22,12 @@ export const changeField = (name, value) => dispatch => {
     type: CHANGE_FIELD,
     name,
     value,
+  })
+}
+
+export const toggleSwitch = name => dispatch => {
+  dispatch({
+    type: TOGGLE_SWITCH,
+    name,
   })
 }
