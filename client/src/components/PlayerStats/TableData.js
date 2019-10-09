@@ -231,7 +231,6 @@ TableData.propTypes = {
   rowsPerPage: PropTypes.number.isRequired,
   trackedPlayers: PropTypes.array.isRequired,
   selectedPlayers: PropTypes.array.isRequired,
-  isAggregate: PropTypes.bool.isRequired,
   handleRowClick: PropTypes.func.isRequired,
   updateTrackedPlayers: PropTypes.func.isRequired,
   handleRequestSort: PropTypes.func.isRequired,

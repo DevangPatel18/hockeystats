@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { changeSeason, changeField } from '../../actions/tableSettingsActions'
+import {
+  changeSeason,
+  changeField,
+  toggleSwitch,
+} from '../../actions/tableSettingsActions'
 import PropTypes from 'prop-types'
 import {
   FormControl,
@@ -27,10 +31,12 @@ class StatsFilterPanel extends Component {
     this.props.changeField(name, event.target.value)
   }
 
+  handleToggle = name => event => {
+    this.props.toggleSwitch(name)
+  }
+
   render() {
     const {
-      isAggregate,
-      playoffs,
       playerPositionCode,
       filterTracked,
       teamFilter,
@@ -48,7 +54,13 @@ class StatsFilterPanel extends Component {
       handleModalOpen,
     } = this.props
 
-    const { yearStart, yearEnd, reportName } = this.props.tableSettings
+    const {
+      yearStart,
+      yearEnd,
+      reportName,
+      playoffs,
+      isAggregate,
+    } = this.props.tableSettings
 
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
     let optionsStart = []
@@ -113,7 +125,7 @@ class StatsFilterPanel extends Component {
             control={
               <Switch
                 checked={playoffs}
-                onChange={handleSwitchChange('playoffs')}
+                onChange={this.handleToggle('playoffs')}
               />
             }
             label={'Playoffs'}
@@ -122,7 +134,7 @@ class StatsFilterPanel extends Component {
             control={
               <Switch
                 checked={isAggregate}
-                onChange={handleSwitchChange('isAggregate')}
+                onChange={this.handleToggle('isAggregate')}
               />
             }
             label="Sum Results"
@@ -244,5 +256,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { changeSeason, changeField }
+  { changeSeason, changeField, toggleSwitch }
 )(StatsFilterPanel)

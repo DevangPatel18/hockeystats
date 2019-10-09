@@ -39,8 +39,6 @@ class PlayerStats extends Component {
     this.state = {
       stats: [],
       playerPositionCode: 'LRCD',
-      isAggregate: false,
-      playoffs: false,
       dataType: '',
       teamFilter: 'all',
       teams: '',
@@ -166,8 +164,13 @@ class PlayerStats extends Component {
       e.preventDefault()
     }
 
-    const { isAggregate, playoffs } = this.state
-    const { yearStart, yearEnd, reportName } = this.props.tableSettings
+    const {
+      yearStart,
+      yearEnd,
+      reportName,
+      isAggregate,
+      playoffs,
+    } = this.props.tableSettings
 
     this.props.startLoad()
     configure().then(async api => {
@@ -242,7 +245,6 @@ class PlayerStats extends Component {
   render() {
     const {
       stats,
-      isAggregate,
       playerPositionCode,
       filterTracked,
       selectedPlayers,
@@ -256,7 +258,6 @@ class PlayerStats extends Component {
       dataType,
       playerLogModal,
       playerLogData,
-      playoffs,
       teams,
       countries,
     } = this.state
@@ -295,8 +296,6 @@ class PlayerStats extends Component {
         : dataDisplay
 
     const statsFilterPanelProps = {
-      isAggregate,
-      playoffs,
       playerPositionCode,
       filterTracked,
       teamFilter,
@@ -350,7 +349,6 @@ class PlayerStats extends Component {
             rowsPerPage={rowsPerPage}
             trackedPlayers={trackedPlayers}
             selectedPlayers={selectedPlayers}
-            isAggregate={isAggregate}
             handleRowClick={(event, x) => this.handleRowClick(event, x)}
             updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
             handleRequestSort={(event, property) =>
