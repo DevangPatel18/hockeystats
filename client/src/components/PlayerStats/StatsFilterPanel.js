@@ -42,7 +42,6 @@ class StatsFilterPanel extends Component {
       teams,
       countryFilter,
       countries,
-      search,
     } = this.props
 
     const {
@@ -59,6 +58,7 @@ class StatsFilterPanel extends Component {
       playoffs,
       isAggregate,
       filterTracked,
+      search,
     } = this.props.tableSettings
 
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
@@ -231,7 +231,7 @@ class StatsFilterPanel extends Component {
             id="player-search-input"
             label="Search"
             value={search}
-            onChange={handleChange('search')}
+            onChange={this.handleChange('search')}
             variant="outlined"
             style={{ width: '170px' }}
           />

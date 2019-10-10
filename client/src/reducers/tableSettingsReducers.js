@@ -7,6 +7,7 @@ const initialState = {
   playoffs: false,
   isAggregate: false,
   filterTracked: false,
+  search: '',
 }
 
 export default function(state = initialState, action) {

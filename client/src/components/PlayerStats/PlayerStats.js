@@ -44,7 +44,6 @@ class PlayerStats extends Component {
       teams: '',
       countryFilter: 'all',
       countries: '',
-      search: '',
       trackedPlayers: [],
       selectedPlayers: [],
       page: 0,
@@ -248,7 +247,6 @@ class PlayerStats extends Component {
       orderBy,
       teamFilter,
       countryFilter,
-      search,
       dataType,
       playerLogModal,
       playerLogData,
@@ -257,7 +255,7 @@ class PlayerStats extends Component {
     } = this.state
     const { closePlayerModal } = this.props
     const { dataLoad, trackedPlayers } = this.props.stats
-    const { filterTracked } = this.props.tableSettings
+    const { filterTracked, search } = this.props.tableSettings
 
     const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
     let dataDisplay = isSkaters
@@ -296,7 +294,6 @@ class PlayerStats extends Component {
       teams,
       countryFilter,
       countries,
-      search,
     }
 
     return (
