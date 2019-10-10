@@ -6,6 +6,7 @@ const initialState = {
   reportName: 'skatersummary',
   playoffs: false,
   isAggregate: false,
+  filterTracked: false,
 }
 
 export default function(state = initialState, action) {

@@ -38,7 +38,6 @@ class StatsFilterPanel extends Component {
   render() {
     const {
       playerPositionCode,
-      filterTracked,
       teamFilter,
       teams,
       countryFilter,
@@ -49,7 +48,6 @@ class StatsFilterPanel extends Component {
     const {
       handleChange,
       handleRowFilter,
-      handleSwitchChange,
       submitQuery,
       handleModalOpen,
     } = this.props
@@ -60,6 +58,7 @@ class StatsFilterPanel extends Component {
       reportName,
       playoffs,
       isAggregate,
+      filterTracked,
     } = this.props.tableSettings
 
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
@@ -194,7 +193,7 @@ class StatsFilterPanel extends Component {
             control={
               <Switch
                 checked={filterTracked}
-                onChange={handleSwitchChange('filterTracked')}
+                onChange={this.handleToggle('filterTracked')}
               />
             }
             label="Tracked Players Only"
@@ -245,7 +244,6 @@ class StatsFilterPanel extends Component {
 StatsFilterPanel.propTypes = {
   handleChange: PropTypes.func.isRequired,
   handleRowFilter: PropTypes.func.isRequired,
-  handleSwitchChange: PropTypes.func.isRequired,
   submitQuery: PropTypes.func.isRequired,
   handleModalOpen: PropTypes.func.isRequired,
 }

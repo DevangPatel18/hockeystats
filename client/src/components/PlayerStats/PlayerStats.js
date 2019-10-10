@@ -45,7 +45,6 @@ class PlayerStats extends Component {
       countryFilter: 'all',
       countries: '',
       search: '',
-      filterTracked: false,
       trackedPlayers: [],
       selectedPlayers: [],
       page: 0,
@@ -114,10 +113,6 @@ class PlayerStats extends Component {
       return event.target.value.includes(playerObj[name])
     })
     this.setState({ [name]: event.target.value, selectedPlayers })
-  }
-
-  handleSwitchChange = name => event => {
-    this.setState({ [name]: event.target.checked })
   }
 
   handleChangePage = (event, page) => {
@@ -246,7 +241,6 @@ class PlayerStats extends Component {
     const {
       stats,
       playerPositionCode,
-      filterTracked,
       selectedPlayers,
       rowsPerPage,
       page,
@@ -263,6 +257,7 @@ class PlayerStats extends Component {
     } = this.state
     const { closePlayerModal } = this.props
     const { dataLoad, trackedPlayers } = this.props.stats
+    const { filterTracked } = this.props.tableSettings
 
     const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
     let dataDisplay = isSkaters
@@ -297,7 +292,6 @@ class PlayerStats extends Component {
 
     const statsFilterPanelProps = {
       playerPositionCode,
-      filterTracked,
       teamFilter,
       teams,
       countryFilter,
@@ -312,7 +306,6 @@ class PlayerStats extends Component {
           {...statsFilterPanelProps}
           handleChange={this.handleChange}
           handleRowFilter={this.handleRowFilter}
-          handleSwitchChange={this.handleSwitchChange}
           submitQuery={this.submitQuery}
           handleModalOpen={() => this.handleModalOpen('modal')}
         />
