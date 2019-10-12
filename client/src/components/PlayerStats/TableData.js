@@ -43,13 +43,13 @@ const TableData = props => {
     order,
     orderBy,
     rowsPerPage,
-    trackedPlayers,
     selectedPlayers,
     handleRowClick,
     updateTrackedPlayers,
     classes,
     handleRequestSort,
     openPlayerModal,
+    handleStarClick,
   } = props
 
   const aggregateTable = !(dataDisplay[0]
@@ -57,9 +57,6 @@ const TableData = props => {
     : false)
 
   const columns = generateCols(dataDisplay)
-
-  const favCheck = (playerId, seasonId, favList) =>
-    favList.some(obj => obj.playerId === playerId && obj.seasonId === seasonId)
 
   return (
     <div style={{ overflowX: 'auto' }}>
@@ -172,11 +169,7 @@ const TableData = props => {
                       <Checkbox
                         icon={<StarBorder />}
                         checkedIcon={<Star />}
-                        checked={favCheck(
-                          row.playerId,
-                          row.seasonId,
-                          trackedPlayers
-                        )}
+                        checked={handleStarClick(row.playerId, row.seasonId)}
                         inputProps={{
                           playerid: row.playerId,
                           seasonid: row.seasonId,
@@ -231,7 +224,6 @@ TableData.propTypes = {
   order: PropTypes.string,
   orderBy: PropTypes.string,
   rowsPerPage: PropTypes.number.isRequired,
-  trackedPlayers: PropTypes.array.isRequired,
   selectedPlayers: PropTypes.array.isRequired,
   handleRowClick: PropTypes.func.isRequired,
   updateTrackedPlayers: PropTypes.func.isRequired,

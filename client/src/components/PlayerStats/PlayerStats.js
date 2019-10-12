@@ -236,6 +236,11 @@ class PlayerStats extends Component {
     }
   }
 
+  handleStarClick = (playerId, seasonId) =>
+    this.props.stats.trackedPlayers.some(
+      obj => obj.playerId === playerId && obj.seasonId === seasonId
+    )
+
   render() {
     const {
       stats,
@@ -337,13 +342,13 @@ class PlayerStats extends Component {
             order={order}
             orderBy={orderBy}
             rowsPerPage={rowsPerPage}
-            trackedPlayers={trackedPlayers}
             selectedPlayers={selectedPlayers}
             handleRowClick={(event, x) => this.handleRowClick(event, x)}
             updateTrackedPlayers={this.updateTrackedPlayers}
             handleRequestSort={(event, property) =>
               this.handleRequestSort(event, property)
             }
+            handleStarClick={this.handleStarClick}
           />
           <TablePagination
             rowsPerPageOptions={[5, 10, 25, 50]}
