@@ -177,9 +177,11 @@ const TableData = props => {
                           row.seasonId,
                           trackedPlayers
                         )}
-                        onChange={() =>
-                          updateTrackedPlayers(row.playerId, row.seasonId)
-                        }
+                        inputProps={{
+                          playerid: row.playerId,
+                          seasonid: row.seasonId,
+                        }}
+                        onChange={updateTrackedPlayers}
                         onClick={stopPropagation}
                         style={{ textAlign: 'center' }}
                         classes={{

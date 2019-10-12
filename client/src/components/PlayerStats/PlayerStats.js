@@ -54,8 +54,6 @@ class PlayerStats extends Component {
     }
 
     this._isMounted = false
-
-    this.updateTrackedPlayers = this.updateTrackedPlayers.bind(this)
   }
 
   componentDidMount() {
@@ -217,7 +215,9 @@ class PlayerStats extends Component {
     })
   }
 
-  updateTrackedPlayers(playerId, seasonId) {
+  updateTrackedPlayers = event => {
+    const playerId = +event.target.attributes.playerid.value
+    const seasonId = +event.target.attributes.seasonid.value
     const { trackedPlayers } = this.props.stats
     const index = trackedPlayers.findIndex(
       obj => obj.playerId === playerId && obj.seasonId === seasonId
@@ -340,7 +340,7 @@ class PlayerStats extends Component {
             trackedPlayers={trackedPlayers}
             selectedPlayers={selectedPlayers}
             handleRowClick={(event, x) => this.handleRowClick(event, x)}
-            updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
+            updateTrackedPlayers={this.updateTrackedPlayers}
             handleRequestSort={(event, property) =>
               this.handleRequestSort(event, property)
             }
