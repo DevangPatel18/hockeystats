@@ -121,7 +121,7 @@ class Dashboard extends Component {
           TransitionComponent={Transition}
         >
           <PlayerGameLog
-            onClose={() => closePlayerModal()}
+            onClose={closePlayerModal}
             playerObj={playerObj}
             dataType="regular"
           />

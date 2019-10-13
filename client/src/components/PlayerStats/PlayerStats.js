@@ -157,12 +157,12 @@ class PlayerStats extends Component {
     this.setState({ order, orderBy })
   }
 
-  handleModalOpen = modal => {
-    this.setState({ [modal]: true })
+  handleModalOpen = () => {
+    this.setState({ modal: true })
   }
 
-  handleModalClose = modal => {
-    this.setState({ [modal]: false })
+  handleModalClose = () => {
+    this.setState({ modal: false })
   }
 
   submitQuery = e => {
@@ -323,7 +323,7 @@ class PlayerStats extends Component {
           handleChange={this.handleChange}
           handleRowFilter={this.handleRowFilter}
           submitQuery={this.submitQuery}
-          handleModalOpen={() => this.handleModalOpen('modal')}
+          handleModalOpen={this.handleModalOpen}
         />
         <PlayerTags
           selectedPlayers={selectedPlayers}
@@ -394,7 +394,7 @@ class PlayerStats extends Component {
           TransitionComponent={Transition}
         >
           <PlayerComparison
-            onClose={() => this.handleModalClose('modal')}
+            onClose={this.handleModalClose}
             selectedPlayers={selectedPlayers}
             data={dataDisplay}
             dataType={dataType}
@@ -407,7 +407,7 @@ class PlayerStats extends Component {
           TransitionComponent={Transition}
         >
           <PlayerGameLog
-            onClose={() => closePlayerModal()}
+            onClose={closePlayerModal}
             playerObj={playerLogData}
             dataType={dataType}
           />
