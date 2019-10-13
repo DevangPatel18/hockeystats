@@ -116,8 +116,31 @@ class PlayerStats extends Component {
     this.setState({ page })
   }
 
-  handleRowClick = (event, playerSeasonId) => {
-    let newSelectedPlayers = this.state.selectedPlayers.slice()
+  handleRowClick = event => {
+    if (event.target.parentElement.tagName === 'TR') {
+      const playerId = +event.target.parentElement.attributes.playerid.value
+      const seasonId = +event.target.parentElement.attributes.seasonid.value
+      const teams = event.target.parentElement.attributes.teams.value
+      const playerSeasonId = this.props.stats.isAggregate
+        ? `${playerId}`
+        : `${playerId}-${seasonId}-${teams}`
+      this.handleSelectedPlayers(playerSeasonId)
+    }
+  }
+
+  handleTagClick = event => {
+    let htmlElement = ''
+    if (event.target.tagName === 'SPAN') {
+      htmlElement = event.target.parentElement
+    } else {
+      htmlElement = event.target
+    }
+    const playerSeasonId = htmlElement.attributes['data-testid'].value
+    this.handleSelectedPlayers(playerSeasonId)
+  }
+
+  handleSelectedPlayers = playerSeasonId => {
+    const newSelectedPlayers = this.state.selectedPlayers.slice()
     const selectedIndex = newSelectedPlayers.indexOf(playerSeasonId)
 
     if (selectedIndex === -1) {
@@ -314,7 +337,7 @@ class PlayerStats extends Component {
         <PlayerTags
           selectedPlayers={selectedPlayers}
           stats={dataDisplay}
-          handleRowClick={this.handleRowClick}
+          handleTagClick={this.handleTagClick}
         />
         <LinearProgress
           color="secondary"
@@ -343,7 +366,7 @@ class PlayerStats extends Component {
             orderBy={orderBy}
             rowsPerPage={rowsPerPage}
             selectedPlayers={selectedPlayers}
-            handleRowClick={(event, x) => this.handleRowClick(event, x)}
+            handleRowClick={this.handleRowClick}
             updateTrackedPlayers={this.updateTrackedPlayers}
             handleRequestSort={(event, property) =>
               this.handleRequestSort(event, property)

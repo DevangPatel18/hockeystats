@@ -130,14 +130,10 @@ const TableData = props => {
                     )
                   ) || selectedPlayers.includes(row.playerId.toString())
                 }
-                onClick={event => {
-                  const tagEntry = aggregateTable
-                    ? `${row.playerId}`
-                    : `${row.playerId}-${row.seasonId}-${
-                        row.playerTeamsPlayedFor
-                      }`
-                  return handleRowClick(event, tagEntry)
-                }}
+                playerid={row.playerId}
+                seasonid={row.seasonId}
+                teams={row.playerTeamsPlayedFor}
+                onClick={handleRowClick}
               >
                 <TableCell
                   style={{

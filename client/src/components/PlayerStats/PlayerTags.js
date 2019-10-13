@@ -9,7 +9,7 @@ import {
 import { yearFormatter } from '../../helper/columnLabels'
 import { teamColors } from '../../helper/teamColors'
 
-const PlayerTags = ({ selectedPlayers, stats, handleRowClick }) => {
+const PlayerTags = ({ selectedPlayers, stats, handleTagClick }) => {
   return (
     <PlayerTagContainerStyles>
       {selectedPlayers.map(idx => {
@@ -32,7 +32,8 @@ const PlayerTags = ({ selectedPlayers, stats, handleRowClick }) => {
             key={idx}
             seasonId={seasonId}
             colors={colors}
-            onClick={() => handleRowClick(null, idx)}
+            data-testid={idx}
+            onClick={handleTagClick}
             style={{ cursor: 'pointer' }}
           >
             <PlayerTagNameStyles>{playerName}</PlayerTagNameStyles>
@@ -51,7 +52,7 @@ const PlayerTags = ({ selectedPlayers, stats, handleRowClick }) => {
 PlayerTags.propTypes = {
   selectedPlayers: PropTypes.array.isRequired,
   stats: PropTypes.array.isRequired,
-  handleRowClick: PropTypes.func.isRequired,
+  handleTagClick: PropTypes.func.isRequired,
 }
 
 export default PlayerTags
