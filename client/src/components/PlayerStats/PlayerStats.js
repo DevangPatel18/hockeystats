@@ -155,11 +155,11 @@ class PlayerStats extends Component {
     this.setState({ page: 0, rowsPerPage: parseInt(event.target.value) })
   }
 
-  handleRequestSort = (event, property) => {
-    const orderBy = property
+  handleRequestSort = event => {
+    const orderBy = event.currentTarget.id
     let order = 'desc'
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
+    if (this.state.orderBy === orderBy && this.state.order === 'desc') {
       order = 'asc'
     }
 
@@ -368,9 +368,7 @@ class PlayerStats extends Component {
             selectedPlayers={selectedPlayers}
             handleRowClick={this.handleRowClick}
             updateTrackedPlayers={this.updateTrackedPlayers}
-            handleRequestSort={(event, property) =>
-              this.handleRequestSort(event, property)
-            }
+            handleRequestSort={this.handleRequestSort}
             handleStarClick={this.handleStarClick}
           />
           <TablePagination

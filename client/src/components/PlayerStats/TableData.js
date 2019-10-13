@@ -102,7 +102,8 @@ const TableData = props => {
                   <TableSortLabel
                     active={orderBy === col.id}
                     direction={order}
-                    onClick={event => handleRequestSort(event, col.id)}
+                    id={col.id}
+                    onClick={handleRequestSort}
                     style={{
                       color: 'white',
                     }}
