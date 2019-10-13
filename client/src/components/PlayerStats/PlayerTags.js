@@ -32,7 +32,7 @@ const PlayerTags = ({ selectedPlayers, stats, handleTagClick }) => {
             key={idx}
             seasonId={seasonId}
             colors={colors}
-            data-testid={idx}
+            id={idx}
             onClick={handleTagClick}
             style={{ cursor: 'pointer' }}
           >

@@ -116,27 +116,18 @@ class PlayerStats extends Component {
     this.setState({ page })
   }
 
-  handleRowClick = event => {
-    if (event.target.parentElement.tagName === 'TR') {
-      const playerId = +event.target.parentElement.attributes.playerid.value
-      const seasonId = +event.target.parentElement.attributes.seasonid.value
-      const teams = event.target.parentElement.attributes.teams.value
-      const playerSeasonId = this.props.stats.isAggregate
-        ? `${playerId}`
-        : `${playerId}-${seasonId}-${teams}`
-      this.handleSelectedPlayers(playerSeasonId)
-    }
+  handleRowClick = ({ currentTarget }) => {
+    const playerId = +currentTarget.attributes.playerid.value
+    const seasonId = +currentTarget.attributes.seasonid.value
+    const teams = currentTarget.attributes.teams.value
+    const playerSeasonId = this.props.stats.isAggregate
+      ? `${playerId}`
+      : `${playerId}-${seasonId}-${teams}`
+    this.handleSelectedPlayers(playerSeasonId)
   }
 
-  handleTagClick = event => {
-    let htmlElement = ''
-    if (event.target.tagName === 'SPAN') {
-      htmlElement = event.target.parentElement
-    } else {
-      htmlElement = event.target
-    }
-    const playerSeasonId = htmlElement.attributes['data-testid'].value
-    this.handleSelectedPlayers(playerSeasonId)
+  handleTagClick = ({ currentTarget }) => {
+    this.handleSelectedPlayers(currentTarget.id)
   }
 
   handleSelectedPlayers = playerSeasonId => {
@@ -155,8 +146,8 @@ class PlayerStats extends Component {
     this.setState({ page: 0, rowsPerPage: parseInt(event.target.value) })
   }
 
-  handleRequestSort = event => {
-    const orderBy = event.currentTarget.id
+  handleRequestSort = ({ currentTarget }) => {
+    const orderBy = currentTarget.id
     let order = 'desc'
 
     if (this.state.orderBy === orderBy && this.state.order === 'desc') {
