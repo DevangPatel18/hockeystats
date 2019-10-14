@@ -220,7 +220,8 @@ class PlayerGameLog extends Component {
               <TableSortLabel
                 active={orderBy === colHeader.key}
                 direction={order}
-                onClick={() => this.handleRequestSort(colHeader.key)}
+                id={colHeader.key}
+                onClick={this.handleRequestSort}
                 hideSortIcon={true}
               >
                 {colHeader.label}
@@ -243,7 +244,8 @@ class PlayerGameLog extends Component {
               <TableSortLabel
                 active={orderBy === statCol.key}
                 direction={order}
-                onClick={() => this.handleRequestSort(statCol.key)}
+                id={statCol.key}
+                onClick={this.handleRequestSort}
                 hideSortIcon={true}
               >
                 {statCol.label}
@@ -255,11 +257,11 @@ class PlayerGameLog extends Component {
     )
   }
 
-  handleRequestSort = property => {
-    const orderBy = property
+  handleRequestSort = ({currentTarget}) => {
+    const orderBy = currentTarget.id
     let order = 'desc'
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
+    if (this.state.orderBy === orderBy && this.state.order === 'desc') {
       order = 'asc'
     }
 
