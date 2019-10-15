@@ -25,6 +25,7 @@ import TableData from './TableData'
 import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
 import PlayerGameLog from '../PlayerGameLog'
+import * as psh from './PlayerStatsHelpers'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -165,68 +166,25 @@ class PlayerStats extends Component {
     this.setState({ modal: false })
   }
 
-  submitQuery = e => {
-    if (e) {
-      e.preventDefault()
-    }
-
-    const {
-      yearStart,
-      yearEnd,
-      reportName,
-      isAggregate,
-      playoffs,
-    } = this.props.tableSettings
+  submitQuery = async () => {
+    const { playoffs } = this.props.tableSettings
 
     this.props.startLoad()
-    configure().then(async api => {
-      const stats = await api
-        .get(
-          `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}/${playoffs}`
-        )
-        .then(res => res.data)
-        .catch(err => {
-          console.log(err)
-        })
+    const stats = await configure().then(api => psh.fetchData(api))
+    this.props.stopLoad()
+    if (!stats) return
 
-      this.props.stopLoad()
-
-      if (!stats) return
-
-      const teams = !isAggregate
-        ? stats
-            .reduce((acc, playerObj) => {
-              let team = playerObj.playerTeamsPlayedFor
-              if (team && team.length === 3 && !acc.includes(team)) {
-                acc.push(team)
-              }
-              return acc
-            }, [])
-            .sort()
-        : ''
-
-      const countries = stats
-        .reduce((acc, playerObj) => {
-          let country = playerObj.playerBirthCountry
-          if (country && !acc.includes(country)) {
-            acc.push(country)
-          }
-          return acc
-        }, [])
-        .sort()
-
-      if (stats && this._isMounted) {
-        this.setState({
-          stats,
-          teams,
-          countries,
-          selectedPlayers: [],
-          teamFilter: 'all',
-          countryFilter: 'all',
-          dataType: playoffs ? 'playoffs' : 'regular',
-        })
-      }
-    })
+    if (stats && this._isMounted) {
+      this.setState({
+        stats,
+        teams: psh.getTeams(stats),
+        countries: psh.getCountries(stats),
+        dataType: playoffs ? 'playoffs' : 'regular',
+        selectedPlayers: [],
+        teamFilter: 'all',
+        countryFilter: 'all',
+      })
+    }
   }
 
   updateTrackedPlayers = event => {
