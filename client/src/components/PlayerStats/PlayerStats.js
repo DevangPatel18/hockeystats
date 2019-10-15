@@ -119,12 +119,16 @@ class PlayerStats extends Component {
 
   handleRowClick = ({ currentTarget }) => {
     const playerId = +currentTarget.attributes.playerid.value
-    const seasonId = +currentTarget.attributes.seasonid.value
-    const teams = currentTarget.attributes.teams.value
-    const playerSeasonId = this.props.stats.isAggregate
-      ? `${playerId}`
-      : `${playerId}-${seasonId}-${teams}`
-    this.handleSelectedPlayers(playerSeasonId)
+    if (currentTarget.attributes.seasonid) {
+      const seasonId = +currentTarget.attributes.seasonid.value
+      const teams = currentTarget.attributes.teams.value
+      const playerSeasonId = this.props.tableSettings.isAggregate
+        ? `${playerId}`
+        : `${playerId}-${seasonId}-${teams}`
+      this.handleSelectedPlayers(playerSeasonId)
+    } else {
+      this.handleSelectedPlayers(`${playerId}`)
+    }
   }
 
   handleTagClick = ({ currentTarget }) => {
