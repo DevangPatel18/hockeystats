@@ -37,15 +37,11 @@ class StatsFilterPanel extends Component {
 
   render() {
     const {
-      playerPositionCode,
-      teamFilter,
       teams,
-      countryFilter,
       countries,
     } = this.props
 
     const {
-      handleChange,
       handleRowFilter,
       submitQuery,
       handleModalOpen,
@@ -59,6 +55,9 @@ class StatsFilterPanel extends Component {
       isAggregate,
       filterTracked,
       search,
+      playerPositionCode,
+      countryFilter,
+      teamFilter,
     } = this.props.tableSettings
 
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
@@ -144,7 +143,7 @@ class StatsFilterPanel extends Component {
             <InputLabel htmlFor="teamFilter">Teams</InputLabel>
             <NativeSelect
               value={teamFilter}
-              onChange={handleChange('teamFilter')}
+              onChange={this.handleChange('teamFilter')}
               input={<Input name="teamFilter" id="teamFilter" />}
             >
               <option value={'all'}>All Teams</option>
@@ -242,7 +241,6 @@ class StatsFilterPanel extends Component {
 }
 
 StatsFilterPanel.propTypes = {
-  handleChange: PropTypes.func.isRequired,
   handleRowFilter: PropTypes.func.isRequired,
   submitQuery: PropTypes.func.isRequired,
   handleModalOpen: PropTypes.func.isRequired,

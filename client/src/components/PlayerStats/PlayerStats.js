@@ -19,6 +19,7 @@ import {
   stopLoad,
   closePlayerModal,
 } from '../../actions/statActions'
+import { changeField } from '../../actions/tableSettingsActions'
 import TablePaginationActions from './TablePaginationActions'
 import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
@@ -39,11 +40,8 @@ class PlayerStats extends Component {
     super()
     this.state = {
       stats: [],
-      playerPositionCode: 'LRCD',
       dataType: '',
-      teamFilter: 'all',
       teams: '',
-      countryFilter: 'all',
       countries: '',
       trackedPlayers: [],
       selectedPlayers: [],
@@ -95,10 +93,6 @@ class PlayerStats extends Component {
     }
   }
 
-  handleChange = name => event => {
-    this.setState({ [name]: event.target.value })
-  }
-
   handleRowFilter = name => event => {
     const { stats } = this.state
     const selectedPlayers = this.state.selectedPlayers.filter(playerStr => {
@@ -110,7 +104,8 @@ class PlayerStats extends Component {
       )
       return event.target.value.includes(playerObj[name])
     })
-    this.setState({ [name]: event.target.value, selectedPlayers })
+    this.props.changeField(name, event.target.value)
+    this.setState({ selectedPlayers })
   }
 
   handleChangePage = (event, page) => {
@@ -179,14 +174,15 @@ class PlayerStats extends Component {
     if (!stats) return
 
     if (stats && this._isMounted) {
+      await this.props.changeField('teamFilter', 'all')
+      await this.props.changeField('countryFilter', 'all')
+      await this.props.changeField('playerPositionCode', 'LRCD')
       this.setState({
         stats,
         teams: psh.getTeams(stats),
         countries: psh.getCountries(stats),
         dataType: playoffs ? 'playoffs' : 'regular',
         selectedPlayers: [],
-        teamFilter: 'all',
-        countryFilter: 'all',
       })
     }
   }
@@ -220,14 +216,11 @@ class PlayerStats extends Component {
   render() {
     const {
       stats,
-      playerPositionCode,
       selectedPlayers,
       rowsPerPage,
       page,
       order,
       orderBy,
-      teamFilter,
-      countryFilter,
       dataType,
       playerLogModal,
       playerLogData,
@@ -236,7 +229,13 @@ class PlayerStats extends Component {
     } = this.state
     const { closePlayerModal } = this.props
     const { dataLoad, trackedPlayers } = this.props.stats
-    const { filterTracked, search } = this.props.tableSettings
+    const {
+      filterTracked,
+      search,
+      playerPositionCode,
+      teamFilter,
+      countryFilter,
+    } = this.props.tableSettings
 
     const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
     let dataDisplay = isSkaters
@@ -269,20 +268,13 @@ class PlayerStats extends Component {
           )
         : dataDisplay
 
-    const statsFilterPanelProps = {
-      playerPositionCode,
-      teamFilter,
-      teams,
-      countryFilter,
-      countries,
-    }
+    const statsFilterPanelProps = { teams, countries }
 
     return (
       <div>
         <h1>Player Statistics</h1>
         <StatsFilterPanel
           {...statsFilterPanelProps}
-          handleChange={this.handleChange}
           handleRowFilter={this.handleRowFilter}
           submitQuery={this.submitQuery}
           handleModalOpen={this.handleModalOpen}
@@ -386,6 +378,7 @@ PlayerStats.propTypes = {
   closePlayerModal: PropTypes.func.isRequired,
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
+  changeField: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
 }
@@ -406,5 +399,6 @@ export default connect(
     startLoad,
     stopLoad,
     closePlayerModal,
+    changeField,
   }
 )(PlayerStats)
