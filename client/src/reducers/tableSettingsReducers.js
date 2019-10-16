@@ -8,6 +8,9 @@ const initialState = {
   isAggregate: false,
   filterTracked: false,
   search: '',
+  playerPositionCode: 'LRCD',
+  teamFilter: 'all',
+  countryFilter: 'all',
 }
 
 export default function(state = initialState, action) {
