@@ -20,13 +20,14 @@ import {
   closePlayerModal,
 } from '../../actions/statActions'
 import { changeField } from '../../actions/tableSettingsActions'
+import { submitQuery } from '../../actions/playerDataActions'
 import TablePaginationActions from './TablePaginationActions'
 import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
 import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
 import PlayerGameLog from '../PlayerGameLog'
-import * as psh from './PlayerStatsHelpers'
+import { fetchData } from './PlayerStatsHelpers'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -39,10 +40,6 @@ class PlayerStats extends Component {
   constructor() {
     super()
     this.state = {
-      stats: [],
-      dataType: '',
-      teams: '',
-      countries: '',
       trackedPlayers: [],
       selectedPlayers: [],
       page: 0,
@@ -94,7 +91,7 @@ class PlayerStats extends Component {
   }
 
   handleRowFilter = name => event => {
-    const { stats } = this.state
+    const { stats } = this.props.playerData
     const selectedPlayers = this.state.selectedPlayers.filter(playerStr => {
       const [playerId, seasonId] = playerStr.split('-')
       const playerObj = stats.find(
@@ -166,24 +163,14 @@ class PlayerStats extends Component {
   }
 
   submitQuery = async () => {
-    const { playoffs } = this.props.tableSettings
-
     this.props.startLoad()
-    const stats = await configure().then(api => psh.fetchData(api))
+    const stats = await configure().then(api => fetchData(api))
     this.props.stopLoad()
     if (!stats) return
 
     if (stats && this._isMounted) {
-      await this.props.changeField('teamFilter', 'all')
-      await this.props.changeField('countryFilter', 'all')
-      await this.props.changeField('playerPositionCode', 'LRCD')
-      this.setState({
-        stats,
-        teams: psh.getTeams(stats),
-        countries: psh.getCountries(stats),
-        dataType: playoffs ? 'playoffs' : 'regular',
-        selectedPlayers: [],
-      })
+      this.props.submitQuery(stats)
+      this.setState({ selectedPlayers: [] })
     }
   }
 
@@ -215,20 +202,17 @@ class PlayerStats extends Component {
 
   render() {
     const {
-      stats,
       selectedPlayers,
       rowsPerPage,
       page,
       order,
       orderBy,
-      dataType,
       playerLogModal,
       playerLogData,
-      teams,
-      countries,
     } = this.state
     const { closePlayerModal } = this.props
     const { dataLoad, trackedPlayers } = this.props.stats
+    const { stats, teams, countries, dataType } = this.props.playerData
     const {
       filterTracked,
       search,
@@ -379,6 +363,7 @@ PlayerStats.propTypes = {
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
   changeField: PropTypes.func.isRequired,
+  submitQuery: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
 }
@@ -388,6 +373,7 @@ const mapStateToProps = state => ({
   errors: state.errors,
   stats: state.stats,
   tableSettings: state.tableSettings,
+  playerData: state.playerData,
 })
 
 export default connect(
@@ -400,5 +386,6 @@ export default connect(
     stopLoad,
     closePlayerModal,
     changeField,
+    submitQuery,
   }
 )(PlayerStats)

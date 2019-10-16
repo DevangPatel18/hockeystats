@@ -31,6 +31,13 @@ export default function(state = initialState, action) {
         ...state,
         [action.name]: !state[action.name],
       }
+    case types.SUBMIT_QUERY:
+      return {
+        ...state,
+        playerPositionCode: 'LRCD',
+        teamFilter: 'all',
+        countryFilter: 'all',
+      }
     default:
       return state
   }
