@@ -36,16 +36,8 @@ class StatsFilterPanel extends Component {
   }
 
   render() {
-    const {
-      teams,
-      countries,
-    } = this.props
-
-    const {
-      handleRowFilter,
-      submitQuery,
-      handleModalOpen,
-    } = this.props
+    const { handleRowFilter, submitQuery, handleModalOpen } = this.props
+    const { teams, countries } = this.props.playerData
 
     const {
       yearStart,
@@ -248,6 +240,7 @@ StatsFilterPanel.propTypes = {
 
 const mapStateToProps = state => ({
   tableSettings: state.tableSettings,
+  playerData: state.playerData,
 })
 
 export default connect(

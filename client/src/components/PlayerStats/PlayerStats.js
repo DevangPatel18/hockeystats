@@ -212,7 +212,7 @@ class PlayerStats extends Component {
     } = this.state
     const { closePlayerModal } = this.props
     const { dataLoad, trackedPlayers } = this.props.stats
-    const { stats, teams, countries, dataType } = this.props.playerData
+    const { stats, dataType } = this.props.playerData
     const {
       filterTracked,
       search,
@@ -252,13 +252,10 @@ class PlayerStats extends Component {
           )
         : dataDisplay
 
-    const statsFilterPanelProps = { teams, countries }
-
     return (
       <div>
         <h1>Player Statistics</h1>
         <StatsFilterPanel
-          {...statsFilterPanelProps}
           handleRowFilter={this.handleRowFilter}
           submitQuery={this.submitQuery}
           handleModalOpen={this.handleModalOpen}
