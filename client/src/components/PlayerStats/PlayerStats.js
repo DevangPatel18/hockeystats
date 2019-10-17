@@ -26,7 +26,7 @@ import StatsFilterPanel from './StatsFilterPanel'
 import TableData from './TableData'
 import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
-import PlayerGameLog from '../PlayerGameLog'
+import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
 import { fetchData } from './PlayerStatsHelpers'
 
 // Marking event handler as 'passive' in response to console violations

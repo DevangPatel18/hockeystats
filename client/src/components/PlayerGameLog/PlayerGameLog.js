@@ -14,14 +14,14 @@ import {
   Tooltip,
 } from '@material-ui/core/'
 import CloseIcon from '@material-ui/icons/Close'
-import configure from '../utils/configLocalforage'
+import configure from '../../utils/configLocalforage'
 import {
   yearFormatter,
   ProfileSkateCol,
   ProfileGoalieCol,
   gameLogTableColumns,
-} from '../helper/columnLabels'
-import { teamCodes } from '../helper/teamCodes'
+} from '../../helper/columnLabels'
+import { teamCodes } from '../../helper/teamCodes'
 
 const headerStyle = {
   background: '#C0C0C0',

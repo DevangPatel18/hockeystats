@@ -6,7 +6,7 @@ import configure from '../../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
 import { CircularProgress, Button, Dialog, Slide } from '@material-ui/core/'
 import { closePlayerModal } from '../../actions/statActions'
-import PlayerGameLog from '../PlayerGameLog'
+import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
