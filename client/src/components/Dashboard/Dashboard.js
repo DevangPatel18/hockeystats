@@ -5,7 +5,6 @@ import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
 import { CircularProgress, Button, Dialog, Slide } from '@material-ui/core/'
-import { closePlayerModal } from '../../actions/statActions'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
 
 function Transition(props) {
@@ -20,13 +19,6 @@ class Dashboard extends Component {
     }
 
     this._isMounted = false
-  }
-
-  static getDerivedStateFromProps(nextProps) {
-    return {
-      modalOpen: nextProps.stats.modalOpen,
-      playerObj: nextProps.stats.playerObj,
-    }
   }
 
   async componentDidMount() {
@@ -77,8 +69,7 @@ class Dashboard extends Component {
 
   render() {
     const { trackedPlayerData } = this.state
-    const { closePlayerModal, stats } = this.props
-    const { trackedPlayers, modalOpen, playerObj } = stats
+    const { trackedPlayers, modalOpen } = this.props.stats
     const filterTrackedPlayerData = trackedPlayerData.filter(dataObj =>
       trackedPlayers.some(
         listObj =>
@@ -120,11 +111,7 @@ class Dashboard extends Component {
           scroll="paper"
           TransitionComponent={Transition}
         >
-          <PlayerGameLog
-            onClose={closePlayerModal}
-            playerObj={playerObj}
-            dataType="regular"
-          />
+          <PlayerGameLog />
         </Dialog>
       </div>
     )
@@ -134,7 +121,6 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   auth: PropTypes.object.isRequired,
   stats: PropTypes.object.isRequired,
-  closePlayerModal: PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => ({
@@ -144,5 +130,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { closePlayerModal }
+  null
 )(Dashboard)

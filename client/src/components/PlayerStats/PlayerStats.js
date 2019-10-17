@@ -17,7 +17,6 @@ import {
   removePlayerList,
   startLoad,
   stopLoad,
-  closePlayerModal,
 } from '../../actions/statActions'
 import { changeField } from '../../actions/tableSettingsActions'
 import { submitQuery } from '../../actions/playerDataActions'
@@ -45,8 +44,6 @@ class PlayerStats extends Component {
       page: 0,
       rowsPerPage: 10,
       modal: false,
-      playerLogModal: false,
-      playerLogData: {},
     }
 
     this._isMounted = false
@@ -61,13 +58,6 @@ class PlayerStats extends Component {
         'beforeunload',
         this.playersToLocalStorage.bind(this)
       )
-    }
-  }
-
-  static getDerivedStateFromProps(nextProps) {
-    return {
-      playerLogModal: nextProps.stats.modalOpen,
-      playerLogData: nextProps.stats.playerObj,
     }
   }
 
@@ -201,17 +191,8 @@ class PlayerStats extends Component {
     )
 
   render() {
-    const {
-      selectedPlayers,
-      rowsPerPage,
-      page,
-      order,
-      orderBy,
-      playerLogModal,
-      playerLogData,
-    } = this.state
-    const { closePlayerModal } = this.props
-    const { dataLoad, trackedPlayers } = this.props.stats
+    const { selectedPlayers, rowsPerPage, page, order, orderBy } = this.state
+    const { dataLoad, trackedPlayers, modalOpen } = this.props.stats
     const { stats, dataType } = this.props.playerData
     const {
       filterTracked,
@@ -337,15 +318,11 @@ class PlayerStats extends Component {
         </Dialog>
         <Dialog
           fullScreen
-          open={playerLogModal}
+          open={modalOpen}
           scroll="paper"
           TransitionComponent={Transition}
         >
-          <PlayerGameLog
-            onClose={closePlayerModal}
-            playerObj={playerLogData}
-            dataType={dataType}
-          />
+          <PlayerGameLog />
         </Dialog>
       </div>
     )
@@ -356,7 +333,6 @@ PlayerStats.propTypes = {
   getPlayerList: PropTypes.func.isRequired,
   addPlayerList: PropTypes.func.isRequired,
   removePlayerList: PropTypes.func.isRequired,
-  closePlayerModal: PropTypes.func.isRequired,
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
   changeField: PropTypes.func.isRequired,
@@ -381,7 +357,6 @@ export default connect(
     removePlayerList,
     startLoad,
     stopLoad,
-    closePlayerModal,
     changeField,
     submitQuery,
   }
