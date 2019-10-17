@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import {
   AppBar,
   IconButton,
@@ -15,6 +16,7 @@ import {
 } from '@material-ui/core/'
 import CloseIcon from '@material-ui/icons/Close'
 import configure from '../../utils/configLocalforage'
+import { closePlayerModal } from '../../actions/statActions'
 import {
   yearFormatter,
   ProfileSkateCol,
@@ -53,8 +55,9 @@ class PlayerGameLog extends Component {
   }
 
   async componentDidMount() {
-    const { playerObj, dataType } = this.props
+    const { playerObj } = this.props.stats
     const { playerId, seasonId } = playerObj
+    const dataType = this.props.playerData.dataType || 'regular'
 
     configure().then(async api => {
       const playerGameLogData = await api
@@ -257,7 +260,7 @@ class PlayerGameLog extends Component {
     )
   }
 
-  handleRequestSort = ({currentTarget}) => {
+  handleRequestSort = ({ currentTarget }) => {
     const orderBy = currentTarget.id
     let order = 'desc'
 
@@ -269,7 +272,8 @@ class PlayerGameLog extends Component {
   }
 
   render() {
-    const { onClose, playerObj } = this.props
+    const { closePlayerModal } = this.props
+    const { playerObj } = this.props.stats
     const { tableData, playerCols, order, orderBy } = this.state
     const sortSign = order === 'desc' ? -1 : 1
 
@@ -300,7 +304,7 @@ class PlayerGameLog extends Component {
           <Toolbar style={{ position: 'relative' }}>
             <IconButton
               color="inherit"
-              onClick={onClose}
+              onClick={closePlayerModal}
               aria-label="Close"
               style={{ position: 'absolute' }}
             >
@@ -380,9 +384,17 @@ class PlayerGameLog extends Component {
 }
 
 PlayerGameLog.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  playerObj: PropTypes.object.isRequired,
-  dataType: PropTypes.string.isRequired,
+  stats: PropTypes.object.isRequired,
+  playerData: PropTypes.object.isRequired,
+  closePlayerModal: PropTypes.func.isRequired,
 }
 
-export default PlayerGameLog
+const mapStateToProps = state => ({
+  stats: state.stats,
+  playerData: state.playerData,
+})
+
+export default connect(
+  mapStateToProps,
+  { closePlayerModal }
+)(PlayerGameLog)
