@@ -17,13 +17,15 @@ import {
 import CloseIcon from '@material-ui/icons/Close'
 import configure from '../../utils/configLocalforage'
 import { closePlayerModal } from '../../actions/statActions'
+import { yearFormatter, gameLogTableColumns } from '../../helper/columnLabels'
 import {
-  yearFormatter,
-  ProfileSkateCol,
-  ProfileGoalieCol,
-  gameLogTableColumns,
-} from '../../helper/columnLabels'
-import { teamCodes } from '../../helper/teamCodes'
+  getPlayerGameLogData,
+  getTeamIntervals,
+  getTeamSchedule,
+  copyPlayerDataToSchedule,
+  getPlayerStatColumns,
+  getTableData,
+} from './PlayerGameLogHelpers'
 
 const headerStyle = {
   background: '#C0C0C0',
@@ -55,137 +57,15 @@ class PlayerGameLog extends Component {
   }
 
   async componentDidMount() {
-    const { playerObj } = this.props.stats
-    const { playerId, seasonId } = playerObj
-    const dataType = this.props.playerData.dataType || 'regular'
-
     configure().then(async api => {
-      const playerGameLogData = await api
-        .get(
-          `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
-        )
-        .then(res => res.data.reverse())
+      const playerGameLogData = await getPlayerGameLogData(api)
+      const teamIntervals = getTeamIntervals(playerGameLogData)
+      const teamSchedule = await getTeamSchedule(api, teamIntervals)
 
-      let tempInterval = {
-        teamId: playerGameLogData[0].team.id,
-        startDate: playerGameLogData[0].season.slice(0, 4) + '-09-20',
-      }
+      copyPlayerDataToSchedule(teamSchedule, playerGameLogData)
 
-      const teamIntervals = playerGameLogData.reduce((acc, gameLog, i) => {
-        if (gameLog.team.id !== tempInterval.teamId) {
-          tempInterval.endDate = playerGameLogData[i - 1].date
-          acc.push(tempInterval)
-          tempInterval = {
-            teamId: gameLog.team.id,
-            startDate: gameLog.date,
-          }
-        }
-        return acc
-      }, [])
-
-      tempInterval.endDate = playerGameLogData[0].season.slice(4) + '-06-20'
-
-      teamIntervals.push(tempInterval)
-
-      let gVar = dataType === 'regular' ? 'R' : 'P'
-
-      let teamSchedule = await Promise.all(
-        teamIntervals.map(async intervalParams => {
-          const { teamId, startDate, endDate } = intervalParams
-          return api
-            .get(
-              `/api/statistics/team/${teamId}/startDate/${startDate}/endDate/${endDate}`
-            )
-            .then(res =>
-              res.data.dates
-                .filter(gameSchedule => gameSchedule.games[0].gameType === gVar)
-                .map(gameSchedule => ({
-                  date: gameSchedule.date,
-                  home: gameSchedule.games[0].teams.home,
-                  away: gameSchedule.games[0].teams.away,
-                }))
-            )
-        })
-      )
-
-      teamSchedule = teamSchedule.reduce(
-        (acc, schedule) => acc.concat(...schedule),
-        []
-      )
-
-      let temp
-
-      playerGameLogData.forEach((gameLog, i) => {
-        temp = teamSchedule.find(game => game.date === gameLog.date)
-        temp.playerData = { ...gameLog, game: i + 1 }
-      })
-
-      let playerCols =
-        playerObj.playerPositionCode !== 'G'
-          ? ProfileSkateCol
-          : ProfileGoalieCol
-      playerCols = playerCols.filter(
-        obj =>
-          !['games', 'wins', 'losses', 'ties', 'goalAgainstAverage'].includes(
-            obj.key
-          )
-      )
-      playerCols.splice(0, 0, { key: 'game', label: 'Game' })
-
-      let date
-      let team
-      let opponent
-      let teamScore
-      let opponentScore
-      let isHome
-      let goalDifference
-      let intervalIdx
-      let playerStats
-      let game
-
-      let tableData = teamSchedule.map(gameLog => {
-        date = gameLog.date
-        if (gameLog.playerData) {
-          team = gameLog.playerData.team.id
-          isHome = gameLog.home.team.id === team
-          opponent = gameLog.playerData.opponent.id
-          playerStats = gameLog.playerData.stat
-          game = gameLog.playerData.game
-        } else {
-          intervalIdx = teamIntervals.findIndex(
-            interval => date >= interval.startDate && date <= interval.endDate
-          )
-          team = teamIntervals[intervalIdx].teamId
-          isHome = team === gameLog.home.team.id
-          opponent = isHome ? gameLog.away.team.id : gameLog.home.team.id
-          playerStats = null
-          game = null
-        }
-        if (isHome) {
-          teamScore = gameLog.home.score
-          opponentScore = gameLog.away.score
-        } else {
-          teamScore = gameLog.away.score
-          opponentScore = gameLog.home.score
-        }
-
-        team = teamCodes[team]
-        opponent = teamCodes[opponent]
-        isHome = isHome ? '' : '@'
-        goalDifference = teamScore - opponentScore
-
-        return {
-          date,
-          team,
-          teamScore,
-          opponent,
-          opponentScore,
-          isHome,
-          goalDifference,
-          game,
-          ...playerStats,
-        }
-      })
+      const playerCols = getPlayerStatColumns()
+      const tableData = getTableData(teamSchedule, teamIntervals)
 
       this.setState({ tableData, playerCols })
     })
