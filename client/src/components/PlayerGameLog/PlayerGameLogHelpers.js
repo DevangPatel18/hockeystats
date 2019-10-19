@@ -39,9 +39,6 @@ export const getTeamIntervals = playerGameLogData => {
 }
 
 export const getTeamSchedule = async (api, teamIntervals) => {
-  const dataType = store.getState().playerData.dataType || 'regular'
-  const dataTypeShort = dataType === 'regular' ? 'R' : 'P'
-
   let teamSchedule = await Promise.all(
     teamIntervals.map(async intervalParams => {
       const { teamId, startDate, endDate } = intervalParams
@@ -49,26 +46,22 @@ export const getTeamSchedule = async (api, teamIntervals) => {
         .get(
           `/api/statistics/team/${teamId}/startDate/${startDate}/endDate/${endDate}`
         )
-        .then(res =>
-          res.data.dates
-            .filter(
-              gameSchedule => gameSchedule.games[0].gameType === dataTypeShort
-            )
-            .map(gameSchedule => ({
-              date: gameSchedule.date,
-              home: gameSchedule.games[0].teams.home,
-              away: gameSchedule.games[0].teams.away,
-            }))
-        )
+        .then(res => generateScheduleData(res))
     })
   )
+  return teamSchedule.reduce((acc, schedule) => acc.concat(...schedule), [])
+}
 
-  teamSchedule = teamSchedule.reduce(
-    (acc, schedule) => acc.concat(...schedule),
-    []
-  )
-
-  return teamSchedule
+const generateScheduleData = res => {
+  const dataType = store.getState().playerData.dataType || 'regular'
+  const dataTypeShort = dataType === 'regular' ? 'R' : 'P'
+  return res.data.dates
+    .filter(gameSchedule => gameSchedule.games[0].gameType === dataTypeShort)
+    .map(gameSchedule => ({
+      date: gameSchedule.date,
+      home: gameSchedule.games[0].teams.home,
+      away: gameSchedule.games[0].teams.away,
+    }))
 }
 
 export const copyPlayerDataToSchedule = (teamSchedule, playerGameLogData) => {
@@ -96,50 +89,41 @@ export const getPlayerStatColumns = () => {
 
 export const getTableData = (teamSchedule, teamIntervals) =>
   teamSchedule.map(gameLog => {
-    const date = gameLog.date
-    let team
-    let opponent
-    let teamScore
-    let opponentScore
-    let isHome
-    let intervalIdx
-    let playerStats
-    let game
+    const data = gameLog.playerData
+      ? getActivePlayerGameData(gameLog)
+      : getInactivePlayerGameData(gameLog, teamIntervals)
 
-    if (gameLog.playerData) {
-      team = gameLog.playerData.team.id
-      isHome = gameLog.home.team.id === team
-      opponent = gameLog.playerData.opponent.id
-      playerStats = gameLog.playerData.stat
-      game = gameLog.playerData.game
-    } else {
-      intervalIdx = teamIntervals.findIndex(
-        interval => date >= interval.startDate && date <= interval.endDate
-      )
-      team = teamIntervals[intervalIdx].teamId
-      isHome = team === gameLog.home.team.id
-      opponent = isHome ? gameLog.away.team.id : gameLog.home.team.id
-      playerStats = null
-      game = null
-    }
+    data.date = gameLog.data
+    data.opponentScore = data.isHome ? gameLog.away.score : gameLog.home.score
+    data.teamScore = data.isHome ? gameLog.home.score : gameLog.away.score
+    data.team = teamCodes[data.team]
+    data.opponent = teamCodes[data.opponent]
+    data.isHome = data.isHome ? '' : '@'
+    data.goalDifference = data.teamScore - data.opponentScore
 
-    if (isHome) {
-      teamScore = gameLog.home.score
-      opponentScore = gameLog.away.score
-    } else {
-      teamScore = gameLog.away.score
-      opponentScore = gameLog.home.score
-    }
-
-    return {
-      date,
-      team: teamCodes[team],
-      opponent: teamCodes[opponent],
-      teamScore,
-      opponentScore,
-      isHome: isHome ? '' : '@',
-      goalDifference: teamScore - opponentScore,
-      game,
-      ...playerStats,
-    }
+    return { ...data, ...data.playerStats }
   })
+
+const getActivePlayerGameData = gameLog => ({
+  team: gameLog.playerData.team.id,
+  isHome: gameLog.home.team.id === gameLog.playerData.team.id,
+  opponent: gameLog.playerData.opponent.id,
+  playerStats: gameLog.playerData.stat,
+  game: gameLog.playerData.game,
+})
+
+const getInactivePlayerGameData = (gameLog, teamIntervals) => {
+  const intervalIdx = teamIntervals.findIndex(
+    interval =>
+      gameLog.date >= interval.startDate && gameLog.date <= interval.endDate
+  )
+  const team = teamIntervals[intervalIdx].teamId
+  const isHome = team === gameLog.home.team.id
+  return {
+    team,
+    isHome,
+    opponent: isHome ? gameLog.away.team.id : gameLog.home.team.id,
+    playerStats: null,
+    game: null,
+  }
+}
