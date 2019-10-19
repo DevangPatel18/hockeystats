@@ -36,7 +36,8 @@ const PlayerProfiles = ({
       userId: auth.user.id,
       playerId: playerObj.id,
       seasonId: playerObj.seasonId,
-      playerPositionCode: playerObj.playerPositionCode,
+      playerPositionCode:
+        playerObj.playerPositionCode || playerObj.primaryPosition.code,
       playerName: playerObj.fullName,
     }
 

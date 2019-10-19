@@ -82,7 +82,6 @@ export const copyPlayerDataToSchedule = (teamSchedule, playerGameLogData) => {
 
 export const getPlayerStatColumns = () => {
   const { playerObj } = store.getState().stats
-  console.log(playerObj)
   let playerCols =
     playerObj.playerPositionCode !== 'G' ? ProfileSkateCol : ProfileGoalieCol
   playerCols = playerCols.filter(
