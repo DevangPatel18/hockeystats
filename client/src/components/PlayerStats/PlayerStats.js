@@ -236,6 +236,7 @@ class PlayerStats extends Component {
             orderBy={orderBy}
             rowsPerPage={rowsPerPage}
             selectedPlayers={selectedPlayers}
+            trackedPlayers={trackedPlayers}
             handleRowClick={this.handleRowClick}
             updateTrackedPlayers={this.updateTrackedPlayers}
             handleRequestSort={this.handleRequestSort}
