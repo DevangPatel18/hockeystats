@@ -60,7 +60,8 @@ class ChartComparison extends Component {
   }
 
   async componentDidMount() {
-    const { selectedPlayers, data, dataType, tableSettings } = this.props
+    const { selectedPlayers, data, tableSettings } = this.props
+    const { dataType } = this.props.playerData
     const { yearStart, yearEnd } = tableSettings
     this._isMounted = true
     const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
@@ -464,6 +465,7 @@ ChartComparison.propTypes = {
   selectedPlayers: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
   stats: PropTypes.object.isRequired,
+  playerData: PropTypes.object.isRequired,
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
 }
@@ -471,6 +473,7 @@ ChartComparison.propTypes = {
 const mapStateToProps = state => ({
   stats: state.stats,
   tableSettings: state.tableSettings,
+  playerData: state.playerData,
 })
 
 export default connect(

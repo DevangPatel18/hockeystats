@@ -181,7 +181,7 @@ class PlayerStats extends Component {
   render() {
     const { selectedPlayers } = this.state
     const { modalOpen } = this.props.stats
-    const { stats, dataType } = this.props.playerData
+    const { stats } = this.props.playerData
     const dataDisplay = getFilteredStats(stats)
 
     return (
@@ -218,7 +218,6 @@ class PlayerStats extends Component {
             onClose={this.handleModalClose}
             selectedPlayers={selectedPlayers}
             data={dataDisplay}
-            dataType={dataType}
           />
         </Dialog>
         <Dialog
