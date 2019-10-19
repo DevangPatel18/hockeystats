@@ -1,22 +1,14 @@
 import React, { Component } from 'react'
 import { Link } from 'gatsby'
-import {
-  TablePagination,
-  Paper,
-  Dialog,
-  LinearProgress,
-  Slide,
-  Button,
-} from '@material-ui/core'
+import { Dialog, Slide, Button } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
 import * as statActions from '../../actions/statActions'
 import { changeField } from '../../actions/tableSettingsActions'
 import { submitQuery } from '../../actions/playerDataActions'
-import TablePaginationActions from './TablePaginationActions'
+import handleTable from './handleTableData'
 import StatsFilterPanel from './StatsFilterPanel'
-import TableData from './TableData'
 import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
@@ -39,6 +31,8 @@ class PlayerStats extends Component {
       rowsPerPage: 10,
       modal: false,
     }
+
+    this.handleTable = handleTable.bind(this)
 
     this._isMounted = false
   }
@@ -185,8 +179,8 @@ class PlayerStats extends Component {
     )
 
   render() {
-    const { selectedPlayers, rowsPerPage, page, order, orderBy } = this.state
-    const { dataLoad, trackedPlayers, modalOpen } = this.props.stats
+    const { selectedPlayers } = this.state
+    const { modalOpen } = this.props.stats
     const { stats, dataType } = this.props.playerData
     const dataDisplay = getFilteredStats(stats)
 
@@ -203,54 +197,7 @@ class PlayerStats extends Component {
           stats={dataDisplay}
           handleTagClick={this.handleTagClick}
         />
-        <LinearProgress
-          color="secondary"
-          style={{
-            opacity: dataLoad ? '1' : '0',
-            transition: 'all 0.5s',
-            marginBottom: '-3px',
-          }}
-        />
-        <Paper>
-          <div
-            style={{
-              position: 'absolute',
-              width: 'calc(100% - 2rem)',
-              height: `calc(156px + ${rowsPerPage * 33}px)`,
-              background: 'white',
-              opacity: dataLoad ? '0.5' : '0',
-              zIndex: dataLoad ? '1' : '-1',
-              transition: 'all 0.5s',
-            }}
-          />
-          <TableData
-            dataDisplay={dataDisplay}
-            page={page}
-            order={order}
-            orderBy={orderBy}
-            rowsPerPage={rowsPerPage}
-            selectedPlayers={selectedPlayers}
-            trackedPlayers={trackedPlayers}
-            handleRowClick={this.handleRowClick}
-            updateTrackedPlayers={this.updateTrackedPlayers}
-            handleRequestSort={this.handleRequestSort}
-            handleStarClick={this.handleStarClick}
-          />
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            component="div"
-            count={dataDisplay.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            SelectProps={{
-              native: true,
-            }}
-            onChangePage={this.handleChangePage}
-            onChangeRowsPerPage={this.handleChangeRowsPerPage}
-            ActionsComponent={TablePaginationActions}
-            style={{ overflow: 'auto' }}
-          />
-        </Paper>
+        {this.handleTable(dataDisplay)}
         <br />
         <Button
           component={Link}
