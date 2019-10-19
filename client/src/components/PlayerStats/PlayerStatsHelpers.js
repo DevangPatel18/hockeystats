@@ -58,7 +58,7 @@ export const getFilteredStats = stats => {
 const getPositionFilteredStats = stats => {
   const { playerPositionCode } = store.getState().tableSettings
   const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
-  return isSkaters
+  return isSkaters && playerPositionCode !== 'LRCD'
     ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
     : stats
 }
