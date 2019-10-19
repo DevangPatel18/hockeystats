@@ -47,50 +47,57 @@ export const getCountries = stats =>
     .sort()
 
 export const getFilteredStats = stats => {
-  const {
-    filterTracked,
-    search,
-    playerPositionCode,
-    teamFilter,
-    countryFilter,
-  } = store.getState().tableSettings
-  const { trackedPlayers } = store.getState().stats
+  let dataDisplay = getPositionFilteredStats(stats)
+  dataDisplay = getStarredFilteredStats(dataDisplay)
+  dataDisplay = getTeamFilteredStats(dataDisplay)
+  dataDisplay = getSearchFilteredStats(dataDisplay)
+  dataDisplay = getCountryFilteredStats(dataDisplay)
+  return dataDisplay
+}
 
+const getPositionFilteredStats = stats => {
+  const { playerPositionCode } = store.getState().tableSettings
   const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
-
-  let dataDisplay = isSkaters
+  return isSkaters
     ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
     : stats
+}
 
-  dataDisplay = filterTracked
-    ? dataDisplay.filter(obj =>
+const getStarredFilteredStats = stats => {
+  const { filterTracked } = store.getState().tableSettings
+  const { trackedPlayers } = store.getState().stats
+  return filterTracked
+    ? stats.filter(obj =>
         trackedPlayers.some(
           listObj =>
             listObj.playerId === obj.playerId &&
             listObj.seasonId === obj.seasonId
         )
       )
-    : dataDisplay
+    : stats
+}
 
-  dataDisplay =
-    teamFilter !== 'all'
-      ? dataDisplay.filter(
-          playerObj =>
-            playerObj.playerTeamsPlayedFor &&
-            playerObj.playerTeamsPlayedFor.includes(teamFilter)
-        )
-      : dataDisplay
+const getTeamFilteredStats = stats => {
+  const { teamFilter } = store.getState().tableSettings
+  return teamFilter !== 'all'
+    ? stats.filter(
+        playerObj =>
+          playerObj.playerTeamsPlayedFor &&
+          playerObj.playerTeamsPlayedFor.includes(teamFilter)
+      )
+    : stats
+}
 
-  dataDisplay = search
-    ? dataDisplay.filter(obj => obj.playerName.toLowerCase().includes(search))
-    : dataDisplay
+const getSearchFilteredStats = stats => {
+  const { search } = store.getState().tableSettings
+  return search
+    ? stats.filter(obj => obj.playerName.toLowerCase().includes(search))
+    : stats
+}
 
-  dataDisplay =
-    countryFilter !== 'all'
-      ? dataDisplay.filter(
-          playerObj => playerObj.playerBirthCountry === countryFilter
-        )
-      : dataDisplay
-
-  return dataDisplay
+const getCountryFilteredStats = stats => {
+  const { countryFilter } = store.getState().tableSettings
+  return countryFilter !== 'all'
+    ? stats.filter(playerObj => playerObj.playerBirthCountry === countryFilter)
+    : stats
 }
