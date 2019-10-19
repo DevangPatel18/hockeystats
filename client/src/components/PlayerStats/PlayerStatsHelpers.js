@@ -45,3 +45,52 @@ export const getCountries = stats =>
       return acc
     }, [])
     .sort()
+
+export const getFilteredStats = stats => {
+  const {
+    filterTracked,
+    search,
+    playerPositionCode,
+    teamFilter,
+    countryFilter,
+  } = store.getState().tableSettings
+  const { trackedPlayers } = store.getState().stats
+
+  const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
+
+  let dataDisplay = isSkaters
+    ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
+    : stats
+
+  dataDisplay = filterTracked
+    ? dataDisplay.filter(obj =>
+        trackedPlayers.some(
+          listObj =>
+            listObj.playerId === obj.playerId &&
+            listObj.seasonId === obj.seasonId
+        )
+      )
+    : dataDisplay
+
+  dataDisplay =
+    teamFilter !== 'all'
+      ? dataDisplay.filter(
+          playerObj =>
+            playerObj.playerTeamsPlayedFor &&
+            playerObj.playerTeamsPlayedFor.includes(teamFilter)
+        )
+      : dataDisplay
+
+  dataDisplay = search
+    ? dataDisplay.filter(obj => obj.playerName.toLowerCase().includes(search))
+    : dataDisplay
+
+  dataDisplay =
+    countryFilter !== 'all'
+      ? dataDisplay.filter(
+          playerObj => playerObj.playerBirthCountry === countryFilter
+        )
+      : dataDisplay
+
+  return dataDisplay
+}

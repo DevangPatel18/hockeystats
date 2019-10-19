@@ -26,7 +26,7 @@ import TableData from './TableData'
 import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
-import { fetchData } from './PlayerStatsHelpers'
+import { fetchData, getFilteredStats } from './PlayerStatsHelpers'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -194,44 +194,7 @@ class PlayerStats extends Component {
     const { selectedPlayers, rowsPerPage, page, order, orderBy } = this.state
     const { dataLoad, trackedPlayers, modalOpen } = this.props.stats
     const { stats, dataType } = this.props.playerData
-    const {
-      filterTracked,
-      search,
-      playerPositionCode,
-      teamFilter,
-      countryFilter,
-    } = this.props.tableSettings
-
-    const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
-    let dataDisplay = isSkaters
-      ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
-      : stats
-    dataDisplay = filterTracked
-      ? dataDisplay.filter(obj =>
-          trackedPlayers.some(
-            listObj =>
-              listObj.playerId === obj.playerId &&
-              listObj.seasonId === obj.seasonId
-          )
-        )
-      : dataDisplay
-    dataDisplay =
-      teamFilter !== 'all'
-        ? dataDisplay.filter(
-            playerObj =>
-              playerObj.playerTeamsPlayedFor &&
-              playerObj.playerTeamsPlayedFor.includes(teamFilter)
-          )
-        : dataDisplay
-    dataDisplay = search
-      ? dataDisplay.filter(obj => obj.playerName.toLowerCase().includes(search))
-      : dataDisplay
-    dataDisplay =
-      countryFilter !== 'all'
-        ? dataDisplay.filter(
-            playerObj => playerObj.playerBirthCountry === countryFilter
-          )
-        : dataDisplay
+    const dataDisplay = getFilteredStats(stats)
 
     return (
       <div>
