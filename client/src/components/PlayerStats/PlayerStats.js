@@ -11,13 +11,7 @@ import {
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
-import {
-  getPlayerList,
-  addPlayerList,
-  removePlayerList,
-  startLoad,
-  stopLoad,
-} from '../../actions/statActions'
+import * as statActions from '../../actions/statActions'
 import { changeField } from '../../actions/tableSettingsActions'
 import { submitQuery } from '../../actions/playerDataActions'
 import TablePaginationActions from './TablePaginationActions'
@@ -316,11 +310,11 @@ const mapStateToProps = state => ({
 export default connect(
   mapStateToProps,
   {
-    getPlayerList,
-    addPlayerList,
-    removePlayerList,
-    startLoad,
-    stopLoad,
+    getPlayerList: statActions.getPlayerList,
+    addPlayerList: statActions.addPlayerList,
+    removePlayerList: statActions.removePlayerList,
+    startLoad: statActions.startLoad,
+    stopLoad: statActions.stopLoad,
     changeField,
     submitQuery,
   }
