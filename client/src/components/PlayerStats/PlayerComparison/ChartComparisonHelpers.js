@@ -1,7 +1,7 @@
 import {
   skaterLogStats,
   goalieLogStats,
-} from '../../../helper/chartComparisonHelper'
+} from '../../../helper/chartComparisonOptions'
 import store from '../../../store'
 
 export async function getGameLogData(api, playerIds) {
