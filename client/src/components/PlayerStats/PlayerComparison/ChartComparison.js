@@ -18,6 +18,7 @@ import configure from '../../../utils/configLocalforage'
 import { startLoad, stopLoad } from '../../../actions/statActions'
 import StatsChart from './StatsChart'
 import {
+  getGameLogData,
   getPlayerSeasonData,
   getPlayerAggregateData,
   getStatOptions,
@@ -62,6 +63,7 @@ class ChartComparison extends Component {
       endDate: '',
     }
 
+    this.getGameLogData = getGameLogData.bind(this)
     this.getPlayerSeasonData = getPlayerSeasonData.bind(this)
     this.getPlayerAggregateData = getPlayerAggregateData.bind(this)
     this.getStatOptions = getStatOptions.bind(this)
@@ -75,28 +77,13 @@ class ChartComparison extends Component {
     const { yearStart, yearEnd } = tableSettings
     this._isMounted = true
     const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
-    let isAggregate = false
     if (playerIds.length) {
       this.props.startLoad()
       await configure().then(async api => {
-        let gameLogCollection = await Promise.all(
-          playerIds.map(async playerArr => {
-            const seasonId = playerArr[1]
-            if (seasonId) {
-              return this.getPlayerSeasonData(api, playerArr)
-            } else {
-              isAggregate = true
-              return this.getPlayerAggregateData(api, playerArr)
-            }
-          })
-        )
-
-        if (isAggregate) {
-          gameLogCollection = gameLogCollection.flat()
-        }
-
+        const gameLogCollection = await this.getGameLogData(api, playerIds)
         const statOptions = this.getStatOptions(gameLogCollection)
         const playerData = this.getPlayerData(gameLogCollection)
+        const isAggregate = playerIds[0][1] ? false : true
         const seasonIds = isAggregate
           ? selectedPlayers.map(() =>
               yearStart.slice(0, 4).concat(yearEnd.slice(-4))

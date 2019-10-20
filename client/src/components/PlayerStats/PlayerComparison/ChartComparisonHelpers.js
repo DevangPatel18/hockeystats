@@ -4,6 +4,17 @@ import {
 } from '../../../helper/chartComparisonHelper'
 import store from '../../../store'
 
+export async function getGameLogData(api, playerIds) {
+  const isAggregate = playerIds[0][1] ? false : true
+  const getPlayerDataFunction = isAggregate
+    ? this.getPlayerAggregateData
+    : this.getPlayerSeasonData
+  const gameLogCollection = await Promise.all(
+    playerIds.map(playerArr => getPlayerDataFunction(api, playerArr))
+  )
+  return isAggregate ? gameLogCollection.flat() : gameLogCollection
+}
+
 export function getPlayerSeasonData(api, playerArr) {
   const { dataType } = this.props.playerData
   const [playerId, seasonId] = playerArr
