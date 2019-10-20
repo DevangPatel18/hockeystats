@@ -16,8 +16,14 @@ import styled from 'styled-components'
 import { DatePicker } from 'material-ui-pickers'
 import configure from '../../../utils/configLocalforage'
 import { startLoad, stopLoad } from '../../../actions/statActions'
-import { skaterLogStats, goalieLogStats } from '../../../helper/chartComparisonHelper'
 import StatsChart from './StatsChart'
+import {
+  getPlayerSeasonData,
+  getPlayerAggregateData,
+  getStatOptions,
+  getPlayerData,
+  getDateRange,
+} from './ChartComparisonHelpers'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
@@ -56,12 +62,16 @@ class ChartComparison extends Component {
       endDate: '',
     }
 
+    this.getPlayerSeasonData = getPlayerSeasonData.bind(this)
+    this.getPlayerAggregateData = getPlayerAggregateData.bind(this)
+    this.getStatOptions = getStatOptions.bind(this)
+    this.getPlayerData = getPlayerData.bind(this)
+
     this._isMounted = false
   }
 
   async componentDidMount() {
-    const { selectedPlayers, data, tableSettings } = this.props
-    const { dataType } = this.props.playerData
+    const { selectedPlayers, tableSettings } = this.props
     const { yearStart, yearEnd } = tableSettings
     this._isMounted = true
     const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
@@ -71,111 +81,43 @@ class ChartComparison extends Component {
       await configure().then(async api => {
         let gameLogCollection = await Promise.all(
           playerIds.map(async playerArr => {
-            const [playerId, seasonId] = playerArr
+            const seasonId = playerArr[1]
             if (seasonId) {
-              return api
-                .get(
-                  `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
-                )
-                .then(res => res.data.reverse())
+              return this.getPlayerSeasonData(api, playerArr)
             } else {
               isAggregate = true
-              const count = yearEnd.slice(0, 4) - yearStart.slice(0, 4) + 1
-
-              let seasonIdArr = []
-              let yearBase = yearStart.slice(0, 4)
-              let tempSeasonId
-
-              for (let i = 1; i < count + 1; i++) {
-                tempSeasonId = yearBase.concat(parseInt(yearBase) + 1)
-                seasonIdArr.push(tempSeasonId)
-                yearBase = (parseInt(yearBase) + 1).toString()
-              }
-
-              return Promise.all(
-                seasonIdArr.map(async seasonId =>
-                  api
-                    .get(
-                      `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
-                    )
-                    .then(res => res.data.reverse())
-                )
-              )
+              return this.getPlayerAggregateData(api, playerArr)
             }
           })
         )
 
         if (isAggregate) {
-          gameLogCollection = gameLogCollection.map(singlePlayerLogs =>
-            singlePlayerLogs.reduce((a, b) => a.concat(b))
-          )
+          gameLogCollection = gameLogCollection.flat()
         }
 
-        let allStatOptions =
-          data[0].playerPositionCode !== 'G' ? skaterLogStats : goalieLogStats
-
-        let statOptions = []
-        for (const playerGameLogArr of gameLogCollection) {
-          for (const playerGameLog of playerGameLogArr) {
-            for (const statKey in playerGameLog.stat) {
-              if (!statOptions.includes(statKey)) {
-                statOptions.push(statKey)
-              }
-            }
-          }
-        }
-
-        statOptions = allStatOptions.filter(statObj =>
-          statOptions.includes(statObj.key)
-        )
-
-        let playerStat = statOptions[0].key
-
-        const playerData = selectedPlayers.map((tag, i) => {
-          const tableData = data.find(
-            playerObj => playerObj.playerId === parseInt(playerIds[i])
-          )
-          return {
-            tag,
-            tableData,
-            gameLog: gameLogCollection[i],
-          }
-        })
-
+        const statOptions = this.getStatOptions(gameLogCollection)
+        const playerData = this.getPlayerData(gameLogCollection)
         const seasonIds = isAggregate
-          ? this.props.selectedPlayers.map(playerTag =>
+          ? selectedPlayers.map(() =>
               yearStart.slice(0, 4).concat(yearEnd.slice(-4))
             )
-          : this.props.selectedPlayers.map(playerTag => playerTag.split('-')[1])
+          : selectedPlayers.map(playerTag => playerTag.split('-')[1])
 
         const sameSeason = isAggregate
           ? false
           : seasonIds.every(seasonId => seasonId === seasonIds[0])
 
-        let startDate = ''
-        let endDate = ''
-        if (sameSeason) {
-          let minDateArr = []
-          let maxDateArr = []
-          gameLogCollection.forEach(playerGameLogArr => {
-            minDateArr.push(playerGameLogArr[0].date)
-            maxDateArr.push(playerGameLogArr[playerGameLogArr.length - 1].date)
-          })
-
-          const presentDay = new Date()
-          startDate = new Date(minDateArr.reduce((a, b) => (a < b ? a : b)))
-          endDate = new Date(maxDateArr.reduce((a, b) => (a > b ? a : b)))
-
-          endDate = endDate > presentDay ? presentDay : endDate
-        }
-
+        const { startDate, endDate } = getDateRange(
+          gameLogCollection,
+          sameSeason
+        )
         if (this._isMounted) {
           this.setState(
             {
               playerData,
               activeLines: selectedPlayers.slice(),
               statOptions,
-              playerStat,
+              playerStat: statOptions[0].key,
               seasonIds,
               sameSeason,
               startDate,
