@@ -77,11 +77,10 @@ class ChartComparison extends Component {
   async componentDidMount() {
     const { selectedPlayers } = this.props
     this._isMounted = true
-    const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
-    if (playerIds.length) {
+    if (selectedPlayers.length) {
       this.props.startLoad()
       await configure().then(async api => {
-        const gameLogCollection = await this.getGameLogData(api, playerIds)
+        const gameLogCollection = await this.getGameLogData(api)
         const statOptions = this.getStatOptions(gameLogCollection)
         const playerData = this.getPlayerData(gameLogCollection)
         const { seasonIds, sameSeason } = this.getSeasonData()
@@ -383,6 +382,7 @@ class ChartComparison extends Component {
 
 ChartComparison.propTypes = {
   selectedPlayers: PropTypes.array.isRequired,
+  playerIds: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
   stats: PropTypes.object.isRequired,
   playerData: PropTypes.object.isRequired,

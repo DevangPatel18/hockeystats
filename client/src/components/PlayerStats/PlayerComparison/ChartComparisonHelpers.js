@@ -4,7 +4,8 @@ import {
 } from '../../../helper/chartComparisonOptions'
 import store from '../../../store'
 
-export async function getGameLogData(api, playerIds) {
+export async function getGameLogData(api) {
+  const { playerIds } = this.props
   const isAggregate = playerIds[0][1] ? false : true
   const getPlayerDataFunction = isAggregate
     ? this.getPlayerAggregateData
@@ -74,8 +75,7 @@ export function getStatOptions(gameLogCollection) {
 }
 
 export function getPlayerData(gameLogCollection) {
-  const { selectedPlayers, data } = this.props
-  const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
+  const { selectedPlayers, playerIds, data } = this.props
   return selectedPlayers.map((tag, i) => {
     const tableData = data.find(
       playerObj => playerObj.playerId === parseInt(playerIds[i])
@@ -106,9 +106,8 @@ export const getDateRange = (gameLogCollection, sameSeason) => {
 }
 
 export function getSeasonData() {
-  const { selectedPlayers, tableSettings } = this.props
+  const { selectedPlayers, playerIds, tableSettings } = this.props
   const { yearStart, yearEnd } = tableSettings
-  const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
   let seasonIds
   let sameSeason
   if (playerIds[0][1]) {
