@@ -130,6 +130,12 @@ class ChartComparison extends Component {
     this.setState({ [name]: event })
   }
 
+  handleLoadingAnimation = () => (
+    <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <CircularProgress />
+    </div>
+  )
+
   render() {
     const {
       playerData,
@@ -147,12 +153,7 @@ class ChartComparison extends Component {
       maxDate,
     } = this.state
 
-    if (!playerStat)
-      return (
-        <div style={{ padding: '2rem', textAlign: 'center' }}>
-          <CircularProgress />
-        </div>
-      )
+    if (!playerStat) return this.handleLoadingAnimation()
 
     const statObj = statOptions.find(obj => obj.key === playerStat)
     const statLabel = statObj.label
