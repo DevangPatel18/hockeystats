@@ -104,3 +104,21 @@ export const getDateRange = (gameLogCollection, sameSeason) => {
   }
   return { startDate: '', endDate: '' }
 }
+
+export function getSeasonData() {
+  const { selectedPlayers, tableSettings } = this.props
+  const { yearStart, yearEnd } = tableSettings
+  const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
+  let seasonIds
+  let sameSeason
+  if (playerIds[0][1]) {
+    seasonIds = selectedPlayers.map(playerTag => playerTag.split('-')[1])
+    sameSeason = seasonIds.every(seasonId => seasonId === seasonIds[0])
+  } else {
+    seasonIds = selectedPlayers.map(() =>
+      yearStart.slice(0, 4).concat(yearEnd.slice(-4))
+    )
+    sameSeason = false
+  }
+  return { seasonIds, sameSeason }
+}

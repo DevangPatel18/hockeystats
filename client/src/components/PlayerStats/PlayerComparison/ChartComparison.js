@@ -24,6 +24,7 @@ import {
   getStatOptions,
   getPlayerData,
   getDateRange,
+  getSeasonData,
 } from './ChartComparisonHelpers'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
@@ -68,13 +69,13 @@ class ChartComparison extends Component {
     this.getPlayerAggregateData = getPlayerAggregateData.bind(this)
     this.getStatOptions = getStatOptions.bind(this)
     this.getPlayerData = getPlayerData.bind(this)
+    this.getSeasonData = getSeasonData.bind(this)
 
     this._isMounted = false
   }
 
   async componentDidMount() {
-    const { selectedPlayers, tableSettings } = this.props
-    const { yearStart, yearEnd } = tableSettings
+    const { selectedPlayers } = this.props
     this._isMounted = true
     const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
     if (playerIds.length) {
@@ -83,17 +84,7 @@ class ChartComparison extends Component {
         const gameLogCollection = await this.getGameLogData(api, playerIds)
         const statOptions = this.getStatOptions(gameLogCollection)
         const playerData = this.getPlayerData(gameLogCollection)
-        const isAggregate = playerIds[0][1] ? false : true
-        const seasonIds = isAggregate
-          ? selectedPlayers.map(() =>
-              yearStart.slice(0, 4).concat(yearEnd.slice(-4))
-            )
-          : selectedPlayers.map(playerTag => playerTag.split('-')[1])
-
-        const sameSeason = isAggregate
-          ? false
-          : seasonIds.every(seasonId => seasonId === seasonIds[0])
-
+        const { seasonIds, sameSeason } = this.getSeasonData()
         const { startDate, endDate } = getDateRange(
           gameLogCollection,
           sameSeason
