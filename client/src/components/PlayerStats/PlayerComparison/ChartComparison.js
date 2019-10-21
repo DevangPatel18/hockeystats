@@ -17,15 +17,7 @@ import { DatePicker } from 'material-ui-pickers'
 import configure from '../../../utils/configLocalforage'
 import { startLoad, stopLoad } from '../../../actions/statActions'
 import StatsChart from './StatsChart'
-import {
-  getGameLogData,
-  getPlayerSeasonData,
-  getPlayerAggregateData,
-  getStatOptions,
-  getPlayerData,
-  getDateRange,
-  getSeasonData,
-} from './ChartComparisonHelpers'
+import * as cch from './ChartComparisonHelpers'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
@@ -64,12 +56,12 @@ class ChartComparison extends Component {
       endDate: '',
     }
 
-    this.getGameLogData = getGameLogData.bind(this)
-    this.getPlayerSeasonData = getPlayerSeasonData.bind(this)
-    this.getPlayerAggregateData = getPlayerAggregateData.bind(this)
-    this.getStatOptions = getStatOptions.bind(this)
-    this.getPlayerData = getPlayerData.bind(this)
-    this.getSeasonData = getSeasonData.bind(this)
+    this.getGameLogData = cch.getGameLogData.bind(this)
+    this.getPlayerSeasonData = cch.getPlayerSeasonData.bind(this)
+    this.getPlayerAggregateData = cch.getPlayerAggregateData.bind(this)
+    this.getStatOptions = cch.getStatOptions.bind(this)
+    this.getPlayerData = cch.getPlayerData.bind(this)
+    this.getSeasonData = cch.getSeasonData.bind(this)
 
     this._isMounted = false
   }
@@ -84,7 +76,7 @@ class ChartComparison extends Component {
         const statOptions = this.getStatOptions(gameLogCollection)
         const playerData = this.getPlayerData(gameLogCollection)
         const { seasonIds, sameSeason } = this.getSeasonData()
-        const { startDate, endDate } = getDateRange(
+        const { startDate, endDate } = cch.getDateRange(
           gameLogCollection,
           sameSeason
         )
