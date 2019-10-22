@@ -63,6 +63,7 @@ class ChartComparison extends Component {
     this.getPlayerData = cch.getPlayerData.bind(this)
     this.getSeasonData = cch.getSeasonData.bind(this)
     this.handleDisplayData = cch.handleDisplayData.bind(this)
+    this.filterLogDataByDate = cch.filterLogDataByDate.bind(this)
 
     this._isMounted = false
   }

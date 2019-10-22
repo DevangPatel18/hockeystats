@@ -129,8 +129,6 @@ export function handleDisplayData() {
     playerData,
     playerStat,
     statOptions,
-    startDate,
-    endDate,
     sameSeason,
   } = this.state
 
@@ -142,19 +140,7 @@ export function handleDisplayData() {
   const playerPointProgress = playerData.map(obj => {
     const { gameLog } = obj
     let total = 0
-    let orderedGameLog = gameLog.slice()
-    let startDateIso
-    let endDateIso
-
-    if (sameSeason) {
-      startDateIso = startDate.toISOString().slice(0, 10)
-      endDateIso = endDate.toISOString().slice(0, 10)
-
-      // Filter games based on date selection for sameSeason comparisons
-      orderedGameLog = orderedGameLog.filter(
-        game => game.date > startDateIso && game.date < endDateIso
-      )
-    }
+    const orderedGameLog = this.filterLogDataByDate(gameLog.slice())
 
     if ((statPercentage && !percentAvg) || !summed) {
       return sameSeason
@@ -193,4 +179,18 @@ export function handleDisplayData() {
     }
   })
   return playerPointProgress
+}
+
+export function filterLogDataByDate(gameLog) {
+  const { sameSeason, startDate, endDate } = this.state
+  if (sameSeason) {
+    const startDateIso = startDate.toISOString().slice(0, 10)
+    const endDateIso = endDate.toISOString().slice(0, 10)
+
+    // Filter games based on date selection for sameSeason comparisons
+    return gameLog.filter(
+      game => game.date > startDateIso && game.date < endDateIso
+    )
+  }
+  return gameLog
 }
