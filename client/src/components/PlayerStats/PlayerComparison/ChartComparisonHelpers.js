@@ -121,3 +121,76 @@ export function getSeasonData() {
   }
   return { seasonIds, sameSeason }
 }
+
+export function handleDisplayData() {
+  const {
+    summed,
+    percentAvg,
+    playerData,
+    playerStat,
+    statOptions,
+    startDate,
+    endDate,
+    sameSeason,
+  } = this.state
+
+  const statObj = statOptions.find(obj => obj.key === playerStat)
+  const formatter = statObj.format ? statObj.format : x => (x ? x : 0)
+  const statPercentage =
+    playerStat.includes('Pct') || playerStat.includes('Percentage')
+
+  const playerPointProgress = playerData.map(obj => {
+    const { gameLog } = obj
+    let total = 0
+    let orderedGameLog = gameLog.slice()
+    let startDateIso
+    let endDateIso
+
+    if (sameSeason) {
+      startDateIso = startDate.toISOString().slice(0, 10)
+      endDateIso = endDate.toISOString().slice(0, 10)
+
+      // Filter games based on date selection for sameSeason comparisons
+      orderedGameLog = orderedGameLog.filter(
+        game => game.date > startDateIso && game.date < endDateIso
+      )
+    }
+
+    if ((statPercentage && !percentAvg) || !summed) {
+      return sameSeason
+        ? orderedGameLog.map(game => {
+            let x = Date.parse(game.date)
+            return { x, y: formatter(game.stat[playerStat]) }
+          })
+        : orderedGameLog.map((game, i) => ({
+            i,
+            y: formatter(game.stat[playerStat]),
+          }))
+    } else {
+      if (statPercentage && percentAvg) {
+        return sameSeason
+          ? orderedGameLog.map((game, i) => {
+              total += formatter(game.stat[playerStat])
+              let x = Date.parse(game.date)
+              return { x, y: total / (i + 1) }
+            })
+          : orderedGameLog.map((game, i) => {
+              total += formatter(game.stat[playerStat])
+              return { i, y: total / (i + 1) }
+            })
+      } else {
+        return sameSeason
+          ? orderedGameLog.map((game, i) => {
+              total += formatter(game.stat[playerStat])
+              let x = Date.parse(game.date)
+              return { x, y: total }
+            })
+          : orderedGameLog.map((game, i) => {
+              total += formatter(game.stat[playerStat])
+              return { i, y: total }
+            })
+      }
+    }
+  })
+  return playerPointProgress
+}

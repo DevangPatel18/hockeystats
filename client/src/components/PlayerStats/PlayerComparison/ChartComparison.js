@@ -62,6 +62,7 @@ class ChartComparison extends Component {
     this.getStatOptions = cch.getStatOptions.bind(this)
     this.getPlayerData = cch.getPlayerData.bind(this)
     this.getSeasonData = cch.getSeasonData.bind(this)
+    this.handleDisplayData = cch.handleDisplayData.bind(this)
 
     this._isMounted = false
   }
@@ -157,76 +158,14 @@ class ChartComparison extends Component {
 
     const statObj = statOptions.find(obj => obj.key === playerStat)
     const statLabel = statObj.label
-
-    const formatter = statObj.format ? statObj.format : x => (x ? x : 0)
-
     const selectedPlayerData = playerData.filter(obj =>
       activeLines.includes(obj.tag)
     )
-
     const statPercentage =
       playerStat.includes('Pct') || playerStat.includes('Percentage')
-
-    const playerPointProgress = playerData.map(obj => {
-      const { gameLog } = obj
-      let total = 0
-      let orderedGameLog = gameLog.slice()
-
-      let startDateIso
-      let endDateIso
-
-      if (sameSeason) {
-        startDateIso = startDate.toISOString().slice(0, 10)
-        endDateIso = endDate.toISOString().slice(0, 10)
-      }
-
-      // Filter games based on date selection for sameSeason comparisons
-      if (sameSeason) {
-        orderedGameLog = orderedGameLog.filter(
-          game => game.date > startDateIso && game.date < endDateIso
-        )
-      }
-
-      if ((statPercentage && !percentAvg) || !summed) {
-        return sameSeason
-          ? orderedGameLog.map(game => {
-              let x = Date.parse(game.date)
-              return { x, y: formatter(game.stat[playerStat]) }
-            })
-          : orderedGameLog.map((game, i) => ({
-              i,
-              y: formatter(game.stat[playerStat]),
-            }))
-      } else {
-        if (statPercentage && percentAvg) {
-          return sameSeason
-            ? orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat])
-                let x = Date.parse(game.date)
-                return { x, y: total / (i + 1) }
-              })
-            : orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat])
-                return { i, y: total / (i + 1) }
-              })
-        } else {
-          return sameSeason
-            ? orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat])
-                let x = Date.parse(game.date)
-                return { x, y: total }
-              })
-            : orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat])
-                return { i, y: total }
-              })
-        }
-      }
-    })
-
     const toi = statLabel.includes('TOI')
-
     const lineNames = selectedPlayerData.map(obj => `${obj.tag}-line-name`)
+    const dataSet = this.handleDisplayData()
 
     const StatChartProps = {
       toi,
@@ -236,7 +175,7 @@ class ChartComparison extends Component {
       playerData,
       activeLines,
       hover,
-      dataSet: playerPointProgress,
+      dataSet,
     }
 
     return (
