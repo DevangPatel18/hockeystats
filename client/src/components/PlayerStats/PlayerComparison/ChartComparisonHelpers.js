@@ -132,53 +132,26 @@ export function handleDisplayData() {
     sameSeason,
   } = this.state
 
-  const statObj = statOptions.find(obj => obj.key === playerStat)
-  const formatter = statObj.format ? statObj.format : x => (x ? x : 0)
-  const statPercentage =
-    playerStat.includes('Pct') || playerStat.includes('Percentage')
+  const formatter = getStatsFormatter(statOptions, playerStat)
+  const isPctg = playerStat.includes('Pct') || playerStat.includes('Percentage')
+  const domainFn = getDomainFunction(sameSeason)
 
-  const playerPointProgress = playerData.map(obj => {
-    const { gameLog } = obj
-    let total = 0
+  return playerData.map(({ gameLog }) => {
     const orderedGameLog = this.filterLogDataByDate(gameLog.slice())
-
-    if ((statPercentage && !percentAvg) || !summed) {
-      return sameSeason
-        ? orderedGameLog.map(game => {
-            let x = Date.parse(game.date)
-            return { x, y: formatter(game.stat[playerStat]) }
-          })
-        : orderedGameLog.map((game, i) => ({
-            i,
-            y: formatter(game.stat[playerStat]),
-          }))
+    if ((isPctg && !percentAvg) || !summed) {
+      return orderedGameLog.map((game, i) => ({
+        x: domainFn(game.date, i),
+        y: formatter(game.stat[playerStat]),
+      }))
     } else {
-      if (statPercentage && percentAvg) {
-        return sameSeason
-          ? orderedGameLog.map((game, i) => {
-              total += formatter(game.stat[playerStat])
-              let x = Date.parse(game.date)
-              return { x, y: total / (i + 1) }
-            })
-          : orderedGameLog.map((game, i) => {
-              total += formatter(game.stat[playerStat])
-              return { i, y: total / (i + 1) }
-            })
-      } else {
-        return sameSeason
-          ? orderedGameLog.map((game, i) => {
-              total += formatter(game.stat[playerStat])
-              let x = Date.parse(game.date)
-              return { x, y: total }
-            })
-          : orderedGameLog.map((game, i) => {
-              total += formatter(game.stat[playerStat])
-              return { i, y: total }
-            })
-      }
+      const rangeFn = getRangeFunction(isPctg, percentAvg)
+      let total = 0
+      return orderedGameLog.map((game, i) => {
+        total += formatter(game.stat[playerStat])
+        return { x: domainFn(game.date, i), y: rangeFn(total, i) }
+      })
     }
   })
-  return playerPointProgress
 }
 
 export function filterLogDataByDate(gameLog) {
@@ -194,3 +167,14 @@ export function filterLogDataByDate(gameLog) {
   }
   return gameLog
 }
+
+const getStatsFormatter = (statOptions, playerStat) => {
+  const statObj = statOptions.find(obj => obj.key === playerStat)
+  return statObj.format ? statObj.format : x => (x ? x : 0)
+}
+
+const getDomainFunction = sameSeason =>
+  sameSeason ? (date, __) => Date.parse(date) : (__, i) => i
+
+const getRangeFunction = (isPctg, percentAvg) =>
+  isPctg && percentAvg ? (total, i) => total / (i + 1) : (total, __) => total
