@@ -11,7 +11,6 @@ const StatsChart = props => {
   const {
     toi,
     sameSeason,
-    lineNames,
     dataSet,
     statLabel,
     playerData,
@@ -28,45 +27,23 @@ const StatsChart = props => {
       domainPadding={{ y: 5 }}
       events={[
         {
-          childName: lineNames,
+          childName: 'all',
           target: 'data',
           eventHandlers: {
-            onMouseOver: () => {
-              return [
-                {
-                  childName: lineNames,
-                  mutation: props => {
-                    return {
-                      style: Object.assign({}, props.style, {
-                        display: 'inline',
-                        opacity: 0.2,
-                      }),
-                    }
-                  },
-                },
-                {
-                  mutation: props => {
-                    return {
-                      style: Object.assign({}, props.style, {
-                        stroke: props.style.stroke,
-                        display: 'inline',
-                        opacity: 1,
-                      }),
-                    }
-                  },
-                },
-              ]
-            },
-            onMouseOut: () => {
-              return [
-                {
-                  childName: lineNames,
-                  mutation: () => {
-                    return null
-                  },
-                },
-              ]
-            },
+            onMouseOver: () => [
+              {
+                childName: 'all',
+                mutation: props => ({
+                  style: { ...props.style, opacity: 0.2 },
+                }),
+              },
+              {
+                mutation: props => ({
+                  style: { ...props.style, opacity: 1 },
+                }),
+              },
+            ],
+            onMouseOut: () => [{ childName: 'all', mutation: () => null }],
           },
         },
       ]}
