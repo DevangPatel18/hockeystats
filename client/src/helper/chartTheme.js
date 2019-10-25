@@ -49,10 +49,10 @@ const strokeLinecap = 'round'
 const strokeLinejoin = 'round'
 
 // Put it all together...
-const chartTheme = (toi = false) => {
+const chartTheme = (toi = false, width = 450, height = 350) => {
   baseProps = {
-    width: 450,
-    height: 350,
+    width,
+    height,
     padding: toi
       ? { left: 80, top: 25, right: 50, bottom: 50 }
       : { left: 50, top: 25, right: 50, bottom: 50 },

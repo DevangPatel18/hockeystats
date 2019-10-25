@@ -46,7 +46,8 @@ class StatsChart extends Component {
       hover,
     } = this.props
 
-    const theme = chartTheme(toi)
+    const { chartWidth, chartHeight } = this.state
+    const theme = chartTheme(toi, chartWidth, chartHeight)
 
     return (
       <VictoryChart
@@ -103,14 +104,14 @@ class StatsChart extends Component {
           textAnchor="middle"
           style={{ fontWeight: 'bolder' }}
           x={10}
-          y={150}
+          y={chartHeight / 2 - 25}
         />
         <VictoryLabel
           text={sameSeason ? 'Date' : 'Games'}
           textAnchor="middle"
           style={{ fontWeight: 'bolder' }}
-          x={225}
-          y={340}
+          x={chartWidth / 2}
+          y={chartHeight - 10}
         />
       </VictoryChart>
     )
