@@ -15,6 +15,11 @@ class StatsChart extends Component {
 
   componentDidMount() {
     this.handleChartResize()
+    window.addEventListener('resize', this.handleChartResize)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleChartResize)
   }
 
   handleChartResize = () => {
