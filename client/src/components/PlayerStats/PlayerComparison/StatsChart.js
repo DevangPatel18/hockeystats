@@ -8,6 +8,24 @@ import chroma from 'chroma-js'
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
 class StatsChart extends Component {
+  state = {
+    chartWidth: 0,
+    chartHeight: 0,
+  }
+
+  handleChartResize = () => {
+    const { chartWidth, chartHeight } = this.state
+    const newWidth = window.innerWidth - (window.innerWidth % 100)
+    const newHeight =
+      window.innerHeight * 0.6 - ((window.innerHeight * 0.6) % 100)
+    if (newWidth !== chartWidth || newHeight !== chartHeight) {
+      this.setState({
+        chartWidth: newWidth,
+        chartHeight: newHeight,
+      })
+    }
+  }
+
   render() {
     const {
       toi,
