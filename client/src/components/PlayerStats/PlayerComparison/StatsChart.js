@@ -13,6 +13,10 @@ class StatsChart extends Component {
     chartHeight: 0,
   }
 
+  componentDidMount() {
+    this.handleChartResize()
+  }
+
   handleChartResize = () => {
     const { chartWidth, chartHeight } = this.state
     const newWidth = window.innerWidth - (window.innerWidth % 100)
