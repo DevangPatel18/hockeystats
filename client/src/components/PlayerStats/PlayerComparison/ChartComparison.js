@@ -10,7 +10,7 @@ import {
   Switch,
 } from '@material-ui/core'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons'
+import { CheckCircleOutline, RadioButtonUnchecked } from '@material-ui/icons'
 import chroma from 'chroma-js'
 import styled from 'styled-components'
 import { DatePicker } from 'material-ui-pickers'
@@ -282,8 +282,8 @@ class ChartComparison extends Component {
                   onMouseLeave={() => this.setState({ hover: '' })}
                 >
                   {activeLines.includes(obj.tag) ? (
-                    <RadioButtonChecked
-                      fontSize="inherit"
+                    <CheckCircleOutline
+                      fontSize="small"
                       style={{
                         color: colorFunc(i / playerData.length),
                         marginRight: '0.3rem',
@@ -291,7 +291,7 @@ class ChartComparison extends Component {
                     />
                   ) : (
                     <RadioButtonUnchecked
-                      fontSize="inherit"
+                      fontSize="small"
                       style={{
                         color: colorFunc(i / playerData.length),
                         marginRight: '0.3rem',
