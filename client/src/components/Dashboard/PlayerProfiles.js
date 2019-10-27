@@ -49,18 +49,16 @@ const PlayerProfiles = ({
       timeZone: 'UTC',
     })
 
-    const logoUrl = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${
-      seasonData.team.id
-    }.svg`
+    const age = playerObj.currentAge ? `${playerObj.currentAge} yrs - ` : ''
+
+    const logoUrl = `https://www-league.nhlstatic.com/images/logos/teams-current-primary-light/${seasonData.team.id}.svg`
 
     return (
       <ProfileContainer key={`${playerObj.id}-${playerObj.seasonId}`}>
         <PlayerIdent logoUrl={logoUrl}>
           <ImageContainer>
             <img
-              src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${
-                playerObj.id
-              }.jpg`}
+              src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${playerObj.id}.jpg`}
               alt={playerObj.playerName}
               style={{
                 margin: '0',
@@ -82,8 +80,7 @@ const PlayerProfiles = ({
                 {playerObj.primaryPosition.abbreviation}
               </PlayerBioListItem>
               <PlayerBioListItem>
-                Bio: {playerObj.currentAge} yrs - {playerObj.height} ft -{' '}
-                {playerObj.weight} lbs
+                Bio: {age} {playerObj.height} ft - {playerObj.weight} lbs
               </PlayerBioListItem>
               <PlayerBioListItem>Birthdate: {bDayStr}</PlayerBioListItem>
               <PlayerBioListItem>
