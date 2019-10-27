@@ -21,6 +21,9 @@ import {
   YearRange,
   YearRangeLabel,
 } from '../styles/StatsFilterPanelStyles'
+import { getCurrentSeasonId } from '../../helper/dateHelpers'
+
+const currentSeasonYearEnd = getCurrentSeasonId().slice(4)
 
 class StatsFilterPanel extends Component {
   handleSeasonChange = name => event => {
@@ -56,14 +59,14 @@ class StatsFilterPanel extends Component {
     let optionsStart = []
     let optionsEnd = []
 
-    for (let i = 1917; i < 2019; i++) {
+    for (let i = 1917; i < currentSeasonYearEnd; i++) {
       optionsStart.push(
         <option value={`${i}${i + 1}`} key={`${i}-start`}>{`${i}-${i +
           1}`}</option>
       )
     }
 
-    for (let i = yearCutoff; i < 2019; i++) {
+    for (let i = yearCutoff; i < currentSeasonYearEnd; i++) {
       optionsEnd.push(
         <option value={`${i}${i + 1}`} key={`${i}-end`}>{`${i}-${i +
           1}`}</option>

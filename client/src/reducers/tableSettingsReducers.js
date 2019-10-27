@@ -1,8 +1,11 @@
 import * as types from '../actions/types'
+import { getCurrentSeasonId } from '../helper/dateHelpers'
+
+const currentSeason = getCurrentSeasonId()
 
 const initialState = {
-  yearStart: '20182019',
-  yearEnd: '20182019',
+  yearStart: currentSeason,
+  yearEnd: currentSeason,
   reportName: 'skatersummary',
   playoffs: false,
   isAggregate: false,
