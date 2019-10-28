@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import {
   AppBar,
   IconButton,
@@ -14,14 +15,17 @@ import {
   Tooltip,
 } from '@material-ui/core/'
 import CloseIcon from '@material-ui/icons/Close'
-import configure from '../utils/configLocalforage'
+import configure from '../../utils/configLocalforage'
+import { closePlayerModal } from '../../actions/statActions'
+import { yearFormatter, gameLogTableColumns } from '../../helper/columnLabels'
 import {
-  yearFormatter,
-  ProfileSkateCol,
-  ProfileGoalieCol,
-  gameLogTableColumns,
-} from '../helper/columnLabels'
-import { teamCodes } from '../helper/teamCodes'
+  getPlayerGameLogData,
+  getTeamIntervals,
+  getTeamSchedule,
+  copyPlayerDataToSchedule,
+  getPlayerStatColumns,
+  getTableData,
+} from './PlayerGameLogHelpers'
 
 const headerStyle = {
   background: '#C0C0C0',
@@ -53,136 +57,15 @@ class PlayerGameLog extends Component {
   }
 
   async componentDidMount() {
-    const { playerObj, dataType } = this.props
-    const { playerId, seasonId } = playerObj
-
     configure().then(async api => {
-      const playerGameLogData = await api
-        .get(
-          `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
-        )
-        .then(res => res.data.reverse())
+      const playerGameLogData = await getPlayerGameLogData(api)
+      const teamIntervals = getTeamIntervals(playerGameLogData)
+      const teamSchedule = await getTeamSchedule(api, teamIntervals)
 
-      let tempInterval = {
-        teamId: playerGameLogData[0].team.id,
-        startDate: playerGameLogData[0].season.slice(0, 4) + '-09-20',
-      }
+      copyPlayerDataToSchedule(teamSchedule, playerGameLogData)
 
-      const teamIntervals = playerGameLogData.reduce((acc, gameLog, i) => {
-        if (gameLog.team.id !== tempInterval.teamId) {
-          tempInterval.endDate = playerGameLogData[i - 1].date
-          acc.push(tempInterval)
-          tempInterval = {
-            teamId: gameLog.team.id,
-            startDate: gameLog.date,
-          }
-        }
-        return acc
-      }, [])
-
-      tempInterval.endDate = playerGameLogData[0].season.slice(4) + '-06-20'
-
-      teamIntervals.push(tempInterval)
-
-      let gVar = dataType === 'regular' ? 'R' : 'P'
-
-      let teamSchedule = await Promise.all(
-        teamIntervals.map(async intervalParams => {
-          const { teamId, startDate, endDate } = intervalParams
-          return api
-            .get(
-              `/api/statistics/team/${teamId}/startDate/${startDate}/endDate/${endDate}`
-            )
-            .then(res =>
-              res.data.dates
-                .filter(gameSchedule => gameSchedule.games[0].gameType === gVar)
-                .map(gameSchedule => ({
-                  date: gameSchedule.date,
-                  home: gameSchedule.games[0].teams.home,
-                  away: gameSchedule.games[0].teams.away,
-                }))
-            )
-        })
-      )
-
-      teamSchedule = teamSchedule.reduce(
-        (acc, schedule) => acc.concat(...schedule),
-        []
-      )
-
-      let temp
-
-      playerGameLogData.forEach((gameLog, i) => {
-        temp = teamSchedule.find(game => game.date === gameLog.date)
-        temp.playerData = { ...gameLog, game: i + 1 }
-      })
-
-      let playerCols =
-        playerObj.playerPositionCode !== 'G'
-          ? ProfileSkateCol
-          : ProfileGoalieCol
-      playerCols = playerCols.filter(
-        obj =>
-          !['games', 'wins', 'losses', 'ties', 'goalAgainstAverage'].includes(
-            obj.key
-          )
-      )
-      playerCols.splice(0, 0, { key: 'game', label: 'Game' })
-
-      let date
-      let team
-      let opponent
-      let teamScore
-      let opponentScore
-      let isHome
-      let goalDifference
-      let intervalIdx
-      let playerStats
-      let game
-
-      let tableData = teamSchedule.map(gameLog => {
-        date = gameLog.date
-        if (gameLog.playerData) {
-          team = gameLog.playerData.team.id
-          isHome = gameLog.home.team.id === team
-          opponent = gameLog.playerData.opponent.id
-          playerStats = gameLog.playerData.stat
-          game = gameLog.playerData.game
-        } else {
-          intervalIdx = teamIntervals.findIndex(
-            interval => date >= interval.startDate && date <= interval.endDate
-          )
-          team = teamIntervals[intervalIdx].teamId
-          isHome = team === gameLog.home.team.id
-          opponent = isHome ? gameLog.away.team.id : gameLog.home.team.id
-          playerStats = null
-          game = null
-        }
-        if (isHome) {
-          teamScore = gameLog.home.score
-          opponentScore = gameLog.away.score
-        } else {
-          teamScore = gameLog.away.score
-          opponentScore = gameLog.home.score
-        }
-
-        team = teamCodes[team]
-        opponent = teamCodes[opponent]
-        isHome = isHome ? '' : '@'
-        goalDifference = teamScore - opponentScore
-
-        return {
-          date,
-          team,
-          teamScore,
-          opponent,
-          opponentScore,
-          isHome,
-          goalDifference,
-          game,
-          ...playerStats,
-        }
-      })
+      const playerCols = getPlayerStatColumns()
+      const tableData = getTableData(teamSchedule, teamIntervals)
 
       this.setState({ tableData, playerCols })
     })
@@ -220,7 +103,8 @@ class PlayerGameLog extends Component {
               <TableSortLabel
                 active={orderBy === colHeader.key}
                 direction={order}
-                onClick={() => this.handleRequestSort(colHeader.key)}
+                id={colHeader.key}
+                onClick={this.handleRequestSort}
                 hideSortIcon={true}
               >
                 {colHeader.label}
@@ -243,7 +127,8 @@ class PlayerGameLog extends Component {
               <TableSortLabel
                 active={orderBy === statCol.key}
                 direction={order}
-                onClick={() => this.handleRequestSort(statCol.key)}
+                id={statCol.key}
+                onClick={this.handleRequestSort}
                 hideSortIcon={true}
               >
                 {statCol.label}
@@ -255,11 +140,11 @@ class PlayerGameLog extends Component {
     )
   }
 
-  handleRequestSort = property => {
-    const orderBy = property
+  handleRequestSort = ({ currentTarget }) => {
+    const orderBy = currentTarget.id
     let order = 'desc'
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
+    if (this.state.orderBy === orderBy && this.state.order === 'desc') {
       order = 'asc'
     }
 
@@ -267,7 +152,8 @@ class PlayerGameLog extends Component {
   }
 
   render() {
-    const { onClose, playerObj } = this.props
+    const { closePlayerModal } = this.props
+    const { playerObj } = this.props.stats
     const { tableData, playerCols, order, orderBy } = this.state
     const sortSign = order === 'desc' ? -1 : 1
 
@@ -298,7 +184,7 @@ class PlayerGameLog extends Component {
           <Toolbar style={{ position: 'relative' }}>
             <IconButton
               color="inherit"
-              onClick={onClose}
+              onClick={closePlayerModal}
               aria-label="Close"
               style={{ position: 'absolute' }}
             >
@@ -378,9 +264,17 @@ class PlayerGameLog extends Component {
 }
 
 PlayerGameLog.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  playerObj: PropTypes.object.isRequired,
-  dataType: PropTypes.string.isRequired,
+  stats: PropTypes.object.isRequired,
+  playerData: PropTypes.object.isRequired,
+  closePlayerModal: PropTypes.func.isRequired,
 }
 
-export default PlayerGameLog
+const mapStateToProps = state => ({
+  stats: state.stats,
+  playerData: state.playerData,
+})
+
+export default connect(
+  mapStateToProps,
+  { closePlayerModal }
+)(PlayerGameLog)

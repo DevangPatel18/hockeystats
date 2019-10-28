@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { VictoryAxis, VictoryChart, VictoryLine, VictoryLabel } from 'victory'
 import chartTheme from '../../../helper/chartTheme'
@@ -7,108 +7,115 @@ import chroma from 'chroma-js'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
-const StatsChart = props => {
-  const {
-    toi,
-    sameSeason,
-    lineNames,
-    dataSet,
-    statLabel,
-    playerData,
-    activeLines,
-    hover,
-  } = props
+class StatsChart extends Component {
+  state = {
+    chartWidth: 0,
+    chartHeight: 0,
+  }
 
-  const theme = chartTheme(toi)
+  componentDidMount() {
+    this.handleChartResize()
+    window.addEventListener('resize', this.handleChartResize)
+  }
 
-  return (
-    <VictoryChart
-      theme={theme}
-      scale={{ x: sameSeason ? 'time' : 'linear' }}
-      domainPadding={{ y: 5 }}
-      events={[
-        {
-          childName: lineNames,
-          target: 'data',
-          eventHandlers: {
-            onMouseOver: () => {
-              return [
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleChartResize)
+  }
+
+  handleChartResize = () => {
+    const { chartWidth, chartHeight } = this.state
+    const newWidth = window.innerWidth - (window.innerWidth % 100)
+    const newHeight =
+      window.innerHeight * 0.6 - ((window.innerHeight * 0.6) % 100)
+    if (newWidth !== chartWidth || newHeight !== chartHeight) {
+      this.setState({
+        chartWidth: newWidth,
+        chartHeight: newHeight,
+      })
+    }
+  }
+
+  render() {
+    const {
+      toi,
+      sameSeason,
+      dataSet,
+      statLabel,
+      playerData,
+      activeLines,
+      hover,
+    } = this.props
+
+    const { chartWidth, chartHeight } = this.state
+    const theme = chartTheme(toi, chartWidth, chartHeight)
+
+    return (
+      <VictoryChart
+        theme={theme}
+        scale={{ x: sameSeason ? 'time' : 'linear' }}
+        domainPadding={{ y: 5 }}
+        events={[
+          {
+            childName: 'all',
+            target: 'data',
+            eventHandlers: {
+              onMouseOver: () => [
                 {
-                  childName: lineNames,
-                  mutation: props => {
-                    return {
-                      style: Object.assign({}, props.style, {
-                        display: 'inline',
-                        opacity: 0.2,
-                      }),
-                    }
-                  },
+                  childName: 'all',
+                  mutation: props => ({
+                    style: { ...props.style, opacity: 0.2 },
+                  }),
                 },
                 {
-                  mutation: props => {
-                    return {
-                      style: Object.assign({}, props.style, {
-                        stroke: props.style.stroke,
-                        display: 'inline',
-                        opacity: 1,
-                      }),
-                    }
-                  },
+                  mutation: props => ({
+                    style: { ...props.style, opacity: 1 },
+                  }),
                 },
-              ]
-            },
-            onMouseOut: () => {
-              return [
-                {
-                  childName: lineNames,
-                  mutation: () => {
-                    return null
-                  },
-                },
-              ]
+              ],
+              onMouseOut: () => [{ childName: 'all', mutation: () => null }],
             },
           },
-        },
-      ]}
-    >
-      {dataSet.map((data, i) => (
-        <VictoryLine
-          key={`${playerData[i].tag}-line`}
-          name={`${playerData[i].tag}-line-name`}
-          data={data}
-          animate={{ duration: 2000, onLoad: { duration: 1000 } }}
-          interpolation="stepAfter"
-          style={{
-            data: {
-              display: activeLines.includes(playerData[i].tag)
-                ? 'inline'
-                : 'none',
-              stroke: colorFunc(i / playerData.length),
-              transition: '0.2s',
-              opacity: hover && hover !== playerData[i].tag ? '0.2' : '1',
-            },
-          }}
+        ]}
+      >
+        {dataSet.map((data, i) => (
+          <VictoryLine
+            key={`${playerData[i].tag}-line`}
+            name={`${playerData[i].tag}-line-name`}
+            data={data}
+            animate={{ duration: 100 }}
+            interpolation="stepAfter"
+            style={{
+              data: {
+                display: activeLines.includes(playerData[i].tag)
+                  ? 'inline'
+                  : 'none',
+                stroke: colorFunc(i / playerData.length),
+                transition: '0.2s',
+                opacity: hover && hover !== playerData[i].tag ? '0.2' : '1',
+              },
+            }}
+          />
+        ))}
+        {toi && <VictoryAxis dependentAxis tickFormat={secToString} />}
+        {toi && <VictoryAxis />}
+        <VictoryLabel
+          angle="-90"
+          text={statLabel}
+          textAnchor="middle"
+          style={{ fontWeight: 'bolder' }}
+          x={10}
+          y={chartHeight / 2 - 25}
         />
-      ))}
-      {toi && <VictoryAxis dependentAxis tickFormat={secToString} />}
-      {toi && <VictoryAxis />}
-      <VictoryLabel
-        angle="-90"
-        text={statLabel}
-        textAnchor="middle"
-        style={{ fontWeight: 'bolder' }}
-        x={10}
-        y={150}
-      />
-      <VictoryLabel
-        text={sameSeason ? 'Date' : 'Games'}
-        textAnchor="middle"
-        style={{ fontWeight: 'bolder' }}
-        x={225}
-        y={340}
-      />
-    </VictoryChart>
-  )
+        <VictoryLabel
+          text={sameSeason ? 'Date' : 'Games'}
+          textAnchor="middle"
+          style={{ fontWeight: 'bolder' }}
+          x={chartWidth / 2}
+          y={chartHeight - 10}
+        />
+      </VictoryChart>
+    )
+  }
 }
 
 StatsChart.propTypes = {

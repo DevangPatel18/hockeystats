@@ -10,14 +10,14 @@ import {
   Switch,
 } from '@material-ui/core'
 import CircularProgress from '@material-ui/core/CircularProgress'
-import { RadioButtonChecked, RadioButtonUnchecked } from '@material-ui/icons'
+import { CheckCircleOutline, RadioButtonUnchecked } from '@material-ui/icons'
 import chroma from 'chroma-js'
 import styled from 'styled-components'
 import { DatePicker } from 'material-ui-pickers'
 import configure from '../../../utils/configLocalforage'
 import { startLoad, stopLoad } from '../../../actions/statActions'
-import { skaterLogStats, goalieLogStats } from '../../../helper/chartComparisonHelper'
 import StatsChart from './StatsChart'
+import * as cch from './ChartComparisonHelpers'
 
 const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
@@ -56,124 +56,39 @@ class ChartComparison extends Component {
       endDate: '',
     }
 
+    this.getGameLogData = cch.getGameLogData.bind(this)
+    this.getPlayerSeasonData = cch.getPlayerSeasonData.bind(this)
+    this.getPlayerAggregateData = cch.getPlayerAggregateData.bind(this)
+    this.getStatOptions = cch.getStatOptions.bind(this)
+    this.getPlayerData = cch.getPlayerData.bind(this)
+    this.getSeasonData = cch.getSeasonData.bind(this)
+    this.handleDisplayData = cch.handleDisplayData.bind(this)
+    this.filterLogDataByDate = cch.filterLogDataByDate.bind(this)
+
     this._isMounted = false
   }
 
   async componentDidMount() {
-    const { selectedPlayers, data, yearStart, yearEnd, dataType } = this.props
+    const { selectedPlayers } = this.props
     this._isMounted = true
-    const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
-    let isAggregate = false
-    if (playerIds.length) {
+    if (selectedPlayers.length) {
       this.props.startLoad()
       await configure().then(async api => {
-        let gameLogCollection = await Promise.all(
-          playerIds.map(async playerArr => {
-            const [playerId, seasonId] = playerArr
-            if (seasonId) {
-              return api
-                .get(
-                  `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
-                )
-                .then(res => res.data.reverse())
-            } else {
-              isAggregate = true
-              const count = yearEnd.slice(0, 4) - yearStart.slice(0, 4) + 1
-
-              let seasonIdArr = []
-              let yearBase = yearStart.slice(0, 4)
-              let tempSeasonId
-
-              for (let i = 1; i < count + 1; i++) {
-                tempSeasonId = yearBase.concat(parseInt(yearBase) + 1)
-                seasonIdArr.push(tempSeasonId)
-                yearBase = (parseInt(yearBase) + 1).toString()
-              }
-
-              return Promise.all(
-                seasonIdArr.map(async seasonId =>
-                  api
-                    .get(
-                      `/api/statistics/players/gameLog/playerId/${playerId}/seasonId/${seasonId}/dataType/${dataType}`
-                    )
-                    .then(res => res.data.reverse())
-                )
-              )
-            }
-          })
+        const gameLogCollection = await this.getGameLogData(api)
+        const statOptions = this.getStatOptions(gameLogCollection)
+        const playerData = this.getPlayerData(gameLogCollection)
+        const { seasonIds, sameSeason } = this.getSeasonData()
+        const { startDate, endDate } = cch.getDateRange(
+          gameLogCollection,
+          sameSeason
         )
-
-        if (isAggregate) {
-          gameLogCollection = gameLogCollection.map(singlePlayerLogs =>
-            singlePlayerLogs.reduce((a, b) => a.concat(b))
-          )
-        }
-
-        let allStatOptions =
-          data[0].playerPositionCode !== 'G' ? skaterLogStats : goalieLogStats
-
-        let statOptions = []
-        for (const playerGameLogArr of gameLogCollection) {
-          for (const playerGameLog of playerGameLogArr) {
-            for (const statKey in playerGameLog.stat) {
-              if (!statOptions.includes(statKey)) {
-                statOptions.push(statKey)
-              }
-            }
-          }
-        }
-
-        statOptions = allStatOptions.filter(statObj =>
-          statOptions.includes(statObj.key)
-        )
-
-        let playerStat = statOptions[0].key
-
-        const playerData = selectedPlayers.map((tag, i) => {
-          const tableData = data.find(
-            playerObj => playerObj.playerId === parseInt(playerIds[i])
-          )
-          return {
-            tag,
-            tableData,
-            gameLog: gameLogCollection[i],
-          }
-        })
-
-        const seasonIds = isAggregate
-          ? this.props.selectedPlayers.map(playerTag =>
-              yearStart.slice(0, 4).concat(yearEnd.slice(-4))
-            )
-          : this.props.selectedPlayers.map(playerTag => playerTag.split('-')[1])
-
-        const sameSeason = isAggregate
-          ? false
-          : seasonIds.every(seasonId => seasonId === seasonIds[0])
-
-        let startDate = ''
-        let endDate = ''
-        if (sameSeason) {
-          let minDateArr = []
-          let maxDateArr = []
-          gameLogCollection.forEach(playerGameLogArr => {
-            minDateArr.push(playerGameLogArr[0].date)
-            maxDateArr.push(playerGameLogArr[playerGameLogArr.length - 1].date)
-          })
-
-          const presentDay = new Date()
-          startDate = new Date(minDateArr.reduce((a, b) => (a < b ? a : b)))
-          endDate = new Date(maxDateArr.reduce((a, b) => (a > b ? a : b)))
-
-          endDate = endDate > presentDay ? presentDay : endDate
-        }
-
         if (this._isMounted) {
           this.setState(
             {
               playerData,
               activeLines: selectedPlayers.slice(),
               statOptions,
-              playerStat,
+              playerStat: statOptions[0].key,
               seasonIds,
               sameSeason,
               startDate,
@@ -217,6 +132,12 @@ class ChartComparison extends Component {
     this.setState({ [name]: event })
   }
 
+  handleLoadingAnimation = () => (
+    <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <CircularProgress />
+    </div>
+  )
+
   render() {
     const {
       playerData,
@@ -234,85 +155,18 @@ class ChartComparison extends Component {
       maxDate,
     } = this.state
 
-    if (!playerStat)
-      return (
-        <div style={{ padding: '2rem', textAlign: 'center' }}>
-          <CircularProgress />
-        </div>
-      )
+    if (!playerStat) return this.handleLoadingAnimation()
 
     const statObj = statOptions.find(obj => obj.key === playerStat)
     const statLabel = statObj.label
-
-    const formatter = statObj.format ? statObj.format : x => (x ? x : 0)
-
     const selectedPlayerData = playerData.filter(obj =>
       activeLines.includes(obj.tag)
     )
-
     const statPercentage =
       playerStat.includes('Pct') || playerStat.includes('Percentage')
-
-    const playerPointProgress = playerData.map(obj => {
-      const { gameLog } = obj
-      let total = 0
-      let orderedGameLog = gameLog.slice()
-
-      let startDateIso
-      let endDateIso
-
-      if (sameSeason) {
-        startDateIso = startDate.toISOString().slice(0, 10)
-        endDateIso = endDate.toISOString().slice(0, 10)
-      }
-
-      // Filter games based on date selection for sameSeason comparisons
-      if (sameSeason) {
-        orderedGameLog = orderedGameLog.filter(
-          game => game.date > startDateIso && game.date < endDateIso
-        )
-      }
-
-      if ((statPercentage && !percentAvg) || !summed) {
-        return sameSeason
-          ? orderedGameLog.map(game => {
-              let x = Date.parse(game.date)
-              return { x, y: formatter(game.stat[playerStat]) }
-            })
-          : orderedGameLog.map((game, i) => ({
-              i,
-              y: formatter(game.stat[playerStat]),
-            }))
-      } else {
-        if (statPercentage && percentAvg) {
-          return sameSeason
-            ? orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat])
-                let x = Date.parse(game.date)
-                return { x, y: total / (i + 1) }
-              })
-            : orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat])
-                return { i, y: total / (i + 1) }
-              })
-        } else {
-          return sameSeason
-            ? orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat])
-                let x = Date.parse(game.date)
-                return { x, y: total }
-              })
-            : orderedGameLog.map((game, i) => {
-                total += formatter(game.stat[playerStat])
-                return { i, y: total }
-              })
-        }
-      }
-    })
-
     const toi = statLabel.includes('TOI')
-
     const lineNames = selectedPlayerData.map(obj => `${obj.tag}-line-name`)
+    const dataSet = this.handleDisplayData()
 
     const StatChartProps = {
       toi,
@@ -322,7 +176,7 @@ class ChartComparison extends Component {
       playerData,
       activeLines,
       hover,
-      dataSet: playerPointProgress,
+      dataSet,
     }
 
     return (
@@ -428,8 +282,8 @@ class ChartComparison extends Component {
                   onMouseLeave={() => this.setState({ hover: '' })}
                 >
                   {activeLines.includes(obj.tag) ? (
-                    <RadioButtonChecked
-                      fontSize="inherit"
+                    <CheckCircleOutline
+                      fontSize="small"
                       style={{
                         color: colorFunc(i / playerData.length),
                         marginRight: '0.3rem',
@@ -437,7 +291,7 @@ class ChartComparison extends Component {
                     />
                   ) : (
                     <RadioButtonUnchecked
-                      fontSize="inherit"
+                      fontSize="small"
                       style={{
                         color: colorFunc(i / playerData.length),
                         marginRight: '0.3rem',
@@ -461,16 +315,18 @@ class ChartComparison extends Component {
 
 ChartComparison.propTypes = {
   selectedPlayers: PropTypes.array.isRequired,
+  playerIds: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
   stats: PropTypes.object.isRequired,
+  playerData: PropTypes.object.isRequired,
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
-  yearStart: PropTypes.string.isRequired,
-  yearEnd: PropTypes.string.isRequired,
 }
 
 const mapStateToProps = state => ({
   stats: state.stats,
+  tableSettings: state.tableSettings,
+  playerData: state.playerData,
 })
 
 export default connect(

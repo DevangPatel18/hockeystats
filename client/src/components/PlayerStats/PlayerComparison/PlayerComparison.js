@@ -13,7 +13,8 @@ class PlayerComparison extends Component {
   }
   render() {
     const { value } = this.state
-    const { selectedPlayers, data, yearStart, yearEnd, dataType } = this.props
+    const { selectedPlayers, data } = this.props
+    const playerIds = selectedPlayers.map(playerStr => playerStr.split('-'))
     return (
       <div>
         <AppBar position="static">
@@ -47,10 +48,8 @@ class PlayerComparison extends Component {
             {value === 1 && (
               <ChartComparison
                 selectedPlayers={selectedPlayers}
+                playerIds={playerIds}
                 data={data}
-                yearStart={yearStart}
-                yearEnd={yearEnd}
-                dataType={dataType}
               />
             )}
           </>
@@ -64,8 +63,6 @@ PlayerComparison.propTypes = {
   onClose: PropTypes.func.isRequired,
   selectedPlayers: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
-  yearStart: PropTypes.string.isRequired,
-  yearEnd: PropTypes.string.isRequired,
 }
 
 export default PlayerComparison

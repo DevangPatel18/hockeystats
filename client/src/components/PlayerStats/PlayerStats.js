@@ -1,31 +1,18 @@
 import React, { Component } from 'react'
 import { Link } from 'gatsby'
-import {
-  Table,
-  TablePagination,
-  Paper,
-  Dialog,
-  LinearProgress,
-  Slide,
-  Button,
-} from '@material-ui/core'
+import { Dialog, Slide, Button } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
-import {
-  getPlayerList,
-  addPlayerList,
-  removePlayerList,
-  startLoad,
-  stopLoad,
-  closePlayerModal,
-} from '../../actions/statActions'
-import TablePaginationActions from './TablePaginationActions'
+import * as statActions from '../../actions/statActions'
+import { changeField } from '../../actions/tableSettingsActions'
+import { submitQuery } from '../../actions/playerDataActions'
+import handleTable from './handleTableData'
 import StatsFilterPanel from './StatsFilterPanel'
-import TableData from './TableData'
 import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
-import PlayerGameLog from '../PlayerGameLog'
+import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
+import { fetchData, getFilteredStats } from './PlayerStatsHelpers'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
@@ -38,32 +25,16 @@ class PlayerStats extends Component {
   constructor() {
     super()
     this.state = {
-      stats: [],
-      playerPositionCode: 'LRCD',
-      isAggregate: false,
-      reportName: 'skatersummary',
-      yearStart: '20182019',
-      yearEnd: '20182019',
-      playoffs: false,
-      dataType: '',
-      teamFilter: 'all',
-      teams: '',
-      countryFilter: 'all',
-      countries: '',
-      search: '',
-      filterTracked: false,
       trackedPlayers: [],
       selectedPlayers: [],
       page: 0,
       rowsPerPage: 10,
       modal: false,
-      playerLogModal: false,
-      playerLogData: {},
     }
 
-    this._isMounted = false
+    this.handleTable = handleTable.bind(this)
 
-    this.updateTrackedPlayers = this.updateTrackedPlayers.bind(this)
+    this._isMounted = false
   }
 
   componentDidMount() {
@@ -75,13 +46,6 @@ class PlayerStats extends Component {
         'beforeunload',
         this.playersToLocalStorage.bind(this)
       )
-    }
-  }
-
-  static getDerivedStateFromProps(nextProps) {
-    return {
-      playerLogModal: nextProps.stats.modalOpen,
-      playerLogData: nextProps.stats.playerObj,
     }
   }
 
@@ -104,12 +68,8 @@ class PlayerStats extends Component {
     }
   }
 
-  handleChange = name => event => {
-    this.setState({ [name]: event.target.value })
-  }
-
   handleRowFilter = name => event => {
-    const { stats } = this.state
+    const { stats } = this.props.playerData
     const selectedPlayers = this.state.selectedPlayers.filter(playerStr => {
       const [playerId, seasonId] = playerStr.split('-')
       const playerObj = stats.find(
@@ -119,30 +79,34 @@ class PlayerStats extends Component {
       )
       return event.target.value.includes(playerObj[name])
     })
-    this.setState({ [name]: event.target.value, selectedPlayers })
-  }
-
-  handleSwitchChange = name => event => {
-    this.setState({ [name]: event.target.checked })
-  }
-
-  handleSeasonChange = name => event => {
-    if (name === 'yearStart' && event.target.value > this.state.yearEnd) {
-      this.setState({
-        yearStart: event.target.value,
-        yearEnd: event.target.value,
-      })
-    } else {
-      this.setState({ [name]: event.target.value })
-    }
+    this.props.changeField(name, event.target.value)
+    this.setState({ selectedPlayers })
   }
 
   handleChangePage = (event, page) => {
     this.setState({ page })
   }
 
-  handleRowClick = (event, playerSeasonId) => {
-    let newSelectedPlayers = this.state.selectedPlayers.slice()
+  handleRowClick = ({ currentTarget }) => {
+    const playerId = +currentTarget.attributes.playerid.value
+    if (currentTarget.attributes.seasonid) {
+      const seasonId = +currentTarget.attributes.seasonid.value
+      const teams = currentTarget.attributes.teams.value
+      const playerSeasonId = this.props.tableSettings.isAggregate
+        ? `${playerId}`
+        : `${playerId}-${seasonId}-${teams}`
+      this.handleSelectedPlayers(playerSeasonId)
+    } else {
+      this.handleSelectedPlayers(`${playerId}`)
+    }
+  }
+
+  handleTagClick = ({ currentTarget }) => {
+    this.handleSelectedPlayers(currentTarget.id)
+  }
+
+  handleSelectedPlayers = playerSeasonId => {
+    const newSelectedPlayers = this.state.selectedPlayers.slice()
     const selectedIndex = newSelectedPlayers.indexOf(playerSeasonId)
 
     if (selectedIndex === -1) {
@@ -157,84 +121,40 @@ class PlayerStats extends Component {
     this.setState({ page: 0, rowsPerPage: parseInt(event.target.value) })
   }
 
-  handleRequestSort = (event, property) => {
-    const orderBy = property
+  handleRequestSort = ({ currentTarget }) => {
+    const orderBy = currentTarget.id
     let order = 'desc'
 
-    if (this.state.orderBy === property && this.state.order === 'desc') {
+    if (this.state.orderBy === orderBy && this.state.order === 'desc') {
       order = 'asc'
     }
 
     this.setState({ order, orderBy })
   }
 
-  handleModalOpen = modal => {
-    this.setState({ [modal]: true })
+  handleModalOpen = () => {
+    this.setState({ modal: true })
   }
 
-  handleModalClose = modal => {
-    this.setState({ [modal]: false })
+  handleModalClose = () => {
+    this.setState({ modal: false })
   }
 
-  submitQuery = e => {
-    if (e) {
-      e.preventDefault()
-    }
-
-    const { isAggregate, reportName, yearStart, yearEnd, playoffs } = this.state
-
+  submitQuery = async () => {
     this.props.startLoad()
-    configure().then(async api => {
-      const stats = await api
-        .get(
-          `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}/${playoffs}`
-        )
-        .then(res => res.data)
-        .catch(err => {
-          console.log(err)
-        })
+    const stats = await configure().then(api => fetchData(api))
+    this.props.stopLoad()
+    if (!stats) return
 
-      this.props.stopLoad()
-
-      if (!stats) return
-
-      const teams = !isAggregate
-        ? stats
-            .reduce((acc, playerObj) => {
-              let team = playerObj.playerTeamsPlayedFor
-              if (team && team.length === 3 && !acc.includes(team)) {
-                acc.push(team)
-              }
-              return acc
-            }, [])
-            .sort()
-        : ''
-
-      const countries = stats
-        .reduce((acc, playerObj) => {
-          let country = playerObj.playerBirthCountry
-          if (country && !acc.includes(country)) {
-            acc.push(country)
-          }
-          return acc
-        }, [])
-        .sort()
-
-      if (stats && this._isMounted) {
-        this.setState({
-          stats,
-          teams,
-          countries,
-          selectedPlayers: [],
-          teamFilter: 'all',
-          countryFilter: 'all',
-          dataType: playoffs ? 'playoffs' : 'regular',
-        })
-      }
-    })
+    if (stats && this._isMounted) {
+      this.props.submitQuery(stats)
+      this.setState({ selectedPlayers: [] })
+    }
   }
 
-  updateTrackedPlayers(playerId, seasonId) {
+  updateTrackedPlayers = event => {
+    const playerId = +event.target.attributes.playerid.value
+    const seasonId = +event.target.attributes.seasonid.value
     const { trackedPlayers } = this.props.stats
     const index = trackedPlayers.findIndex(
       obj => obj.playerId === playerId && obj.seasonId === seasonId
@@ -253,131 +173,31 @@ class PlayerStats extends Component {
     }
   }
 
-  render() {
-    const {
-      stats,
-      isAggregate,
-      playerPositionCode,
-      filterTracked,
-      selectedPlayers,
-      rowsPerPage,
-      page,
-      order,
-      orderBy,
-      teamFilter,
-      countryFilter,
-      yearStart,
-      yearEnd,
-      search,
-      dataType,
-      playerLogModal,
-      playerLogData,
-    } = this.state
-    const { closePlayerModal } = this.props
-    const { dataLoad, trackedPlayers } = this.props.stats
+  handleStarClick = (playerId, seasonId) =>
+    this.props.stats.trackedPlayers.some(
+      obj => obj.playerId === playerId && obj.seasonId === seasonId
+    )
 
-    const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
-    let dataDisplay = isSkaters
-      ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
-      : stats
-    dataDisplay = filterTracked
-      ? dataDisplay.filter(obj =>
-          trackedPlayers.some(
-            listObj =>
-              listObj.playerId === obj.playerId &&
-              listObj.seasonId === obj.seasonId
-          )
-        )
-      : dataDisplay
-    dataDisplay =
-      teamFilter !== 'all'
-        ? dataDisplay.filter(
-            playerObj =>
-              playerObj.playerTeamsPlayedFor &&
-              playerObj.playerTeamsPlayedFor.includes(teamFilter)
-          )
-        : dataDisplay
-    dataDisplay = search
-      ? dataDisplay.filter(obj => obj.playerName.toLowerCase().includes(search))
-      : dataDisplay
-    dataDisplay =
-      countryFilter !== 'all'
-        ? dataDisplay.filter(
-            playerObj => playerObj.playerBirthCountry === countryFilter
-          )
-        : dataDisplay
+  render() {
+    const { selectedPlayers } = this.state
+    const { modalOpen } = this.props.stats
+    const { stats } = this.props.playerData
+    const dataDisplay = getFilteredStats(stats)
 
     return (
       <div>
         <h1>Player Statistics</h1>
         <StatsFilterPanel
-          this={this.state}
-          handleChange={this.handleChange}
           handleRowFilter={this.handleRowFilter}
-          handleSwitchChange={this.handleSwitchChange}
-          handleSeasonChange={this.handleSeasonChange}
           submitQuery={this.submitQuery}
-          handleModalOpen={() => this.handleModalOpen('modal')}
+          handleModalOpen={this.handleModalOpen}
         />
         <PlayerTags
           selectedPlayers={selectedPlayers}
           stats={dataDisplay}
-          handleRowClick={this.handleRowClick}
+          handleTagClick={this.handleTagClick}
         />
-        <LinearProgress
-          color="secondary"
-          style={{
-            opacity: dataLoad ? '1' : '0',
-            transition: 'all 0.5s',
-            marginBottom: '-3px',
-          }}
-        />
-        <Paper>
-          <div
-            style={{
-              position: 'absolute',
-              width: 'calc(100% - 2rem)',
-              height: `calc(156px + ${rowsPerPage * 33}px)`,
-              background: 'white',
-              opacity: dataLoad ? '0.5' : '0',
-              zIndex: dataLoad ? '1' : '-1',
-              transition: 'all 0.5s',
-            }}
-          />
-          <div style={{ overflowX: 'auto' }}>
-            <Table padding="checkbox">
-              <TableData
-                dataDisplay={dataDisplay}
-                page={page}
-                order={order}
-                orderBy={orderBy}
-                rowsPerPage={rowsPerPage}
-                trackedPlayers={trackedPlayers}
-                selectedPlayers={selectedPlayers}
-                isAggregate={isAggregate}
-                handleRowClick={(event, x) => this.handleRowClick(event, x)}
-                updateTrackedPlayers={(x, y) => this.updateTrackedPlayers(x, y)}
-                handleRequestSort={(event, property) =>
-                  this.handleRequestSort(event, property)
-                }
-              />
-            </Table>
-          </div>
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25, 50]}
-            component="div"
-            count={dataDisplay.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            SelectProps={{
-              native: true,
-            }}
-            onChangePage={this.handleChangePage}
-            onChangeRowsPerPage={this.handleChangeRowsPerPage}
-            ActionsComponent={TablePaginationActions}
-            style={{ overflow: 'auto' }}
-          />
-        </Paper>
+        {this.handleTable(dataDisplay)}
         <br />
         <Button
           component={Link}
@@ -395,25 +215,18 @@ class PlayerStats extends Component {
           TransitionComponent={Transition}
         >
           <PlayerComparison
-            onClose={() => this.handleModalClose('modal')}
+            onClose={this.handleModalClose}
             selectedPlayers={selectedPlayers}
             data={dataDisplay}
-            yearStart={yearStart}
-            yearEnd={yearEnd}
-            dataType={dataType}
           />
         </Dialog>
         <Dialog
           fullScreen
-          open={playerLogModal}
+          open={modalOpen}
           scroll="paper"
           TransitionComponent={Transition}
         >
-          <PlayerGameLog
-            onClose={() => closePlayerModal()}
-            playerObj={playerLogData}
-            dataType={dataType}
-          />
+          <PlayerGameLog />
         </Dialog>
       </div>
     )
@@ -424,9 +237,10 @@ PlayerStats.propTypes = {
   getPlayerList: PropTypes.func.isRequired,
   addPlayerList: PropTypes.func.isRequired,
   removePlayerList: PropTypes.func.isRequired,
-  closePlayerModal: PropTypes.func.isRequired,
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
+  changeField: PropTypes.func.isRequired,
+  submitQuery: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
 }
@@ -435,16 +249,19 @@ const mapStateToProps = state => ({
   auth: state.auth,
   errors: state.errors,
   stats: state.stats,
+  tableSettings: state.tableSettings,
+  playerData: state.playerData,
 })
 
 export default connect(
   mapStateToProps,
   {
-    getPlayerList,
-    addPlayerList,
-    removePlayerList,
-    startLoad,
-    stopLoad,
-    closePlayerModal,
+    getPlayerList: statActions.getPlayerList,
+    addPlayerList: statActions.addPlayerList,
+    removePlayerList: statActions.removePlayerList,
+    startLoad: statActions.startLoad,
+    stopLoad: statActions.stopLoad,
+    changeField,
+    submitQuery,
   }
 )(PlayerStats)
