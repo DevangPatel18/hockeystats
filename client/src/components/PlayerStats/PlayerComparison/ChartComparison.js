@@ -139,6 +139,11 @@ class ChartComparison extends Component {
     </div>
   )
 
+  handleHoverTag = ({ currentTarget }) =>
+    this.setState({ hover: currentTarget.id })
+
+  handleHoverReset = () => this.setState({ hover: '' })
+
   render() {
     const {
       playerData,
@@ -280,8 +285,8 @@ class ChartComparison extends Component {
                   key={`${obj.tag}-legend`}
                   id={obj.tag}
                   onClick={this.toggleLines}
-                  onMouseEnter={() => this.setState({ hover: obj.tag })}
-                  onMouseLeave={() => this.setState({ hover: '' })}
+                  onMouseEnter={this.handleHoverTag}
+                  onMouseLeave={this.handleHoverReset}
                 >
                   {activeLines.includes(obj.tag) ? (
                     <CheckCircleOutline
