@@ -117,7 +117,8 @@ class ChartComparison extends Component {
     this.setState({ [name]: event.target.checked })
   }
 
-  toggleLines = tag => {
+  toggleLines = ({ currentTarget }) => {
+    const tag = currentTarget.id
     const newActiveLines = this.state.activeLines.slice()
     const tagIndex = newActiveLines.indexOf(tag)
     if (tagIndex === -1) {
@@ -277,7 +278,8 @@ class ChartComparison extends Component {
               {playerData.map((obj, i) => (
                 <LegendItem
                   key={`${obj.tag}-legend`}
-                  onClick={() => this.toggleLines(obj.tag)}
+                  id={obj.tag}
+                  onClick={this.toggleLines}
                   onMouseEnter={() => this.setState({ hover: obj.tag })}
                   onMouseLeave={() => this.setState({ hover: '' })}
                 >
