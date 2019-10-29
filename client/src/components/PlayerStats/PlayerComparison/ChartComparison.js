@@ -12,6 +12,7 @@ import {
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { CheckCircleOutline, RadioButtonUnchecked } from '@material-ui/icons'
 import chroma from 'chroma-js'
+import { isMobile } from 'react-device-detect'
 import styled from 'styled-components'
 import { DatePicker } from 'material-ui-pickers'
 import configure from '../../../utils/configLocalforage'
@@ -54,6 +55,12 @@ class ChartComparison extends Component {
       statOptions: '',
       startDate: '',
       endDate: '',
+      legendHandlers: isMobile
+        ? null
+        : {
+            onMouseEnter: this.handleHoverTag,
+            onMouseLeave: this.handleHoverReset,
+          },
     }
 
     this.getGameLogData = cch.getGameLogData.bind(this)
@@ -159,6 +166,7 @@ class ChartComparison extends Component {
       sameSeason,
       minDate,
       maxDate,
+      legendHandlers,
     } = this.state
 
     if (!playerStat) return this.handleLoadingAnimation()
@@ -285,8 +293,7 @@ class ChartComparison extends Component {
                   key={`${obj.tag}-legend`}
                   id={obj.tag}
                   onClick={this.toggleLines}
-                  onMouseEnter={this.handleHoverTag}
-                  onMouseLeave={this.handleHoverReset}
+                  {...legendHandlers}
                 >
                   {activeLines.includes(obj.tag) ? (
                     <CheckCircleOutline
