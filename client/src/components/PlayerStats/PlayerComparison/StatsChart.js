@@ -9,12 +9,11 @@ const colorFunc = chroma.cubehelix().lightness([0.3, 0.7])
 
 class StatsChart extends Component {
   state = {
-    chartWidth: 0,
-    chartHeight: 0,
+    chartWidth: window.innerWidth - (window.innerWidth % 100),
+    chartHeight: window.innerHeight * 0.6 - ((window.innerHeight * 0.6) % 100),
   }
 
   componentDidMount() {
-    this.handleChartResize()
     window.addEventListener('resize', this.handleChartResize)
   }
 
