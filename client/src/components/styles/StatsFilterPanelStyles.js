@@ -1,3 +1,4 @@
+import { FormControl } from '@material-ui/core'
 import styled from 'styled-components'
 
 const tabletWidth = '425px'
@@ -32,6 +33,16 @@ export const StatsPanel = styled.div`
     '${props.title}'
     `
         : ''};
+  }
+`
+
+export const FormControlStyles = styled(FormControl)`
+  && {
+    margin-right: 1rem;
+  }
+
+  svg {
+    display: none;
   }
 `
 

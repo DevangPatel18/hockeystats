@@ -21,6 +21,7 @@ import {
   StatsPanel,
   YearRange,
   YearRangeLabel,
+  FormControlStyles,
 } from '../styles/StatsFilterPanelStyles'
 import { getCurrentSeasonId } from '../../helper/dateHelpers'
 
@@ -145,7 +146,7 @@ class StatsFilterPanel extends Component {
           />
         </StatsPanel>
         <StatsPanel title={'Filters'}>
-          <FormControl style={{ marginRight: '1rem' }}>
+          <FormControlStyles>
             <InputLabel htmlFor="teamFilter">Teams</InputLabel>
             <Select
               value={teamFilter}
@@ -161,8 +162,8 @@ class StatsFilterPanel extends Component {
                   </option>
                 ))}
             </Select>
-          </FormControl>
           <FormControl style={{ marginRight: '1rem' }}>
+          </FormControlStyles>
             <InputLabel htmlFor="playerPositionCode">Position</InputLabel>
             <NativeSelect
               value={playerPositionCode}
