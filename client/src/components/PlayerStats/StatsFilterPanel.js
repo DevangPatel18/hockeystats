@@ -162,8 +162,8 @@ class StatsFilterPanel extends Component {
                   </option>
                 ))}
             </Select>
-          <FormControl style={{ marginRight: '1rem' }}>
           </FormControlStyles>
+          <FormControlStyles>
             <InputLabel htmlFor="playerPositionCode">Position</InputLabel>
             <NativeSelect
               value={playerPositionCode}
@@ -179,8 +179,8 @@ class StatsFilterPanel extends Component {
               <option value={'C'}>Center</option>
               <option value={'D'}>Defensemen</option>
             </NativeSelect>
-          </FormControl>
-          <FormControl style={{ marginRight: '1rem' }}>
+          </FormControlStyles>
+          <FormControlStyles>
             <InputLabel htmlFor="countryFilter">Country</InputLabel>
             <NativeSelect
               value={countryFilter}
@@ -195,7 +195,7 @@ class StatsFilterPanel extends Component {
                   </option>
                 ))}
             </NativeSelect>
-          </FormControl>
+          </FormControlStyles>
           <FormControlLabel
             control={
               <Switch
