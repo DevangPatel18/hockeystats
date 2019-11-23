@@ -97,7 +97,11 @@ const getSearchFilteredStats = stats => {
 
 const getCountryFilteredStats = stats => {
   const { countryFilter } = store.getState().tableSettings
-  return countryFilter !== 'all'
-    ? stats.filter(playerObj => playerObj.playerBirthCountry === countryFilter)
+  return !countryFilter.includes('all')
+    ? stats.filter(
+        playerObj =>
+          playerObj.playerBirthCountry &&
+          countryFilter.includes(playerObj.playerBirthCountry)
+      )
     : stats
 }

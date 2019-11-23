@@ -182,19 +182,20 @@ class StatsFilterPanel extends Component {
           </FormControlStyles>
           <FormControlStyles>
             <InputLabel htmlFor="countryFilter">Country</InputLabel>
-            <NativeSelect
+            <Select
               value={countryFilter}
-              onChange={handleRowFilter('countryFilter')}
-              input={<Input name="countryFilter" id="countryFilter" />}
+              multiple
+              native
+              onChange={this.handleChangeMultiple}
+              inputProps={{ name: 'countryFilter', id: 'countryFilter' }}
             >
-              <option value={'all'}>All Countries</option>
               {countries &&
                 countries.map(countryCode => (
                   <option value={countryCode} key={countryCode}>
                     {countryCode}
                   </option>
                 ))}
-            </NativeSelect>
+            </Select>
           </FormControlStyles>
           <FormControlLabel
             control={

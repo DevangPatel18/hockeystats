@@ -13,7 +13,7 @@ const initialState = {
   search: '',
   playerPositionCode: 'LRCD',
   teamFilter: ['all'],
-  countryFilter: 'all',
+  countryFilter: ['all'],
 }
 
 export default function(state = initialState, action) {
@@ -39,7 +39,7 @@ export default function(state = initialState, action) {
         ...state,
         playerPositionCode: 'LRCD',
         teamFilter: ['all'],
-        countryFilter: 'all',
+        countryFilter: ['all'],
       }
     default:
       return state
