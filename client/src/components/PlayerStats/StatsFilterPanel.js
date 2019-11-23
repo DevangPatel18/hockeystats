@@ -12,6 +12,7 @@ import {
   InputLabel,
   Input,
   NativeSelect,
+  Select,
   Button,
   Switch,
   TextField,
@@ -32,6 +33,16 @@ class StatsFilterPanel extends Component {
 
   handleChange = name => event => {
     this.props.changeField(name, event.target.value)
+  }
+
+  handleChangeMultiple = event => {
+    const optionList = [...event.target.options].reduce((acc, option) => {
+      if (option.selected) {
+        acc.push(option.value)
+      }
+      return acc
+    }, [])
+    this.props.changeField(event.target.name, optionList)
   }
 
   handleToggle = name => event => {
@@ -136,19 +147,20 @@ class StatsFilterPanel extends Component {
         <StatsPanel title={'Filters'}>
           <FormControl style={{ marginRight: '1rem' }}>
             <InputLabel htmlFor="teamFilter">Teams</InputLabel>
-            <NativeSelect
+            <Select
               value={teamFilter}
-              onChange={this.handleChange('teamFilter')}
-              input={<Input name="teamFilter" id="teamFilter" />}
+              multiple
+              native
+              onChange={this.handleChangeMultiple}
+              inputProps={{ name: 'teamFilter', id: 'teamFilter' }}
             >
-              <option value={'all'}>All Teams</option>
               {teams &&
                 teams.map(teamCode => (
-                  <option value={teamCode} key={teamCode}>
+                  <option key={teamCode} value={teamCode}>
                     {teamCode}
                   </option>
                 ))}
-            </NativeSelect>
+            </Select>
           </FormControl>
           <FormControl style={{ marginRight: '1rem' }}>
             <InputLabel htmlFor="playerPositionCode">Position</InputLabel>

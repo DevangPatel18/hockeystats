@@ -79,11 +79,11 @@ const getStarredFilteredStats = stats => {
 
 const getTeamFilteredStats = stats => {
   const { teamFilter } = store.getState().tableSettings
-  return teamFilter !== 'all'
+  return !teamFilter.includes('all')
     ? stats.filter(
         playerObj =>
           playerObj.playerTeamsPlayedFor &&
-          playerObj.playerTeamsPlayedFor.includes(teamFilter)
+          teamFilter.includes(playerObj.playerTeamsPlayedFor)
       )
     : stats
 }

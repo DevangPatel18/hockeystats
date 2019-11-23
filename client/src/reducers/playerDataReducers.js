@@ -13,7 +13,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         stats: action.stats,
-        teams: action.teams,
+        teams: ['all', ...action.teams],
         countries: action.countries,
         dataType: action.dataType,
       }
