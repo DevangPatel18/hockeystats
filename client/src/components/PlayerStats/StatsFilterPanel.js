@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { isMobile } from 'react-device-detect'
 import {
   changeSeason,
   changeField,
@@ -16,12 +17,14 @@ import {
   Button,
   Switch,
   TextField,
+  MenuItem,
 } from '@material-ui/core'
 import {
   StatsPanel,
   YearRange,
   YearRangeLabel,
   FormControlStyles,
+  ChipStyles,
 } from '../styles/StatsFilterPanelStyles'
 import { getCurrentSeasonId } from '../../helper/dateHelpers'
 
@@ -37,18 +40,28 @@ class StatsFilterPanel extends Component {
   }
 
   handleChangeMultiple = event => {
-    const optionList = [...event.target.options].reduce((acc, option) => {
-      if (option.selected) {
-        acc.push(option.value)
-      }
-      return acc
-    }, [])
+    const optionList = isMobile
+      ? [...event.target.options].reduce((acc, option) => {
+          if (option.selected) {
+            acc.push(option.value)
+          }
+          return acc
+        }, [])
+      : event.target.value
     this.props.changeField(event.target.name, optionList)
   }
 
   handleToggle = name => event => {
     this.props.toggleSwitch(name)
   }
+
+  handleRenderValue = selected => (
+    <div>
+      {selected.map(value => (
+        <ChipStyles key={value} label={value} />
+      ))}
+    </div>
+  )
 
   render() {
     const { handleRowFilter, submitQuery, handleModalOpen } = this.props
@@ -151,16 +164,23 @@ class StatsFilterPanel extends Component {
             <Select
               value={teamFilter}
               multiple
-              native
+              native={isMobile}
               onChange={this.handleChangeMultiple}
               inputProps={{ name: 'teamFilter', id: 'teamFilter' }}
+              renderValue={this.handleRenderValue}
             >
               {teams &&
-                teams.map(teamCode => (
-                  <option key={teamCode} value={teamCode}>
-                    {teamCode}
-                  </option>
-                ))}
+                (isMobile
+                  ? teams.map(teamCode => (
+                      <option key={teamCode} value={teamCode}>
+                        {teamCode}
+                      </option>
+                    ))
+                  : teams.map(teamCode => (
+                      <MenuItem key={teamCode} value={teamCode}>
+                        {teamCode}
+                      </MenuItem>
+                    )))}
             </Select>
           </FormControlStyles>
           <FormControlStyles>
@@ -185,16 +205,23 @@ class StatsFilterPanel extends Component {
             <Select
               value={countryFilter}
               multiple
-              native
+              native={isMobile}
               onChange={this.handleChangeMultiple}
               inputProps={{ name: 'countryFilter', id: 'countryFilter' }}
+              renderValue={this.handleRenderValue}
             >
               {countries &&
-                countries.map(countryCode => (
-                  <option value={countryCode} key={countryCode}>
-                    {countryCode}
-                  </option>
-                ))}
+                (isMobile
+                  ? countries.map(countryCode => (
+                      <option value={countryCode} key={countryCode}>
+                        {countryCode}
+                      </option>
+                    ))
+                  : countries.map(countryCode => (
+                      <MenuItem value={countryCode} key={countryCode}>
+                        {countryCode}
+                      </MenuItem>
+                    )))}
             </Select>
           </FormControlStyles>
           <FormControlLabel
