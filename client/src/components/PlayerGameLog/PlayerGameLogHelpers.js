@@ -93,7 +93,7 @@ export const getTableData = (teamSchedule, teamIntervals) =>
       ? getActivePlayerGameData(gameLog)
       : getInactivePlayerGameData(gameLog, teamIntervals)
 
-    data.date = gameLog.data
+    data.date = gameLog.date
     data.opponentScore = data.isHome ? gameLog.away.score : gameLog.home.score
     data.teamScore = data.isHome ? gameLog.home.score : gameLog.away.score
     data.team = teamCodes[data.team]
