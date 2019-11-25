@@ -1,3 +1,4 @@
+import { FormControl, Chip } from '@material-ui/core'
 import styled from 'styled-components'
 
 const tabletWidth = '425px'
@@ -35,6 +36,16 @@ export const StatsPanel = styled.div`
   }
 `
 
+export const FormControlStyles = styled(FormControl)`
+  && {
+    margin-right: 1rem;
+  }
+
+  svg {
+    display: none;
+  }
+`
+
 export const YearRange = styled.div`
   display: flex;
   align-items: center;
@@ -54,4 +65,8 @@ export const YearRangeLabel = styled.div`
   @media (max-width: ${tabletWidth}) {
     padding: 0 0 0.5rem;
   }
+`
+
+export const ChipStyles = styled(Chip)`
+  margin: 0 0.15rem;
 `

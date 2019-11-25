@@ -12,6 +12,7 @@ import {
 import CircularProgress from '@material-ui/core/CircularProgress'
 import { CheckCircleOutline, RadioButtonUnchecked } from '@material-ui/icons'
 import chroma from 'chroma-js'
+import { isMobile } from 'react-device-detect'
 import styled from 'styled-components'
 import { DatePicker } from 'material-ui-pickers'
 import configure from '../../../utils/configLocalforage'
@@ -54,6 +55,12 @@ class ChartComparison extends Component {
       statOptions: '',
       startDate: '',
       endDate: '',
+      legendHandlers: isMobile
+        ? null
+        : {
+            onMouseEnter: this.handleHoverTag,
+            onMouseLeave: this.handleHoverReset,
+          },
     }
 
     this.getGameLogData = cch.getGameLogData.bind(this)
@@ -117,7 +124,8 @@ class ChartComparison extends Component {
     this.setState({ [name]: event.target.checked })
   }
 
-  toggleLines = tag => {
+  toggleLines = ({ currentTarget }) => {
+    const tag = currentTarget.id
     const newActiveLines = this.state.activeLines.slice()
     const tagIndex = newActiveLines.indexOf(tag)
     if (tagIndex === -1) {
@@ -138,6 +146,11 @@ class ChartComparison extends Component {
     </div>
   )
 
+  handleHoverTag = ({ currentTarget }) =>
+    this.setState({ hover: currentTarget.id })
+
+  handleHoverReset = () => this.setState({ hover: '' })
+
   render() {
     const {
       playerData,
@@ -153,6 +166,7 @@ class ChartComparison extends Component {
       sameSeason,
       minDate,
       maxDate,
+      legendHandlers,
     } = this.state
 
     if (!playerStat) return this.handleLoadingAnimation()
@@ -277,9 +291,9 @@ class ChartComparison extends Component {
               {playerData.map((obj, i) => (
                 <LegendItem
                   key={`${obj.tag}-legend`}
-                  onClick={() => this.toggleLines(obj.tag)}
-                  onMouseEnter={() => this.setState({ hover: obj.tag })}
-                  onMouseLeave={() => this.setState({ hover: '' })}
+                  id={obj.tag}
+                  onClick={this.toggleLines}
+                  {...legendHandlers}
                 >
                   {activeLines.includes(obj.tag) ? (
                     <CheckCircleOutline

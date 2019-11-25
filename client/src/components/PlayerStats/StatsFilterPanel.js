@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { isMobile } from 'react-device-detect'
 import {
   changeSeason,
   changeField,
@@ -12,14 +13,18 @@ import {
   InputLabel,
   Input,
   NativeSelect,
+  Select,
   Button,
   Switch,
   TextField,
+  MenuItem,
 } from '@material-ui/core'
 import {
   StatsPanel,
   YearRange,
   YearRangeLabel,
+  FormControlStyles,
+  ChipStyles,
 } from '../styles/StatsFilterPanelStyles'
 import { getCurrentSeasonId } from '../../helper/dateHelpers'
 
@@ -34,9 +39,29 @@ class StatsFilterPanel extends Component {
     this.props.changeField(name, event.target.value)
   }
 
+  handleChangeMultiple = event => {
+    const optionList = isMobile
+      ? [...event.target.options].reduce((acc, option) => {
+          if (option.selected) {
+            acc.push(option.value)
+          }
+          return acc
+        }, [])
+      : event.target.value
+    this.props.changeField(event.target.name, optionList)
+  }
+
   handleToggle = name => event => {
     this.props.toggleSwitch(name)
   }
+
+  handleRenderValue = selected => (
+    <div>
+      {selected.map(value => (
+        <ChipStyles key={value} label={value} />
+      ))}
+    </div>
+  )
 
   render() {
     const { handleRowFilter, submitQuery, handleModalOpen } = this.props
@@ -134,23 +159,31 @@ class StatsFilterPanel extends Component {
           />
         </StatsPanel>
         <StatsPanel title={'Filters'}>
-          <FormControl style={{ marginRight: '1rem' }}>
+          <FormControlStyles>
             <InputLabel htmlFor="teamFilter">Teams</InputLabel>
-            <NativeSelect
+            <Select
               value={teamFilter}
-              onChange={this.handleChange('teamFilter')}
-              input={<Input name="teamFilter" id="teamFilter" />}
+              multiple
+              native={isMobile}
+              onChange={this.handleChangeMultiple}
+              inputProps={{ name: 'teamFilter', id: 'teamFilter' }}
+              renderValue={this.handleRenderValue}
             >
-              <option value={'all'}>All Teams</option>
               {teams &&
-                teams.map(teamCode => (
-                  <option value={teamCode} key={teamCode}>
-                    {teamCode}
-                  </option>
-                ))}
-            </NativeSelect>
-          </FormControl>
-          <FormControl style={{ marginRight: '1rem' }}>
+                (isMobile
+                  ? teams.map(teamCode => (
+                      <option key={teamCode} value={teamCode}>
+                        {teamCode}
+                      </option>
+                    ))
+                  : teams.map(teamCode => (
+                      <MenuItem key={teamCode} value={teamCode}>
+                        {teamCode}
+                      </MenuItem>
+                    )))}
+            </Select>
+          </FormControlStyles>
+          <FormControlStyles>
             <InputLabel htmlFor="playerPositionCode">Position</InputLabel>
             <NativeSelect
               value={playerPositionCode}
@@ -166,23 +199,31 @@ class StatsFilterPanel extends Component {
               <option value={'C'}>Center</option>
               <option value={'D'}>Defensemen</option>
             </NativeSelect>
-          </FormControl>
-          <FormControl style={{ marginRight: '1rem' }}>
+          </FormControlStyles>
+          <FormControlStyles>
             <InputLabel htmlFor="countryFilter">Country</InputLabel>
-            <NativeSelect
+            <Select
               value={countryFilter}
-              onChange={handleRowFilter('countryFilter')}
-              input={<Input name="countryFilter" id="countryFilter" />}
+              multiple
+              native={isMobile}
+              onChange={this.handleChangeMultiple}
+              inputProps={{ name: 'countryFilter', id: 'countryFilter' }}
+              renderValue={this.handleRenderValue}
             >
-              <option value={'all'}>All Countries</option>
               {countries &&
-                countries.map(countryCode => (
-                  <option value={countryCode} key={countryCode}>
-                    {countryCode}
-                  </option>
-                ))}
-            </NativeSelect>
-          </FormControl>
+                (isMobile
+                  ? countries.map(countryCode => (
+                      <option value={countryCode} key={countryCode}>
+                        {countryCode}
+                      </option>
+                    ))
+                  : countries.map(countryCode => (
+                      <MenuItem value={countryCode} key={countryCode}>
+                        {countryCode}
+                      </MenuItem>
+                    )))}
+            </Select>
+          </FormControlStyles>
           <FormControlLabel
             control={
               <Switch

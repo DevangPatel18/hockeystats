@@ -79,11 +79,11 @@ const getStarredFilteredStats = stats => {
 
 const getTeamFilteredStats = stats => {
   const { teamFilter } = store.getState().tableSettings
-  return teamFilter !== 'all'
+  return !teamFilter.includes('all')
     ? stats.filter(
         playerObj =>
           playerObj.playerTeamsPlayedFor &&
-          playerObj.playerTeamsPlayedFor.includes(teamFilter)
+          teamFilter.includes(playerObj.playerTeamsPlayedFor)
       )
     : stats
 }
@@ -97,7 +97,11 @@ const getSearchFilteredStats = stats => {
 
 const getCountryFilteredStats = stats => {
   const { countryFilter } = store.getState().tableSettings
-  return countryFilter !== 'all'
-    ? stats.filter(playerObj => playerObj.playerBirthCountry === countryFilter)
+  return !countryFilter.includes('all')
+    ? stats.filter(
+        playerObj =>
+          playerObj.playerBirthCountry &&
+          countryFilter.includes(playerObj.playerBirthCountry)
+      )
     : stats
 }
