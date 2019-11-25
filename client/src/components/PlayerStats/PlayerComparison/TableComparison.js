@@ -50,25 +50,27 @@ const TableComparison = ({ selectedPlayers, data }) => {
     columnsMin.forEach(attr => {
       const dataVal = playersObj[0][attr.id]
       if (typeof dataVal === 'number') {
-        const attrArray = playersObj.map(obj => obj[attr.id])
-        const max = Math.max(...attrArray)
-        const min = Math.min(...attrArray)
-        const maxArray = []
-        const minArray = []
+        const maxObj = { val: playersObj[0][attr.id], list: [0] }
+        const minObj = { val: playersObj[0][attr.id], list: [0] }
 
-        if (min !== max) {
-          attrArray.forEach((val, i) => {
-            if (val === max) {
-              maxArray.push(i)
-            }
-            if (val === min) {
-              minArray.push(i)
-            }
-          })
+        for (let i = 1; i < playersObj.length; i++) {
+          if (playersObj[i][attr.id] > maxObj.val) {
+            maxObj.val = playersObj[i][attr.id]
+            maxObj.list = [i]
+          } else if (playersObj[i][attr.id] === maxObj.val) {
+            maxObj.list.push(i)
+          } else if (playersObj[i][attr.id] === minObj.val) {
+            minObj.list.push(i)
+          } else if (playersObj[i][attr.id] < minObj.val) {
+            minObj.val = playersObj[i][attr.id]
+            minObj.list = [i]
+          }
+        }
 
+        if (maxObj.val !== minObj.val) {
           minMax[attr.id] = attr.sortReverse
-            ? { max: minArray, min: maxArray }
-            : { max: maxArray, min: minArray }
+            ? { max: minObj.list, min: maxObj.list }
+            : { max: maxObj.list, min: minObj.list }
         }
       }
     })
@@ -85,9 +87,7 @@ const TableComparison = ({ selectedPlayers, data }) => {
           {playersObj.map(obj => (
             <TableCell key={`${obj.playerId}-${obj.seasonId}-img`}>
               <img
-                src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${
-                  obj.playerId
-                }.jpg`}
+                src={`https://nhl.bamcontent.com/images/headshots/current/168x168/${obj.playerId}.jpg`}
                 alt={obj.playerName}
                 style={{
                   display: 'flex',
