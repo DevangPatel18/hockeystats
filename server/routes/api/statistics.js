@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const { statsSortObj } = require('../../helper/statisticsHelpers');
 
 // Retrieve dataset
 router.get(
@@ -26,8 +27,7 @@ router.get(
             reportType,
             isGame: false,
             reportName,
-            sort:
-              '[{"property":"points","direction":"DESC"},{"property":"goals","direction":"DESC"},{"property":"assists","direction":"DESC"}]',
+            sort: statsSortObj[reportName],
             cayenneExp: `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
           },
         })
