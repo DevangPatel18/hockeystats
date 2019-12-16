@@ -6,12 +6,13 @@ import {
 import store from '../store'
 
 export const submitQuery = stats => dispatch => {
-  const { playoffs } = store.getState().tableSettings
+  const { playoffs, reportName } = store.getState().tableSettings
   dispatch({
     type: SUBMIT_QUERY,
     stats,
     teams: getTeams(stats),
     countries: getCountries(stats),
     dataType: playoffs ? 'playoffs' : 'regular',
+    playerType: reportName.split('-')[0],
   })
 }

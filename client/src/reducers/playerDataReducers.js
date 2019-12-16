@@ -5,6 +5,7 @@ const initialState = {
   teams: '',
   countries: '',
   dataType: '',
+  playerType: 'skater',
 }
 
 export default function(state = initialState, action) {
@@ -16,6 +17,7 @@ export default function(state = initialState, action) {
         teams: ['all', ...action.teams],
         countries: ['all', ...action.countries],
         dataType: action.dataType,
+        playerType: action.playerType,
       }
     default:
       return state
