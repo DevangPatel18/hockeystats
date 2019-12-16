@@ -6,7 +6,7 @@ const currentSeason = getCurrentSeasonId()
 const initialState = {
   yearStart: currentSeason,
   yearEnd: currentSeason,
-  reportName: 'skatersummary',
+  reportName: 'skater-summary',
   playoffs: false,
   isAggregate: false,
   filterTracked: false,

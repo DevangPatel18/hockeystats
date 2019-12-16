@@ -17,17 +17,19 @@ router.get(
         playoffs,
       } = req.params;
 
-      let reportType = reportName.includes('goalie') ? 'goalie_basic' : 'basic';
+      const [playerType, reportType] = reportName.split('-');
       let gameTypeId = playoffs === 'true' ? 3 : 2;
 
       let data = await axios
-        .get(`http://www.nhl.com/stats/rest/skaters`, {
+        .get(`https://api.nhle.com/stats/rest/en/${playerType}/${reportType}`, {
           params: {
             isAggregate,
-            reportType,
             isGame: false,
             reportName,
-            sort: statsSortObj[reportName],
+            sort: statsSortObj[playerType + reportType],
+            start: 0,
+            limit: 50,
+            factCayenneExp: 'gamesPlayed>=1',
             cayenneExp: `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
           },
         })
