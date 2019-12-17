@@ -14,6 +14,8 @@ const initialState = {
   playerPositionCode: 'LRCD',
   teamFilter: ['all'],
   countryFilter: ['all'],
+  page: 0,
+  rowsPerPage: 10,
 }
 
 export default function(state = initialState, action) {

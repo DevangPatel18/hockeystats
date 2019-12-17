@@ -27,8 +27,6 @@ class PlayerStats extends Component {
     this.state = {
       trackedPlayers: [],
       selectedPlayers: [],
-      page: 0,
-      rowsPerPage: 10,
       modal: false,
     }
 
@@ -84,7 +82,7 @@ class PlayerStats extends Component {
   }
 
   handleChangePage = (event, page) => {
-    this.setState({ page })
+    this.props.changeField('page', page)
   }
 
   handleRowClick = ({ currentTarget }) => {
@@ -118,7 +116,7 @@ class PlayerStats extends Component {
   }
 
   handleChangeRowsPerPage = event => {
-    this.setState({ page: 0, rowsPerPage: parseInt(event.target.value) })
+    this.props.changeField('rowsPerPage', parseInt(event.target.value))
   }
 
   handleRequestSort = ({ currentTarget }) => {

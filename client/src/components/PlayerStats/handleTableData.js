@@ -4,7 +4,8 @@ import TablePaginationActions from './TablePaginationActions'
 import TableData from './TableData'
 
 export default function(dataDisplay) {
-  const { selectedPlayers, rowsPerPage, page, order, orderBy } = this.state
+  const { selectedPlayers, order, orderBy } = this.state
+  const { rowsPerPage, page } = this.props.tableSettings
   const { dataLoad, trackedPlayers } = this.props.stats
 
   return (
