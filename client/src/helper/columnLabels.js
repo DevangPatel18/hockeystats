@@ -1,3 +1,5 @@
+import store from '../store'
+
 export const seasonCol = [
   { title: 'Season', id: 'seasonId' },
   { title: 'Track', id: 'track' }, // For adding current season players to dashboard
@@ -31,6 +33,7 @@ export const skaterStatsCol = [
   { title: 'SHG', id: 'shGoals' },
   { title: 'SHP', id: 'shPoints' },
   { title: 'P/G', id: 'pointsPerGame', format: val => val.toFixed(2) },
+  // { title: 'Shifts/G', id: 'shiftsPerGame', format: val => val.toFixed(1) },
   { title: 'S%', id: 'shootingPct', format: val => (val * 100).toFixed(1) },
   { title: 'TOI/G', id: 'timeOnIcePerGame', format: val => secToString(val) },
 ]
@@ -112,15 +115,16 @@ export const getSorting = (order, orderBy) => {
 
 export const generateCols = data => {
   if (!data.length) return skaterStatsCol
+  const { playerType } = store.getState().playerData
 
   const aggregateTable = !Object.keys(data[0]).includes('seasonId')
-  const isSkaters = data[0]['playerPositionCode'] !== 'G'
+  const isSkaters = playerType === 'skater'
 
   const playerStatsCol = isSkaters ? skaterStatsCol : goalieStatsCol
 
   const columns = aggregateTable
-    ? [].concat(playerStatsCol, bioCol, draftCol)
-    : [].concat(seasonCol, playerStatsCol, bioCol, draftCol)
+    ? [].concat(playerStatsCol)
+    : [].concat(seasonCol, playerStatsCol)
 
   return columns
 }
