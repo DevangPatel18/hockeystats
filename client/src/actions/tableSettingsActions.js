@@ -1,4 +1,4 @@
-import { CHANGE_YEARS, CHANGE_FIELD, TOGGLE_SWITCH } from './types'
+import { CHANGE_YEARS, CHANGE_FIELD, CHANGE_SORT, TOGGLE_SWITCH } from './types'
 import store from '../store'
 
 export const changeSeason = (name, year) => dispatch => {
@@ -22,6 +22,14 @@ export const changeField = (name, value) => dispatch => {
     type: CHANGE_FIELD,
     name,
     value,
+  })
+}
+
+export const changeSort = (order, orderBy) => dispatch => {
+  dispatch({
+    type: CHANGE_SORT,
+    order,
+    orderBy,
   })
 }
 

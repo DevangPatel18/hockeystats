@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
 import * as statActions from '../../actions/statActions'
-import { changeField } from '../../actions/tableSettingsActions'
+import { changeField, changeSort } from '../../actions/tableSettingsActions'
 import { submitQuery } from '../../actions/playerDataActions'
 import handleTable from './handleTableData'
 import StatsFilterPanel from './StatsFilterPanel'
@@ -120,14 +120,15 @@ class PlayerStats extends Component {
   }
 
   handleRequestSort = ({ currentTarget }) => {
-    const orderBy = currentTarget.id
-    let order = 'desc'
+    const { order, orderBy } = this.props.tableSettings
+    const newOrderBy = currentTarget.id
+    let newOrder = 'desc'
 
-    if (this.state.orderBy === orderBy && this.state.order === 'desc') {
-      order = 'asc'
+    if (orderBy === orderBy && order === 'desc') {
+      newOrder = 'asc'
     }
 
-    this.setState({ order, orderBy })
+    this.props.changeSort(newOrder, newOrderBy)
   }
 
   handleModalOpen = () => {
@@ -238,6 +239,7 @@ PlayerStats.propTypes = {
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
   changeField: PropTypes.func.isRequired,
+  changeSort: PropTypes.func.isRequired,
   submitQuery: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
@@ -260,6 +262,7 @@ export default connect(
     startLoad: statActions.startLoad,
     stopLoad: statActions.stopLoad,
     changeField,
+    changeSort,
     submitQuery,
   }
 )(PlayerStats)

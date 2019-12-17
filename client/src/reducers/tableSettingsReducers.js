@@ -16,6 +16,8 @@ const initialState = {
   countryFilter: ['all'],
   page: 0,
   rowsPerPage: 10,
+  order: 'desc',
+  orderBy: 'points',
 }
 
 export default function(state = initialState, action) {
@@ -30,6 +32,12 @@ export default function(state = initialState, action) {
       return {
         ...state,
         [action.name]: action.value,
+      }
+    case types.CHANGE_SORT:
+      return {
+        ...state,
+        order: action.order,
+        orderBy: action.orderBy,
       }
     case types.TOGGLE_SWITCH:
       return {
