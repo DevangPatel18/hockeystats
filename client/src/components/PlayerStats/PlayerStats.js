@@ -81,8 +81,9 @@ class PlayerStats extends Component {
     this.setState({ selectedPlayers })
   }
 
-  handleChangePage = (event, page) => {
-    this.props.changeField('page', page)
+  handleChangePage = async (event, page) => {
+    await this.props.changeField('page', page)
+    this.submitQuery()
   }
 
   handleRowClick = ({ currentTarget }) => {
@@ -115,8 +116,9 @@ class PlayerStats extends Component {
     this.setState({ selectedPlayers: newSelectedPlayers })
   }
 
-  handleChangeRowsPerPage = event => {
-    this.props.changeField('rowsPerPage', parseInt(event.target.value))
+  handleChangeRowsPerPage = async event => {
+    await this.props.changeField('rowsPerPage', parseInt(event.target.value))
+    this.submitQuery()
   }
 
   handleRequestSort = ({ currentTarget }) => {

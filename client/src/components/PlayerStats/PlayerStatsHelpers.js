@@ -7,11 +7,13 @@ export const fetchData = api => {
     reportName,
     isAggregate,
     playoffs,
+    page,
+    rowsPerPage,
   } = store.getState().tableSettings
 
   return api
     .get(
-      `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}/${playoffs}`
+      `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}/${playoffs}/${page}/${rowsPerPage}`
     )
     .then(res => res.data)
     .catch(err => {
@@ -82,8 +84,7 @@ const getTeamFilteredStats = stats => {
   return !teamFilter.includes('all')
     ? stats.filter(
         playerObj =>
-          playerObj.teamAbbrevs &&
-          teamFilter.includes(playerObj.teamAbbrevs)
+          playerObj.teamAbbrevs && teamFilter.includes(playerObj.teamAbbrevs)
       )
     : stats
 }

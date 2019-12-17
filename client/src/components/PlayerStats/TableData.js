@@ -118,7 +118,6 @@ const TableData = props => {
         </TableHead>
         <TableBody>
           {stableSort(dataDisplay, getSorting(order, orderBy))
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
             .map((row, i) => (
               <TableRow
                 key={`${row.playerId}-${row.seasonId}`}

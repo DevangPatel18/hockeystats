@@ -6,6 +6,7 @@ const initialState = {
   countries: '',
   dataType: '',
   playerType: 'skater',
+  total: 0,
 }
 
 export default function(state = initialState, action) {
@@ -14,6 +15,7 @@ export default function(state = initialState, action) {
       return {
         ...state,
         stats: action.stats,
+        total: action.total,
         teams: ['all', ...action.teams],
         countries: ['all', ...action.countries],
         dataType: action.dataType,

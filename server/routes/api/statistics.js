@@ -8,7 +8,7 @@ const {
 
 // Retrieve dataset
 router.get(
-  '/:isAggregate/:reportName/:yearStart/:yearEnd/:playoffs',
+  '/:isAggregate/:reportName/:yearStart/:yearEnd/:playoffs/:page/:rowsPerPage',
   async (req, res, next) => {
     try {
       console.log('Requesting data from api...');
@@ -18,6 +18,8 @@ router.get(
         yearStart,
         yearEnd,
         playoffs,
+        page,
+        rowsPerPage,
       } = req.params;
 
       const [playerType, reportType] = reportName.split('-');
@@ -30,15 +32,15 @@ router.get(
             isGame: false,
             reportName,
             sort: statsSortObj[playerType + reportType],
-            start: 0,
-            limit: 50,
+            start: page * rowsPerPage,
+            limit: rowsPerPage,
             factCayenneExp: 'gamesPlayed>=1',
             cayenneExp: `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
           },
         })
         .then(res => {
           addPlayerName(playerType, res.data.data);
-          return res.data.data;
+          return res.data;
         });
 
       return res.status(200).json(data);

@@ -9,9 +9,10 @@ export const submitQuery = stats => dispatch => {
   const { playoffs, reportName } = store.getState().tableSettings
   dispatch({
     type: SUBMIT_QUERY,
-    stats,
-    teams: getTeams(stats),
-    countries: getCountries(stats),
+    stats: stats.data,
+    total: stats.total,
+    teams: getTeams(stats.data),
+    countries: getCountries(stats.data),
     dataType: playoffs ? 'playoffs' : 'regular',
     playerType: reportName.split('-')[0],
   })
