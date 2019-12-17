@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
-const { statsSortObj } = require('../../helper/statisticsHelpers');
+const {
+  statsSortObj,
+  addPlayerName,
+} = require('../../helper/statisticsHelpers');
 
 // Retrieve dataset
 router.get(
@@ -34,6 +37,7 @@ router.get(
           },
         })
         .then(res => {
+          addPlayerName(playerType, res.data.data);
           return res.data.data;
         });
 
