@@ -126,14 +126,14 @@ const TableData = props => {
                 hover={true}
                 selected={
                   selectedPlayers.includes(
-                    [row.playerId, row.seasonId, row.playerTeamsPlayedFor].join(
+                    [row.playerId, row.seasonId, row.teamAbbrevs].join(
                       '-'
                     )
                   ) || selectedPlayers.includes(row.playerId.toString())
                 }
                 playerid={row.playerId}
                 seasonid={row.seasonId}
-                teams={row.playerTeamsPlayedFor}
+                teams={row.teamAbbrevs}
                 onClick={handleRowClick}
               >
                 <TableCell

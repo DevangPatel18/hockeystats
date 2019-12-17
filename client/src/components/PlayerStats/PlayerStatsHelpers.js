@@ -25,7 +25,7 @@ export const getTeams = stats => {
   return !isAggregate
     ? stats
         .reduce((acc, playerObj) => {
-          let team = playerObj.playerTeamsPlayedFor
+          let team = playerObj.teamAbbrevs
           if (team && team.length === 3 && !acc.includes(team)) {
             acc.push(team)
           }
@@ -82,8 +82,8 @@ const getTeamFilteredStats = stats => {
   return !teamFilter.includes('all')
     ? stats.filter(
         playerObj =>
-          playerObj.playerTeamsPlayedFor &&
-          teamFilter.includes(playerObj.playerTeamsPlayedFor)
+          playerObj.teamAbbrevs &&
+          teamFilter.includes(playerObj.teamAbbrevs)
       )
     : stats
 }
