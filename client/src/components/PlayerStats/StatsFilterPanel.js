@@ -161,27 +161,17 @@ class StatsFilterPanel extends Component {
         <StatsPanel title={'Filters'}>
           <FormControlStyles>
             <InputLabel htmlFor="teamFilter">Teams</InputLabel>
-            <Select
+            <NativeSelect
               value={teamFilter}
-              multiple
-              native={isMobile}
-              onChange={this.handleChangeMultiple}
+              onChange={this.handleChange('teamFilter')}
               inputProps={{ name: 'teamFilter', id: 'teamFilter' }}
-              renderValue={this.handleRenderValue}
             >
-              {teams &&
-                (isMobile
-                  ? teams.map(teamCode => (
-                      <option key={teamCode} value={teamCode}>
-                        {teamCode}
-                      </option>
-                    ))
-                  : teams.map(teamCode => (
-                      <MenuItem key={teamCode} value={teamCode}>
-                        {teamCode}
-                      </MenuItem>
-                    )))}
-            </Select>
+              {teams && teams.map(teamCode => (
+                <option key={teamCode} value={teamCode}>
+                  {teamCode}
+                </option>
+              ))}
+            </NativeSelect>
           </FormControlStyles>
           <FormControlStyles>
             <InputLabel htmlFor="playerPositionCode">Position</InputLabel>

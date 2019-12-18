@@ -12,7 +12,7 @@ const initialState = {
   filterTracked: false,
   search: '',
   playerPositionCode: 'LRCD',
-  teamFilter: ['all'],
+  teamFilter: 'all',
   countryFilter: ['all'],
   page: 0,
   rowsPerPage: 10,
@@ -48,7 +48,6 @@ export default function(state = initialState, action) {
       return {
         ...state,
         playerPositionCode: 'LRCD',
-        teamFilter: ['all'],
         countryFilter: ['all'],
       }
     default:
