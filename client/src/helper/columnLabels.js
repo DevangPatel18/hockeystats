@@ -164,7 +164,7 @@ export const ProfileGoalieCol = [
   { key: 'ot', label: 'OT' },
   { key: 'shotsAgainst', label: 'SA' },
   { key: 'saves', label: 'S' },
-  { key: 'savePct', label: 'Sv%', format: val => val.toFixed(3) },
+  { key: 'savePercentage', label: 'Sv%', format: val => val.toFixed(3) },
   { key: 'goalsAgainst', label: 'GA' },
   { key: 'goalAgainstAverage', label: 'GAA' },
   { key: 'shutouts', label: 'SO' },
