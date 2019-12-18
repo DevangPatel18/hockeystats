@@ -8,7 +8,7 @@ const {
 
 // Retrieve dataset
 router.get(
-  '/:isAggregate/:reportName/:yearStart/:yearEnd/:playoffs/:page/:rowsPerPage/:order/:orderBy',
+  '/:isAggregate/:reportName/:yearStart/:yearEnd/:playoffs/:page/:rowsPerPage/:order/:orderBy/:teamFilter',
   async (req, res, next) => {
     try {
       console.log('Requesting data from api...');
@@ -22,6 +22,7 @@ router.get(
         rowsPerPage,
         order,
         orderBy,
+        teamFilter,
       } = req.params;
 
       const [playerType, reportType] = reportName.split('-');
@@ -30,6 +31,7 @@ router.get(
         orderBy === 'default'
           ? statsSortObj[playerType + reportType]
           : `[{"property": "${orderBy}", "direction":"${order.toUpperCase()}"}]`;
+      const team = teamFilter === 'all' ? '': `franchiseId=${teamFilter} and`
 
       let data = await axios
         .get(`https://api.nhle.com/stats/rest/en/${playerType}/${reportType}`, {
@@ -41,7 +43,7 @@ router.get(
             start: page * rowsPerPage,
             limit: rowsPerPage,
             factCayenneExp: 'gamesPlayed>=1',
-            cayenneExp: `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
+            cayenneExp: `${team} gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
           },
         })
         .then(res => {

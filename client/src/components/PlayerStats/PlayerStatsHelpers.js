@@ -11,11 +11,12 @@ export const fetchData = api => {
     rowsPerPage,
     order,
     orderBy,
+    teamFilter,
   } = store.getState().tableSettings
 
   return api
     .get(
-      `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}/${playoffs}/${page}/${rowsPerPage}/${order}/${orderBy}`
+      `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}/${playoffs}/${page}/${rowsPerPage}/${order}/${orderBy}/${teamFilter}`
     )
     .then(res => res.data)
     .catch(err => {
