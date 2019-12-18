@@ -51,21 +51,17 @@ export const getCountries = stats =>
     .sort()
 
 export const getFilteredStats = stats => {
-  let dataDisplay = getPositionFilteredStats(stats)
-  dataDisplay = getStarredFilteredStats(dataDisplay)
-  dataDisplay = getTeamFilteredStats(dataDisplay)
-  dataDisplay = getSearchFilteredStats(dataDisplay)
-  dataDisplay = getCountryFilteredStats(dataDisplay)
+  let dataDisplay = getStarredFilteredStats(stats)
   return dataDisplay
 }
 
-const getPositionFilteredStats = stats => {
-  const { playerPositionCode } = store.getState().tableSettings
-  const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
-  return isSkaters && playerPositionCode !== 'LRCD'
-    ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
-    : stats
-}
+// const getPositionFilteredStats = stats => {
+//   const { playerPositionCode } = store.getState().tableSettings
+//   const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
+//   return isSkaters && playerPositionCode !== 'LRCD'
+//     ? stats.filter(obj => playerPositionCode.includes(obj.playerPositionCode))
+//     : stats
+// }
 
 const getStarredFilteredStats = stats => {
   const { filterTracked } = store.getState().tableSettings
@@ -81,30 +77,30 @@ const getStarredFilteredStats = stats => {
     : stats
 }
 
-const getTeamFilteredStats = stats => {
-  const { teamFilter } = store.getState().tableSettings
-  return !teamFilter.includes('all')
-    ? stats.filter(
-        playerObj =>
-          playerObj.teamAbbrevs && teamFilter.includes(playerObj.teamAbbrevs)
-      )
-    : stats
-}
+// const getTeamFilteredStats = stats => {
+//   const { teamFilter } = store.getState().tableSettings
+//   return !teamFilter.includes('all')
+//     ? stats.filter(
+//         playerObj =>
+//           playerObj.teamAbbrevs && teamFilter.includes(playerObj.teamAbbrevs)
+//       )
+//     : stats
+// }
 
-const getSearchFilteredStats = stats => {
-  const { search } = store.getState().tableSettings
-  return search
-    ? stats.filter(obj => obj.playerName.toLowerCase().includes(search))
-    : stats
-}
+// const getSearchFilteredStats = stats => {
+//   const { search } = store.getState().tableSettings
+//   return search
+//     ? stats.filter(obj => obj.playerName.toLowerCase().includes(search))
+//     : stats
+// }
 
-const getCountryFilteredStats = stats => {
-  const { countryFilter } = store.getState().tableSettings
-  return !countryFilter.includes('all')
-    ? stats.filter(
-        playerObj =>
-          playerObj.playerBirthCountry &&
-          countryFilter.includes(playerObj.playerBirthCountry)
-      )
-    : stats
-}
+// const getCountryFilteredStats = stats => {
+//   const { countryFilter } = store.getState().tableSettings
+//   return !countryFilter.includes('all')
+//     ? stats.filter(
+//         playerObj =>
+//           playerObj.playerBirthCountry &&
+//           countryFilter.includes(playerObj.playerBirthCountry)
+//       )
+//     : stats
+// }
