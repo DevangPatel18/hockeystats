@@ -13,11 +13,9 @@ import {
   InputLabel,
   Input,
   NativeSelect,
-  Select,
   Button,
   Switch,
   TextField,
-  MenuItem,
 } from '@material-ui/core'
 import {
   StatsPanel,
@@ -194,27 +192,18 @@ class StatsFilterPanel extends Component {
           </FormControlStyles>
           <FormControlStyles>
             <InputLabel htmlFor="countryFilter">Country</InputLabel>
-            <Select
+            <NativeSelect
               value={countryFilter}
-              multiple
-              native={isMobile}
-              onChange={this.handleChangeMultiple}
+              onChange={this.handleChange('countryFilter')}
               inputProps={{ name: 'countryFilter', id: 'countryFilter' }}
-              renderValue={this.handleRenderValue}
             >
               {countries &&
-                (isMobile
-                  ? countries.map(countryCode => (
-                      <option value={countryCode} key={countryCode}>
-                        {countryCode}
-                      </option>
-                    ))
-                  : countries.map(countryCode => (
-                      <MenuItem value={countryCode} key={countryCode}>
-                        {countryCode}
-                      </MenuItem>
-                    )))}
-            </Select>
+                countries.map(countryCode => (
+                  <option value={countryCode} key={countryCode}>
+                    {countryCode}
+                  </option>
+                ))}
+            </NativeSelect>
           </FormControlStyles>
           <FormControlLabel
             control={
