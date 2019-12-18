@@ -27,6 +27,7 @@ import {
   ChipStyles,
 } from '../styles/StatsFilterPanelStyles'
 import { getCurrentSeasonId } from '../../helper/dateHelpers'
+import franchises from '../../helper/franchises'
 
 const currentSeasonYearEnd = getCurrentSeasonId().slice(4)
 
@@ -65,7 +66,7 @@ class StatsFilterPanel extends Component {
 
   render() {
     const { handleRowFilter, submitQuery, handleModalOpen } = this.props
-    const { teams, countries } = this.props.playerData
+    const { countries } = this.props.playerData
 
     const {
       yearStart,
@@ -166,9 +167,10 @@ class StatsFilterPanel extends Component {
               onChange={this.handleChange('teamFilter')}
               inputProps={{ name: 'teamFilter', id: 'teamFilter' }}
             >
-              {teams && teams.map(teamCode => (
-                <option key={teamCode} value={teamCode}>
-                  {teamCode}
+              <option value={'all'}>All teams</option>
+              {franchises.map(team => (
+                <option key={team.id} value={team.id}>
+                  {team.fullName}
                 </option>
               ))}
             </NativeSelect>

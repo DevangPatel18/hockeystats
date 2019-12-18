@@ -16,7 +16,6 @@ export default function(state = initialState, action) {
         ...state,
         stats: action.stats,
         total: action.total,
-        teams: ['all', ...action.teams],
         countries: ['all', ...action.countries],
         dataType: action.dataType,
         playerType: action.playerType,
