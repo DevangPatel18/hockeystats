@@ -177,7 +177,7 @@ class StatsFilterPanel extends Component {
             <InputLabel htmlFor="playerPositionCode">Position</InputLabel>
             <NativeSelect
               value={playerPositionCode}
-              onChange={handleRowFilter('playerPositionCode')}
+              onChange={this.handleChange('playerPositionCode')}
               input={
                 <Input name="playerPositionCode" id="playerPositionCode" />
               }
