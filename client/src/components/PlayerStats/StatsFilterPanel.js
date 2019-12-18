@@ -73,7 +73,7 @@ class StatsFilterPanel extends Component {
       playoffs,
       isAggregate,
       filterTracked,
-      search,
+      // search,
       playerPositionCode,
       countryFilter,
       teamFilter,
@@ -242,7 +242,7 @@ class StatsFilterPanel extends Component {
           >
             compare selected
           </Button>
-          <div style={{ flexGrow: '1', marginRight: '1rem' }} />
+          {/* <div style={{ flexGrow: '1', marginRight: '1rem' }} />
           <TextField
             id="player-search-input"
             label="Search"
@@ -250,7 +250,7 @@ class StatsFilterPanel extends Component {
             onChange={this.handleChange('search')}
             variant="outlined"
             style={{ width: '170px' }}
-          />
+          /> */}
         </div>
       </div>
     )
