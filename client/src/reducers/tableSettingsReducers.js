@@ -6,14 +6,18 @@ const currentSeason = getCurrentSeasonId()
 const initialState = {
   yearStart: currentSeason,
   yearEnd: currentSeason,
-  reportName: 'skatersummary',
+  reportName: 'skater-summary',
   playoffs: false,
   isAggregate: false,
   filterTracked: false,
   search: '',
   playerPositionCode: 'LRCD',
-  teamFilter: ['all'],
-  countryFilter: ['all'],
+  teamFilter: 'all',
+  countryFilter: 'all',
+  page: 0,
+  rowsPerPage: 10,
+  order: 'desc',
+  orderBy: 'default',
 }
 
 export default function(state = initialState, action) {
@@ -29,17 +33,16 @@ export default function(state = initialState, action) {
         ...state,
         [action.name]: action.value,
       }
+    case types.CHANGE_SORT:
+      return {
+        ...state,
+        order: action.order,
+        orderBy: action.orderBy,
+      }
     case types.TOGGLE_SWITCH:
       return {
         ...state,
         [action.name]: !state[action.name],
-      }
-    case types.SUBMIT_QUERY:
-      return {
-        ...state,
-        playerPositionCode: 'LRCD',
-        teamFilter: ['all'],
-        countryFilter: ['all'],
       }
     default:
       return state

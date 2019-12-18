@@ -17,8 +17,6 @@ import { withStyles } from '@material-ui/core/styles'
 import {
   yearFormatter,
   stopPropagation,
-  stableSort,
-  getSorting,
   generateCols,
 } from '../../helper/columnLabels'
 import Tooltip from '@material-ui/core/Tooltip'
@@ -117,98 +115,94 @@ const TableData = props => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {stableSort(dataDisplay, getSorting(order, orderBy))
-            .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            .map((row, i) => (
-              <TableRow
-                key={`${row.playerId}-${row.seasonId}`}
-                style={{ height: 'auto' }}
-                hover={true}
-                selected={
-                  selectedPlayers.includes(
-                    [row.playerId, row.seasonId, row.playerTeamsPlayedFor].join(
-                      '-'
-                    )
-                  ) || selectedPlayers.includes(row.playerId.toString())
-                }
-                playerid={row.playerId}
-                seasonid={row.seasonId}
-                teams={row.playerTeamsPlayedFor}
-                onClick={handleRowClick}
+          {dataDisplay.map((row, i) => (
+            <TableRow
+              key={`${row.playerId}-${row.seasonId}`}
+              style={{ height: 'auto' }}
+              hover={true}
+              selected={
+                selectedPlayers.includes(
+                  [row.playerId, row.seasonId, row.teamAbbrevs].join('-')
+                ) || selectedPlayers.includes(row.playerId.toString())
+              }
+              playerid={row.playerId}
+              seasonid={row.seasonId}
+              teams={row.teamAbbrevs}
+              onClick={handleRowClick}
+            >
+              <TableCell
+                style={{
+                  padding: '0 5px',
+                  margin: '0',
+                }}
               >
-                <TableCell
-                  style={{
-                    padding: '0 5px',
-                    margin: '0',
-                  }}
-                >
-                  {i + 1 + page * rowsPerPage}
-                </TableCell>
-                <TableCell
-                  component="th"
-                  style={{
-                    paddingLeft: '24px',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {row['playerName']}
-                </TableCell>
-                {!aggregateTable && (
-                  <>
-                    <TableCell
-                      style={{
-                        whiteSpace: 'nowrap',
+                {i + 1 + page * rowsPerPage}
+              </TableCell>
+              <TableCell
+                component="th"
+                style={{
+                  paddingLeft: '24px',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {row['playerName']}
+              </TableCell>
+              {!aggregateTable && (
+                <>
+                  <TableCell
+                    style={{
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {yearFormatter(row['seasonId'])}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Checkbox
+                      icon={<StarBorder />}
+                      checkedIcon={<Star />}
+                      checked={handleStarClick(row.playerId, row.seasonId)}
+                      inputProps={{
+                        playerid: row.playerId,
+                        seasonid: row.seasonId,
                       }}
-                    >
-                      {yearFormatter(row['seasonId'])}
-                    </TableCell>
-                    <TableCell align="center">
-                      <Checkbox
-                        icon={<StarBorder />}
-                        checkedIcon={<Star />}
-                        checked={handleStarClick(row.playerId, row.seasonId)}
-                        inputProps={{
-                          playerid: row.playerId,
-                          seasonid: row.seasonId,
-                        }}
-                        onChange={updateTrackedPlayers}
-                        onClick={stopPropagation}
-                        style={{ textAlign: 'center' }}
-                        classes={{
-                          root: classes.root,
-                          checked: classes.checked,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        children={<TableChart />}
-                        classes={{ root: classes.root }}
-                        onClick={event => {
-                          event.stopPropagation()
-                          openPlayerModal(row)
-                        }}
-                      />
-                    </TableCell>
-                  </>
-                )}
-                {columns
-                  .filter(
-                    obj => !['seasonId', 'track', 'gameLogs'].includes(obj.id)
-                  )
-                  .map(col => (
-                    <TableCell
-                      key={`${row.playerId}-${col.title}`}
-                      style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
-                      align="center"
-                    >
-                      {col.format && row[col.id]
-                        ? col.format(row[col.id])
-                        : row[col.id]}
-                    </TableCell>
-                  ))}
-              </TableRow>
-            ))}
+                      onChange={updateTrackedPlayers}
+                      onClick={stopPropagation}
+                      style={{ textAlign: 'center' }}
+                      classes={{
+                        root: classes.root,
+                        checked: classes.checked,
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell align="center">
+                    <IconButton
+                      children={<TableChart />}
+                      classes={{ root: classes.root }}
+                      onClick={event => {
+                        event.stopPropagation()
+                        openPlayerModal(row)
+                      }}
+                    />
+                  </TableCell>
+                </>
+              )}
+              {columns
+                .filter(
+                  obj => !['seasonId', 'track', 'gameLogs'].includes(obj.id)
+                )
+                .map(col => (
+                  <TableCell
+                    key={`${row.playerId}-${col.title}`}
+                    style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
+                    align="center"
+                  >
+                    {col.format && row[col.id]
+                      ? col.format(row[col.id])
+                      : row[col.id]}
+                  </TableCell>
+                ))}
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>

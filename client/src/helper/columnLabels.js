@@ -1,8 +1,10 @@
+import store from '../store'
+
 export const seasonCol = [
   { title: 'Season', id: 'seasonId' },
   { title: 'Track', id: 'track' }, // For adding current season players to dashboard
   { title: 'Game logs', id: 'gameLogs' },
-  { title: 'Team', id: 'playerTeamsPlayedFor' },
+  { title: 'Team', id: 'teamAbbrevs' },
 ]
 
 export const secToString = val => {
@@ -20,7 +22,7 @@ export const secToString = val => {
 }
 
 export const skaterStatsCol = [
-  { title: 'Pos', id: 'playerPositionCode' },
+  { title: 'Pos', id: 'positionCode' },
   { title: 'GP', id: 'gamesPlayed' },
   { title: 'G', id: 'goals' },
   { title: 'A', id: 'assists' },
@@ -31,8 +33,8 @@ export const skaterStatsCol = [
   { title: 'SHG', id: 'shGoals' },
   { title: 'SHP', id: 'shPoints' },
   { title: 'P/G', id: 'pointsPerGame', format: val => val.toFixed(2) },
-  { title: 'Shifts/G', id: 'shiftsPerGame', format: val => val.toFixed(1) },
-  { title: 'S%', id: 'shootingPctg', format: val => (val * 100).toFixed(1) },
+  // { title: 'Shifts/G', id: 'shiftsPerGame', format: val => val.toFixed(1) },
+  { title: 'S%', id: 'shootingPct', format: val => (val * 100).toFixed(1) },
   { title: 'TOI/G', id: 'timeOnIcePerGame', format: val => secToString(val) },
 ]
 
@@ -46,7 +48,7 @@ export const goalieStatsCol = [
   { title: 'SA', id: 'shotsAgainst' },
   { title: 'Svs', id: 'saves' },
   { title: 'GA', id: 'goalsAgainst', sortReverse: true },
-  { title: 'Sv%', id: 'savePctg', format: val => val.toFixed(3) },
+  { title: 'Sv%', id: 'savePct', format: val => val.toFixed(3) },
   {
     title: 'GAA',
     id: 'goalsAgainstAverage',
@@ -113,15 +115,16 @@ export const getSorting = (order, orderBy) => {
 
 export const generateCols = data => {
   if (!data.length) return skaterStatsCol
+  const { playerType } = store.getState().playerData
 
   const aggregateTable = !Object.keys(data[0]).includes('seasonId')
-  const isSkaters = data[0]['playerPositionCode'] !== 'G'
+  const isSkaters = playerType === 'skater'
 
   const playerStatsCol = isSkaters ? skaterStatsCol : goalieStatsCol
 
   const columns = aggregateTable
-    ? [].concat(playerStatsCol, bioCol, draftCol)
-    : [].concat(seasonCol, playerStatsCol, bioCol, draftCol)
+    ? [].concat(playerStatsCol)
+    : [].concat(seasonCol, playerStatsCol)
 
   return columns
 }

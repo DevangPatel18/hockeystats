@@ -58,9 +58,8 @@ const getPlayerLogDataFromSeasons = (api, seasonIdArr, playerId) => {
 }
 
 export function getStatOptions(gameLogCollection) {
-  const { data } = this.props
-  let allStatOptions =
-    data[0].playerPositionCode !== 'G' ? skaterLogStats : goalieLogStats
+  const { playerType } = this.props.playerData
+  let allStatOptions = playerType === 'skater' ? skaterLogStats : goalieLogStats
   let statOptions = []
   for (const playerGameLogArr of gameLogCollection) {
     for (const playerGameLog of playerGameLogArr) {

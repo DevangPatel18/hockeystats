@@ -4,8 +4,10 @@ import TablePaginationActions from './TablePaginationActions'
 import TableData from './TableData'
 
 export default function(dataDisplay) {
-  const { selectedPlayers, rowsPerPage, page, order, orderBy } = this.state
+  const { selectedPlayers } = this.state
+  const { rowsPerPage, page, order, orderBy } = this.props.tableSettings
   const { dataLoad, trackedPlayers } = this.props.stats
+  const { total } = this.props.playerData
 
   return (
     <>
@@ -45,7 +47,7 @@ export default function(dataDisplay) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 50]}
           component="div"
-          count={dataDisplay.length}
+          count={total}
           rowsPerPage={rowsPerPage}
           page={page}
           SelectProps={{

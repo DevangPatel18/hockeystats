@@ -104,7 +104,7 @@ const TableComparison = ({ selectedPlayers, data }) => {
           .filter(
             colObj =>
               playersObj[0].seasonId ||
-              !['seasonId', 'playerTeamsPlayedFor'].includes(colObj.id)
+              !['seasonId', 'teamAbbrevs'].includes(colObj.id)
           )
           .map(colObj => (
             <TableRow

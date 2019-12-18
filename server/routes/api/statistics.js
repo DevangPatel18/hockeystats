@@ -1,10 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const {
+  statsSortObj,
+  addPlayerName,
+} = require('../../helper/statisticsHelpers');
 
 // Retrieve dataset
 router.get(
-  '/:isAggregate/:reportName/:yearStart/:yearEnd/:playoffs',
+  '/:isAggregate/:reportName/:yearStart/:yearEnd/:playoffs/:page/:rowsPerPage/:order/:orderBy/:teamFilter/:countryFilter/:playerPositionCode',
   async (req, res, next) => {
     try {
       console.log('Requesting data from api...');
@@ -14,25 +18,52 @@ router.get(
         yearStart,
         yearEnd,
         playoffs,
+        page,
+        rowsPerPage,
+        order,
+        orderBy,
+        teamFilter,
+        countryFilter,
+        playerPositionCode,
       } = req.params;
 
-      let reportType = reportName.includes('goalie') ? 'goalie_basic' : 'basic';
+      const [playerType, reportType] = reportName.split('-');
       let gameTypeId = playoffs === 'true' ? 3 : 2;
+      sort =
+        orderBy === 'default'
+          ? statsSortObj[playerType + reportType]
+          : `[{"property": "${orderBy}", "direction":"${order.toUpperCase()}"}]`;
+      const team = teamFilter === 'all' ? '' : `franchiseId=${teamFilter}`;
+      const country =
+        countryFilter === 'all' ? '' : `nationalityCode="${countryFilter}"`;
+      const position =
+        playerType === 'goalie' || playerPositionCode === 'all'
+          ? ''
+          : `(${playerPositionCode
+              .split('')
+              .map(char => `positionCode="${char}"`)
+              .join(' or ')})`;
+      let optionalFilters = [team, country, position]
+        .filter(x => x)
+        .join(' and ');
+      optionalFilters = optionalFilters ? optionalFilters + ' and' : '';
 
       let data = await axios
-        .get(`http://www.nhl.com/stats/rest/skaters`, {
+        .get(`https://api.nhle.com/stats/rest/en/${playerType}/${reportType}`, {
           params: {
             isAggregate,
-            reportType,
             isGame: false,
             reportName,
-            sort:
-              '[{"property":"points","direction":"DESC"},{"property":"goals","direction":"DESC"},{"property":"assists","direction":"DESC"}]',
-            cayenneExp: `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
+            sort,
+            start: page * rowsPerPage,
+            limit: rowsPerPage,
+            factCayenneExp: 'gamesPlayed>=1',
+            cayenneExp: `${optionalFilters} gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
           },
         })
         .then(res => {
-          return res.data.data;
+          addPlayerName(playerType, res.data.data);
+          return res.data;
         });
 
       return res.status(200).json(data);

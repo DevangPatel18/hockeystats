@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
 import * as statActions from '../../actions/statActions'
-import { changeField } from '../../actions/tableSettingsActions'
+import { changeField, changeSort } from '../../actions/tableSettingsActions'
 import { submitQuery } from '../../actions/playerDataActions'
 import handleTable from './handleTableData'
 import StatsFilterPanel from './StatsFilterPanel'
@@ -27,8 +27,6 @@ class PlayerStats extends Component {
     this.state = {
       trackedPlayers: [],
       selectedPlayers: [],
-      page: 0,
-      rowsPerPage: 10,
       modal: false,
     }
 
@@ -83,8 +81,9 @@ class PlayerStats extends Component {
     this.setState({ selectedPlayers })
   }
 
-  handleChangePage = (event, page) => {
-    this.setState({ page })
+  handleChangePage = async (event, page) => {
+    await this.props.changeField('page', page)
+    this.submitQuery()
   }
 
   handleRowClick = ({ currentTarget }) => {
@@ -117,19 +116,23 @@ class PlayerStats extends Component {
     this.setState({ selectedPlayers: newSelectedPlayers })
   }
 
-  handleChangeRowsPerPage = event => {
-    this.setState({ page: 0, rowsPerPage: parseInt(event.target.value) })
+  handleChangeRowsPerPage = async event => {
+    await this.props.changeField('rowsPerPage', parseInt(event.target.value))
+    this.submitQuery()
   }
 
-  handleRequestSort = ({ currentTarget }) => {
-    const orderBy = currentTarget.id
-    let order = 'desc'
+  handleRequestSort = async ({ currentTarget }) => {
+    if (['track', 'gameLogs'].includes(currentTarget.id)) return
+    const { order, orderBy } = this.props.tableSettings
+    const newOrderBy = currentTarget.id
+    let newOrder = 'desc'
 
-    if (this.state.orderBy === orderBy && this.state.order === 'desc') {
-      order = 'asc'
+    if (newOrderBy === orderBy && order === 'desc') {
+      newOrder = 'asc'
     }
 
-    this.setState({ order, orderBy })
+    await this.props.changeSort(newOrder, newOrderBy)
+    this.submitQuery()
   }
 
   handleModalOpen = () => {
@@ -240,6 +243,7 @@ PlayerStats.propTypes = {
   startLoad: PropTypes.func.isRequired,
   stopLoad: PropTypes.func.isRequired,
   changeField: PropTypes.func.isRequired,
+  changeSort: PropTypes.func.isRequired,
   submitQuery: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired,
@@ -262,6 +266,7 @@ export default connect(
     startLoad: statActions.startLoad,
     stopLoad: statActions.stopLoad,
     changeField,
+    changeSort,
     submitQuery,
   }
 )(PlayerStats)

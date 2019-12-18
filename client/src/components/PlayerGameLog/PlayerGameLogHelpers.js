@@ -75,8 +75,8 @@ export const copyPlayerDataToSchedule = (teamSchedule, playerGameLogData) => {
 
 export const getPlayerStatColumns = () => {
   const { playerObj } = store.getState().stats
-  let playerCols =
-    playerObj.playerPositionCode !== 'G' ? ProfileSkateCol : ProfileGoalieCol
+  const playerPosition = playerObj.positionCode || playerObj.playerPositionCode
+  let playerCols = playerPosition !== 'G' ? ProfileSkateCol : ProfileGoalieCol
   playerCols = playerCols.filter(
     obj =>
       !['games', 'wins', 'losses', 'ties', 'goalAgainstAverage'].includes(
