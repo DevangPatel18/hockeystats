@@ -37,7 +37,7 @@ router.get(
       const country =
         countryFilter === 'all' ? '' : `nationalityCode="${countryFilter}" and`;
       const position =
-        playerPositionCode === 'all'
+        playerType === 'goalie' || playerPositionCode === 'all'
           ? ''
           : `(${playerPositionCode
               .split('')
