@@ -26,6 +26,7 @@ import {
 } from '../styles/StatsFilterPanelStyles'
 import { getCurrentSeasonId } from '../../helper/dateHelpers'
 import franchises from '../../helper/franchises'
+import countries from '../../helper/countries'
 
 const currentSeasonYearEnd = getCurrentSeasonId().slice(4)
 
@@ -64,7 +65,6 @@ class StatsFilterPanel extends Component {
 
   render() {
     const { handleRowFilter, submitQuery, handleModalOpen } = this.props
-    const { countries } = this.props.playerData
 
     const {
       yearStart,
@@ -197,12 +197,12 @@ class StatsFilterPanel extends Component {
               onChange={this.handleChange('countryFilter')}
               inputProps={{ name: 'countryFilter', id: 'countryFilter' }}
             >
-              {countries &&
-                countries.map(countryCode => (
-                  <option value={countryCode} key={countryCode}>
-                    {countryCode}
-                  </option>
-                ))}
+              <option value={'all'}>All countries</option>
+              {countries.map(country => (
+                <option value={country.id} key={country.id}>
+                  {country.countryName}
+                </option>
+              ))}
             </NativeSelect>
           </FormControlStyles>
           <FormControlLabel
