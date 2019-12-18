@@ -17,7 +17,7 @@ const initialState = {
   page: 0,
   rowsPerPage: 10,
   order: 'desc',
-  orderBy: 'points',
+  orderBy: 'default',
 }
 
 export default function(state = initialState, action) {

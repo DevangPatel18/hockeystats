@@ -121,16 +121,18 @@ class PlayerStats extends Component {
     this.submitQuery()
   }
 
-  handleRequestSort = ({ currentTarget }) => {
+  handleRequestSort = async ({ currentTarget }) => {
+    if (['track', 'gameLogs'].includes(currentTarget.id)) return
     const { order, orderBy } = this.props.tableSettings
     const newOrderBy = currentTarget.id
     let newOrder = 'desc'
 
-    if (orderBy === orderBy && order === 'desc') {
+    if (newOrderBy === orderBy && order === 'desc') {
       newOrder = 'asc'
     }
 
-    this.props.changeSort(newOrder, newOrderBy)
+    await this.props.changeSort(newOrder, newOrderBy)
+    this.submitQuery()
   }
 
   handleModalOpen = () => {
