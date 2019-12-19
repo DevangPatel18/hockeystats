@@ -4,6 +4,7 @@ const axios = require('axios');
 const {
   statsSortObj,
   addPlayerName,
+  getOptionalFilters,
 } = require('../../helper/statisticsHelpers');
 
 // Retrieve dataset
@@ -29,24 +30,12 @@ router.get(
 
       const [playerType, reportType] = reportName.split('-');
       let gameTypeId = playoffs === 'true' ? 3 : 2;
-      sort =
+      const sort =
         orderBy === 'default'
           ? statsSortObj[playerType + reportType]
           : `[{"property": "${orderBy}", "direction":"${order.toUpperCase()}"}]`;
-      const team = teamFilter === 'all' ? '' : `franchiseId=${teamFilter}`;
-      const country =
-        countryFilter === 'all' ? '' : `nationalityCode="${countryFilter}"`;
-      const position =
-        playerType === 'goalie' || playerPositionCode === 'all'
-          ? ''
-          : `(${playerPositionCode
-              .split('')
-              .map(char => `positionCode="${char}"`)
-              .join(' or ')})`;
-      let optionalFilters = [team, country, position]
-        .filter(x => x)
-        .join(' and ');
-      optionalFilters = optionalFilters ? optionalFilters + ' and' : '';
+      const optionalFilters = getOptionalFilters({ teamFilter, countryFilter, playerType, playerPositionCode });
+      const baseFilters = `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`;
 
       let data = await axios
         .get(`https://api.nhle.com/stats/rest/en/${playerType}/${reportType}`, {
@@ -58,7 +47,7 @@ router.get(
             start: page * rowsPerPage,
             limit: rowsPerPage,
             factCayenneExp: 'gamesPlayed>=1',
-            cayenneExp: `${optionalFilters} gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
+            cayenneExp: `${optionalFilters} ${baseFilters}`,
           },
         })
         .then(res => {
