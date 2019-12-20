@@ -58,8 +58,7 @@ export const deleteUser = userData => dispatch => {
 
   API.post(`/api/userActions/delete/${userId}`, { password, password2 })
     .then(() => {
-      dispatch(logoutUser())
-      // Dispatch action showing successful account deletion message
+      logoutUserActions(dispatch)
     })
     .catch(err =>
       dispatch({
@@ -94,6 +93,10 @@ export const clearErrors = () => {
 
 // Log user out
 export const logoutUser = () => dispatch => {
+  logoutUserActions(dispatch)
+}
+
+const logoutUserActions = dispatch => {
   // Remove token from local storage
   if (typeof window !== 'undefined') {
     localStorage.removeItem('jwtToken')
