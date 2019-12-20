@@ -23,9 +23,9 @@ router.get('/playerstats', async (req, res, next) => {
       orderBy,
       teamFilter,
       countryFilter,
+      search,
       playerPositionCode,
     } = req.query;
-    console.log(req.query)
 
     const [playerType, reportType] = reportName.split('-');
     let gameTypeId = playoffs === 'true' ? 3 : 2;
@@ -40,6 +40,8 @@ router.get('/playerstats', async (req, res, next) => {
       playerPositionCode,
     });
     const baseFilters = `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`;
+    const searchFilter =
+      search && ` and ${playerType}FullName likeIgnoreCase "%${search}%"`;
 
     let data = await axios
       .get(`https://api.nhle.com/stats/rest/en/${playerType}/${reportType}`, {
@@ -51,7 +53,7 @@ router.get('/playerstats', async (req, res, next) => {
           start: page * rowsPerPage,
           limit: rowsPerPage,
           factCayenneExp: 'gamesPlayed>=1',
-          cayenneExp: `${optionalFilters} ${baseFilters}`,
+          cayenneExp: `${optionalFilters} ${baseFilters} ${searchFilter}`,
         },
       })
       .then(res => {
