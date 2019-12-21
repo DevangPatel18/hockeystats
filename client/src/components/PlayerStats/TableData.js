@@ -180,7 +180,7 @@ const TableData = props => {
                       classes={{ root: classes.root }}
                       onClick={event => {
                         event.stopPropagation()
-                        openPlayerModal(row)
+                        openPlayerModal('gameLogModal', row)
                       }}
                     />
                   </TableCell>

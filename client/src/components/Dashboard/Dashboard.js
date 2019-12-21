@@ -69,7 +69,7 @@ class Dashboard extends Component {
 
   render() {
     const { trackedPlayerData } = this.state
-    const { trackedPlayers, modalOpen } = this.props.stats
+    const { trackedPlayers, gameLogModal } = this.props.stats
     const filterTrackedPlayerData = trackedPlayerData.filter(dataObj =>
       trackedPlayers.some(
         listObj =>
@@ -107,7 +107,7 @@ class Dashboard extends Component {
         </div>
         <Dialog
           fullScreen
-          open={modalOpen}
+          open={gameLogModal}
           scroll="paper"
           TransitionComponent={Transition}
         >

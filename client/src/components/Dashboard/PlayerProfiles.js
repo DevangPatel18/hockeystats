@@ -94,7 +94,7 @@ const PlayerProfiles = ({
                 <IconButton
                   children={<TableChart />}
                   style={{ padding: '0', marginLeft: '0.5rem' }}
-                  onClick={event => openPlayerModal(userData)}
+                  onClick={() => openPlayerModal('gameLogModal', userData)}
                 />
               </PlayerBioListItem>
             </PlayerBioList>

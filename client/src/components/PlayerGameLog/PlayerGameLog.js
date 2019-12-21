@@ -184,7 +184,7 @@ class PlayerGameLog extends Component {
           <Toolbar style={{ position: 'relative' }}>
             <IconButton
               color="inherit"
-              onClick={closePlayerModal}
+              onClick={() => closePlayerModal('gameLogModal')}
               aria-label="Close"
               style={{ position: 'absolute' }}
             >

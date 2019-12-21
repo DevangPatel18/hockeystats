@@ -183,7 +183,7 @@ class PlayerStats extends Component {
 
   render() {
     const { selectedPlayers } = this.state
-    const { modalOpen } = this.props.stats
+    const { gameLogModal } = this.props.stats
     const { stats } = this.props.playerData
     const dataDisplay = getFilteredStats(stats)
 
@@ -225,7 +225,7 @@ class PlayerStats extends Component {
         </Dialog>
         <Dialog
           fullScreen
-          open={modalOpen}
+          open={gameLogModal}
           scroll="paper"
           TransitionComponent={Transition}
         >
