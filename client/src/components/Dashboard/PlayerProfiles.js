@@ -2,7 +2,7 @@ import React from 'react'
 import { Trail, animated } from 'react-spring/renderprops'
 import PropTypes from 'prop-types'
 import IconButton from '@material-ui/core/IconButton'
-import { TableChart, Close } from '@material-ui/icons'
+import { TableChart, Equalizer, Close } from '@material-ui/icons'
 import { connect } from 'react-redux'
 import {
   ProfileContainer,
@@ -95,6 +95,14 @@ const PlayerProfiles = ({
                   children={<TableChart />}
                   style={{ padding: '0', marginLeft: '0.5rem' }}
                   onClick={() => openPlayerModal('gameLogModal', userData)}
+                />
+              </PlayerBioListItem>
+              <PlayerBioListItem>
+                Player overview ▶
+                <IconButton
+                  children={<Equalizer />}
+                  style={{ padding: '0', marginLeft: '0.5rem' }}
+                  onClick={() => openPlayerModal('overviewModal', playerObj)}
                 />
               </PlayerBioListItem>
             </PlayerBioList>
