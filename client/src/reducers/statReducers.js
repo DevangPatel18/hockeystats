@@ -12,6 +12,7 @@ const initialState = {
   trackedPlayers: [],
   dataLoad: false,
   gameLogModal: false,
+  overviewModal: false,
   playerObj: {},
 }
 

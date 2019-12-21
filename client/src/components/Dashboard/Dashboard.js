@@ -6,6 +6,7 @@ import configure from '../../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
 import { CircularProgress, Button, Dialog, Slide } from '@material-ui/core/'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
+import PlayerOverview from '../PlayerOverview/PlayerOverview'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
@@ -69,7 +70,7 @@ class Dashboard extends Component {
 
   render() {
     const { trackedPlayerData } = this.state
-    const { trackedPlayers, gameLogModal } = this.props.stats
+    const { trackedPlayers, gameLogModal, overviewModal } = this.props.stats
     const filterTrackedPlayerData = trackedPlayerData.filter(dataObj =>
       trackedPlayers.some(
         listObj =>
@@ -112,6 +113,14 @@ class Dashboard extends Component {
           TransitionComponent={Transition}
         >
           <PlayerGameLog />
+        </Dialog>
+        <Dialog
+          fullScreen
+          open={overviewModal}
+          scroll="paper"
+          TransitionComponent={Transition}
+        >
+          <PlayerOverview />
         </Dialog>
       </div>
     )
