@@ -1,7 +1,7 @@
 import React from 'react'
 import { Router } from '@reach/router'
 import DateFnsUtils from '@date-io/date-fns'
-import { MuiPickersUtilsProvider } from 'material-ui-pickers'
+import { MuiPickersUtilsProvider } from '@material-ui/pickers'
 import Layout from '../components/layout'
 import Details from '../components/Details'
 import DeleteAcct from '../components/DeleteAcct'
