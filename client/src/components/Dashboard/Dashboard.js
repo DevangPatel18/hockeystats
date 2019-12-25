@@ -4,13 +4,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
-import { CircularProgress, Button, Dialog, Slide } from '@material-ui/core/'
+import { CircularProgress, Button, Dialog } from '@material-ui/core/'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
 import PlayerOverview from '../PlayerOverview/PlayerOverview'
-
-function Transition(props) {
-  return <Slide direction="up" {...props} />
-}
+import { TransitionUp } from '../../helper/transitions'
 
 class Dashboard extends Component {
   constructor() {
@@ -110,7 +107,7 @@ class Dashboard extends Component {
           fullScreen
           open={gameLogModal}
           scroll="paper"
-          TransitionComponent={Transition}
+          TransitionComponent={TransitionUp}
         >
           <PlayerGameLog />
         </Dialog>
@@ -118,7 +115,7 @@ class Dashboard extends Component {
           fullScreen
           open={overviewModal}
           scroll="paper"
-          TransitionComponent={Transition}
+          TransitionComponent={TransitionUp}
         >
           <PlayerOverview />
         </Dialog>
