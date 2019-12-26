@@ -5,10 +5,10 @@ import {
   Table,
   TableHead,
   TableRow,
-  TableCell,
   TableBody,
   Tooltip,
 } from '@material-ui/core'
+import { TableCellStyled as TableCell } from '../styles/TableStyles'
 import { ProfileSkateCol, ProfileGoalieCol } from '../../helper/columnLabels'
 
 const ProfileStatTable = ({ stats }) => {
@@ -21,7 +21,7 @@ const ProfileStatTable = ({ stats }) => {
         margin: '1rem',
       }}
     >
-      <Table padding="checkbox">
+      <Table>
         <TableHead>
           <TableRow style={{ height: '2rem' }}>
             {keyCols.map(obj => (
