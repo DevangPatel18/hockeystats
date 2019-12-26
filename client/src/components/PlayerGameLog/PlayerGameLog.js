@@ -37,7 +37,7 @@ const headerStyle = {
 
 const tableCellStyle = {
   fontSize: '0.65rem',
-  padding: '0 5px',
+  padding: '3px 5px',
   borderBottom: '1px solid #D0D0D0',
   borderRight: '1px solid #D0D0D0',
 }
@@ -78,7 +78,7 @@ class PlayerGameLog extends Component {
   tableRowHeader = index => {
     const { playerCols, order, orderBy } = this.state
     return (
-      <TableRow style={{ height: 'auto' }} key={`row-${index}`}>
+      <TableRow key={`row-${index}`}>
         <TableCell
           style={{
             ...headerStyle,
@@ -184,7 +184,7 @@ class PlayerGameLog extends Component {
           <Toolbar style={{ position: 'relative' }}>
             <IconButton
               color="inherit"
-              onClick={closePlayerModal}
+              onClick={() => closePlayerModal('gameLogModal')}
               aria-label="Close"
               style={{ position: 'absolute' }}
             >
@@ -206,13 +206,13 @@ class PlayerGameLog extends Component {
           }}
         >
           {tableDataDisplay.length ? (
-            <Table padding="none" style={{ margin: '0' }}>
+            <Table style={{ margin: '0' }}>
               <TableHead>{this.tableRowHeader('header')}</TableHead>
               <TableBody>
                 {tableDataDisplay.map((game, i) => (
                   <React.Fragment key={`gameLogRow-${i}`}>
                     {i > 0 && i % 25 === 0 && this.tableRowHeader(i)}
-                    <TableRow style={{ height: 'auto' }} hover={true}>
+                    <TableRow hover={true}>
                       <TableCell
                         align="center"
                         style={{ ...tableCellStyle, paddingLeft: '0.5rem' }}

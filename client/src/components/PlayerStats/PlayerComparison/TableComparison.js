@@ -2,7 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { yearFormatter } from '../../../helper/columnLabels'
 import { generateCols } from '../../../helper/columnLabels'
-import { Table, TableBody, TableRow, TableCell } from '@material-ui/core'
+import { Table, TableBody, TableRow } from '@material-ui/core'
+import { TableCellStyled as TableCell } from '../../../components/styles/TableStyles'
 
 const cellBackground = (obj, i) => {
   if (obj.max.includes(i)) {
@@ -78,7 +79,7 @@ const TableComparison = ({ selectedPlayers, data }) => {
 
   return (
     <Table
-      padding="checkbox"
+      size="small"
       style={{ width: 'auto', margin: '0 auto', border: '1px solid' }}
     >
       <TableBody>
@@ -109,7 +110,6 @@ const TableComparison = ({ selectedPlayers, data }) => {
           .map(colObj => (
             <TableRow
               key={colObj.title}
-              style={{ height: '27px' }}
               hover={true}
             >
               <TableCell style={{ fontWeight: 'bolder', paddingLeft: '10px' }}>

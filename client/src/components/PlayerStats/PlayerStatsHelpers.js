@@ -1,25 +1,13 @@
 import store from '../../store'
 
 export const fetchData = api => {
-  const {
-    yearStart,
-    yearEnd,
-    reportName,
-    isAggregate,
-    playoffs,
-    page,
-    rowsPerPage,
-    order,
-    orderBy,
-    teamFilter,
-    countryFilter,
-    playerPositionCode,
-  } = store.getState().tableSettings
-
+  const { filterTracked, ...params } = store.getState().tableSettings
   return api
-    .get(
-      `/api/statistics/${isAggregate.toString()}/${reportName}/${yearStart}/${yearEnd}/${playoffs}/${page}/${rowsPerPage}/${order}/${orderBy}/${teamFilter}/${countryFilter}/${playerPositionCode}`
-    )
+    .request({
+      method: 'get',
+      url: '/api/statistics/playerstats',
+      params,
+    })
     .then(res => res.data)
     .catch(err => {
       console.log(err)

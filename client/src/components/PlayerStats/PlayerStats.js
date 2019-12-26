@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'gatsby'
-import { Dialog, Slide, Button } from '@material-ui/core'
+import { Dialog, Button } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
@@ -13,13 +13,10 @@ import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
 import { fetchData, getFilteredStats } from './PlayerStatsHelpers'
+import { TransitionUp } from '../../helper/transitions'
 
 // Marking event handler as 'passive' in response to console violations
 require('default-passive-events')
-
-function Transition(props) {
-  return <Slide direction="up" {...props} />
-}
 
 class PlayerStats extends Component {
   constructor() {
@@ -183,7 +180,7 @@ class PlayerStats extends Component {
 
   render() {
     const { selectedPlayers } = this.state
-    const { modalOpen } = this.props.stats
+    const { gameLogModal } = this.props.stats
     const { stats } = this.props.playerData
     const dataDisplay = getFilteredStats(stats)
 
@@ -215,7 +212,7 @@ class PlayerStats extends Component {
           fullScreen
           open={this.state.modal}
           scroll="paper"
-          TransitionComponent={Transition}
+          TransitionComponent={TransitionUp}
         >
           <PlayerComparison
             onClose={this.handleModalClose}
@@ -225,9 +222,9 @@ class PlayerStats extends Component {
         </Dialog>
         <Dialog
           fullScreen
-          open={modalOpen}
+          open={gameLogModal}
           scroll="paper"
-          TransitionComponent={Transition}
+          TransitionComponent={TransitionUp}
         >
           <PlayerGameLog />
         </Dialog>

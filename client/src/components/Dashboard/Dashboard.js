@@ -4,12 +4,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
-import { CircularProgress, Button, Dialog, Slide } from '@material-ui/core/'
+import { CircularProgress, Button, Dialog } from '@material-ui/core/'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
-
-function Transition(props) {
-  return <Slide direction="up" {...props} />
-}
+import PlayerOverview from '../PlayerOverview/PlayerOverview'
+import { TransitionUp } from '../../helper/transitions'
 
 class Dashboard extends Component {
   constructor() {
@@ -69,7 +67,7 @@ class Dashboard extends Component {
 
   render() {
     const { trackedPlayerData } = this.state
-    const { trackedPlayers, modalOpen } = this.props.stats
+    const { trackedPlayers, gameLogModal, overviewModal } = this.props.stats
     const filterTrackedPlayerData = trackedPlayerData.filter(dataObj =>
       trackedPlayers.some(
         listObj =>
@@ -107,11 +105,19 @@ class Dashboard extends Component {
         </div>
         <Dialog
           fullScreen
-          open={modalOpen}
+          open={gameLogModal}
           scroll="paper"
-          TransitionComponent={Transition}
+          TransitionComponent={TransitionUp}
         >
           <PlayerGameLog />
+        </Dialog>
+        <Dialog
+          fullScreen
+          open={overviewModal}
+          scroll="paper"
+          TransitionComponent={TransitionUp}
+        >
+          <PlayerOverview />
         </Dialog>
       </div>
     )

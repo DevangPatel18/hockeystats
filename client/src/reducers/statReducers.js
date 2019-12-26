@@ -11,7 +11,8 @@ import {
 const initialState = {
   trackedPlayers: [],
   dataLoad: false,
-  modalOpen: false,
+  gameLogModal: false,
+  overviewModal: false,
   playerObj: {},
 }
 
@@ -62,13 +63,13 @@ export default function(state = initialState, action) {
     case OPEN_MODAL:
       return {
         ...state,
-        modalOpen: true,
+        [action.modal]: true,
         playerObj: action.payload.playerObj,
       }
     case CLOSE_MODAL:
       return {
         ...state,
-        modalOpen: false,
+        [action.modal]: false,
         playerObj: {},
       }
     default:

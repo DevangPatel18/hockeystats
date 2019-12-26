@@ -4,74 +4,68 @@ const axios = require('axios');
 const {
   statsSortObj,
   addPlayerName,
+  getOptionalFilters,
 } = require('../../helper/statisticsHelpers');
 
 // Retrieve dataset
-router.get(
-  '/:isAggregate/:reportName/:yearStart/:yearEnd/:playoffs/:page/:rowsPerPage/:order/:orderBy/:teamFilter/:countryFilter/:playerPositionCode',
-  async (req, res, next) => {
-    try {
-      console.log('Requesting data from api...');
-      const {
-        isAggregate,
-        reportName,
-        yearStart,
-        yearEnd,
-        playoffs,
-        page,
-        rowsPerPage,
-        order,
-        orderBy,
-        teamFilter,
-        countryFilter,
-        playerPositionCode,
-      } = req.params;
+router.get('/playerstats', async (req, res, next) => {
+  try {
+    console.log('Requesting data from api...');
+    const {
+      isAggregate,
+      reportName,
+      yearStart,
+      yearEnd,
+      playoffs,
+      page,
+      rowsPerPage,
+      order,
+      orderBy,
+      teamFilter,
+      countryFilter,
+      search,
+      playerPositionCode,
+    } = req.query;
 
-      const [playerType, reportType] = reportName.split('-');
-      let gameTypeId = playoffs === 'true' ? 3 : 2;
-      sort =
-        orderBy === 'default'
-          ? statsSortObj[playerType + reportType]
-          : `[{"property": "${orderBy}", "direction":"${order.toUpperCase()}"}]`;
-      const team = teamFilter === 'all' ? '' : `franchiseId=${teamFilter}`;
-      const country =
-        countryFilter === 'all' ? '' : `nationalityCode="${countryFilter}"`;
-      const position =
-        playerType === 'goalie' || playerPositionCode === 'all'
-          ? ''
-          : `(${playerPositionCode
-              .split('')
-              .map(char => `positionCode="${char}"`)
-              .join(' or ')})`;
-      let optionalFilters = [team, country, position]
-        .filter(x => x)
-        .join(' and ');
-      optionalFilters = optionalFilters ? optionalFilters + ' and' : '';
+    const [playerType, reportType] = reportName.split('-');
+    let gameTypeId = playoffs === 'true' ? 3 : 2;
+    const sort =
+      orderBy === 'default'
+        ? statsSortObj[playerType + reportType]
+        : `[{"property": "${orderBy}", "direction":"${order.toUpperCase()}"}]`;
+    const optionalFilters = getOptionalFilters({
+      teamFilter,
+      countryFilter,
+      playerType,
+      playerPositionCode,
+    });
+    const baseFilters = `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`;
+    const searchFilter =
+      search && ` and ${playerType}FullName likeIgnoreCase "%${search}%"`;
 
-      let data = await axios
-        .get(`https://api.nhle.com/stats/rest/en/${playerType}/${reportType}`, {
-          params: {
-            isAggregate,
-            isGame: false,
-            reportName,
-            sort,
-            start: page * rowsPerPage,
-            limit: rowsPerPage,
-            factCayenneExp: 'gamesPlayed>=1',
-            cayenneExp: `${optionalFilters} gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`,
-          },
-        })
-        .then(res => {
-          addPlayerName(playerType, res.data.data);
-          return res.data;
-        });
+    let data = await axios
+      .get(`https://api.nhle.com/stats/rest/en/${playerType}/${reportType}`, {
+        params: {
+          isAggregate,
+          isGame: false,
+          reportName,
+          sort,
+          start: page * rowsPerPage,
+          limit: rowsPerPage,
+          factCayenneExp: 'gamesPlayed>=1',
+          cayenneExp: `${optionalFilters} ${baseFilters} ${searchFilter}`,
+        },
+      })
+      .then(res => {
+        addPlayerName(playerType, res.data.data);
+        return res.data;
+      });
 
-      return res.status(200).json(data);
-    } catch (err) {
-      return next(err);
-    }
+    return res.status(200).json(data);
+  } catch (err) {
+    return next(err);
   }
-);
+});
 
 // Retrieve individual player stats
 router.get('/players/:playerId', async (req, res, next) => {

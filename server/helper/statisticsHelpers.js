@@ -10,3 +10,19 @@ exports.addPlayerName = function(playerType, playerList) {
     player.playerName = player[playerNameKey];
   }
 };
+
+exports.getOptionalFilters = function(args) {
+  const { teamFilter, countryFilter, playerType, playerPositionCode } = args;
+  const team = teamFilter === 'all' ? '' : `franchiseId=${teamFilter}`;
+  const country =
+    countryFilter === 'all' ? '' : `nationalityCode="${countryFilter}"`;
+  const position =
+    playerType === 'goalie' || playerPositionCode === 'all'
+      ? ''
+      : `(${playerPositionCode
+          .split('')
+          .map(char => `positionCode="${char}"`)
+          .join(' or ')})`;
+  let optionalFilters = [team, country, position].filter(x => x).join(' and ');
+  return optionalFilters ? optionalFilters + ' and' : '';
+};

@@ -7,7 +7,6 @@ import {
   Checkbox,
   IconButton,
   TableBody,
-  TableCell,
   TableRow,
   TableSortLabel,
 } from '@material-ui/core'
@@ -20,6 +19,7 @@ import {
   generateCols,
 } from '../../helper/columnLabels'
 import Tooltip from '@material-ui/core/Tooltip'
+import { TableCellStyled as TableCell } from '../styles/TableStyles'
 import { openPlayerModal } from '../../actions/statActions'
 
 const styles = {
@@ -58,7 +58,7 @@ const TableData = props => {
 
   return (
     <div style={{ overflowX: 'auto' }}>
-      <Table padding="checkbox">
+      <Table >
         <TableHead>
           <TableRow style={{ borderColor: 'none', height: '35px' }}>
             <TableCell
@@ -180,7 +180,7 @@ const TableData = props => {
                       classes={{ root: classes.root }}
                       onClick={event => {
                         event.stopPropagation()
-                        openPlayerModal(row)
+                        openPlayerModal('gameLogModal', row)
                       }}
                     />
                   </TableCell>

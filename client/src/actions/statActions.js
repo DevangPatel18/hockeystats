@@ -69,10 +69,10 @@ export const stopLoad = event => dispatch => {
   dispatch({ type: DATA_LOADED })
 }
 
-export const openPlayerModal = playerObj => dispatch => {
-  dispatch({ type: OPEN_MODAL, payload: { playerObj } })
+export const openPlayerModal = (modal, playerObj) => dispatch => {
+  dispatch({ type: OPEN_MODAL, payload: { playerObj }, modal })
 }
 
-export const closePlayerModal = () => dispatch => {
-  dispatch({ type: CLOSE_MODAL })
+export const closePlayerModal = modal => dispatch => {
+  dispatch({ type: CLOSE_MODAL, modal })
 }

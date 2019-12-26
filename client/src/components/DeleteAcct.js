@@ -10,7 +10,7 @@ import {
   DialogTitle,
 } from '@material-ui/core'
 import styles from './styles/DeleteAcctStyles'
-import { deleteUser } from '../actions/authActions'
+import { deleteUser, logoutUser } from '../actions/authActions'
 
 class DeleteAcct extends Component {
   constructor() {
@@ -142,5 +142,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { deleteUser }
+  { deleteUser, logoutUser }
 )(DeleteAcct)
