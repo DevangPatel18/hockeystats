@@ -5,6 +5,7 @@ import { closePlayerModal } from '../../actions/statActions'
 import { AppBar, IconButton, Toolbar } from '@material-ui/core/'
 import CloseIcon from '@material-ui/icons/Close'
 import StackedPointsChart from './StackedPointsChart'
+import PointsPieChart from './PointsPieChart'
 
 class PlayerOverview extends Component {
   render() {
@@ -26,6 +27,9 @@ class PlayerOverview extends Component {
           </Toolbar>
         </AppBar>
         <StackedPointsChart />
+        <div style={{ width: '48vw' }}>
+          <PointsPieChart />
+        </div>
       </div>
     )
   }
