@@ -115,16 +115,31 @@ export const getSorting = (order, orderBy) => {
 
 export const generateCols = data => {
   if (!data.length) return skaterStatsCol
-  const { playerType } = store.getState().playerData
+  const { playerType, reportType } = store.getState().playerData
 
-  const aggregateTable = !Object.keys(data[0]).includes('seasonId')
-  const isSkaters = playerType === 'skater'
+  const dataColumns = Object.keys(data[0])
+  const seasonIdindex = dataColumns.indexOf('seasonId')
+  let playerStatsCol
 
-  const playerStatsCol = isSkaters ? skaterStatsCol : goalieStatsCol
+  switch (`${playerType}${reportType}`) {
+    case 'skatersummary':
+      playerStatsCol = skaterStatsCol
+      break
+    case 'goaliesummary':
+      playerStatsCol = goalieStatsCol
+      break
+    default:
+      playerStatsCol = dataColumns
+      if (seasonIdindex > 0) {
+        playerStatsCol.splice(seasonIdindex, 1)
+      }
+      playerStatsCol = playerStatsCol.map(x => ({ title: x, id: x }))
+  }
 
-  const columns = aggregateTable
-    ? [].concat(playerStatsCol)
-    : [].concat(seasonCol, playerStatsCol)
+  const columns =
+    seasonIdindex < 0
+      ? [].concat(playerStatsCol)
+      : [].concat(seasonCol, playerStatsCol)
 
   return columns
 }
