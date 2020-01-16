@@ -34,7 +34,7 @@ class PlayerStats extends Component {
 
   componentDidMount() {
     this._isMounted = true
-    this.submitQuery()
+    this.handleSubmitQuery()
 
     if (!this.props.auth.isAuthenticated) {
       window.addEventListener(
@@ -80,7 +80,7 @@ class PlayerStats extends Component {
 
   handleChangePage = async (event, page) => {
     await this.props.changeField('page', page)
-    this.submitQuery()
+    this.handleSubmitQuery()
   }
 
   handleRowClick = ({ currentTarget }) => {
@@ -115,7 +115,7 @@ class PlayerStats extends Component {
 
   handleChangeRowsPerPage = async event => {
     await this.props.changeField('rowsPerPage', parseInt(event.target.value))
-    this.submitQuery()
+    this.handleSubmitQuery()
   }
 
   handleRequestSort = async ({ currentTarget }) => {
@@ -129,7 +129,7 @@ class PlayerStats extends Component {
     }
 
     await this.props.changeSort(newOrder, newOrderBy)
-    this.submitQuery()
+    this.handleSubmitQuery()
   }
 
   handleModalOpen = () => {
@@ -140,7 +140,7 @@ class PlayerStats extends Component {
     this.setState({ modal: false })
   }
 
-  submitQuery = async () => {
+  handleSubmitQuery = async () => {
     this.props.startLoad()
     const stats = await configure().then(api => fetchData(api))
     this.props.stopLoad()
@@ -189,7 +189,7 @@ class PlayerStats extends Component {
         <h1>Player Statistics</h1>
         <StatsFilterPanel
           handleRowFilter={this.handleRowFilter}
-          submitQuery={this.submitQuery}
+          handleSubmitQuery={this.handleSubmitQuery}
           handleModalOpen={this.handleModalOpen}
         />
         <PlayerTags

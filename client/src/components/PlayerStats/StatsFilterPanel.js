@@ -64,7 +64,7 @@ class StatsFilterPanel extends Component {
   )
 
   render() {
-    const { handleRowFilter, submitQuery, handleModalOpen } = this.props
+    const { handleSubmitQuery, handleModalOpen } = this.props
 
     const {
       yearStart,
@@ -226,7 +226,7 @@ class StatsFilterPanel extends Component {
           <Button
             color="primary"
             variant="contained"
-            onClick={submitQuery}
+            onClick={handleSubmitQuery}
             style={{ marginBottom: '1rem' }}
           >
             generate data
@@ -259,7 +259,7 @@ class StatsFilterPanel extends Component {
 
 StatsFilterPanel.propTypes = {
   handleRowFilter: PropTypes.func.isRequired,
-  submitQuery: PropTypes.func.isRequired,
+  handleSubmitQuery: PropTypes.func.isRequired,
   handleModalOpen: PropTypes.func.isRequired,
 }
 
