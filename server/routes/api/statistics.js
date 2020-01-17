@@ -132,4 +132,17 @@ router.get(
   }
 );
 
+// Retrieve stat column configuration
+router.get('/columnConfig', async (req, res, next) => {
+  try {
+    const columnConfig = await axios
+      .get('https://api.nhle.com/stats/rest/en/config')
+      .then(res => res.data);
+
+    return res.status(200).json(columnConfig);
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;
