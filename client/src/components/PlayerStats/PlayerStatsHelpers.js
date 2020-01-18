@@ -46,6 +46,17 @@ export const getFilteredStats = stats => {
   return dataDisplay
 }
 
+const getDefaultSortParams = () => {
+  const { reportName, colConfig } = store.getState().tableSettings
+  const [player, report] = reportName.split('-')
+  const playerType = player === 'skater' ? 'player' : 'goalie'
+  const { sortKeys } = colConfig[`${playerType}ReportData`][report].season
+  const statArray = sortKeys.map(
+    stat => `{"property":"${stat}","direction":"DESC"}`
+  )
+  return `[${statArray.join(',')}]`
+}
+
 // const getPositionFilteredStats = stats => {
 //   const { playerPositionCode } = store.getState().tableSettings
 //   const isSkaters = stats[0] ? stats[0]['playerPositionCode'] !== 'G' : true
