@@ -5,7 +5,11 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
 import * as statActions from '../../actions/statActions'
-import { changeField, changeSort } from '../../actions/tableSettingsActions'
+import {
+  changeField,
+  changeSort,
+  loadColumnConfig,
+} from '../../actions/tableSettingsActions'
 import { submitQuery } from '../../actions/playerDataActions'
 import handleTable from './handleTableData'
 import StatsFilterPanel from './StatsFilterPanel'
@@ -32,8 +36,10 @@ class PlayerStats extends Component {
     this._isMounted = false
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this._isMounted = true
+
+    await this.props.loadColumnConfig()
     this.handleSubmitQuery()
 
     if (!this.props.auth.isAuthenticated) {
@@ -265,5 +271,6 @@ export default connect(
     changeField,
     changeSort,
     submitQuery,
+    loadColumnConfig,
   }
 )(PlayerStats)
