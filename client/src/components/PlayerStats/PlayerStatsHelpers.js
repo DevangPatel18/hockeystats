@@ -1,12 +1,13 @@
 import store from '../../store'
 
 export const fetchData = api => {
-  const { filterTracked, ...params } = store.getState().tableSettings
+  const { filterTracked, colConfig, ...params } = store.getState().tableSettings
+  const defaultSort = getDefaultSortParams()
   return api
     .request({
       method: 'get',
       url: '/api/statistics/playerstats',
-      params,
+      params: { ...params, defaultSort },
     })
     .then(res => res.data)
     .catch(err => {
