@@ -47,9 +47,9 @@ export const toggleSwitch = name => dispatch => {
   })
 }
 
-export const loadColumnConfig = () => async dispatch => {
-  const colConfig = await API.get('/api/statistics/columnConfig')
-    .then(res => res.data)
+export const loadColumnConfig = () => async dispatch =>
+  await API.get('/api/statistics/columnConfig')
+    .then(res => {
+      dispatch({ type: LOAD_COLUMN_CONFIG, colConfig: res.data })
+    })
     .catch(err => console.log(err))
-  dispatch({ type: LOAD_COLUMN_CONFIG, colConfig })
-}
