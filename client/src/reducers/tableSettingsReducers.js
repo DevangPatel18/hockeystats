@@ -4,7 +4,7 @@ import { getCurrentSeasonId } from '../helper/dateHelpers'
 const currentSeason = getCurrentSeasonId()
 
 const initialState = {
-  colConfig: {},
+  colConfig: null,
   yearStart: currentSeason,
   yearEnd: currentSeason,
   reportName: 'skater-summary',

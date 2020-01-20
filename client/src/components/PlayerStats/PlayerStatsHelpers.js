@@ -51,11 +51,16 @@ const getDefaultSortParams = () => {
   const { reportName, colConfig } = store.getState().tableSettings
   const [player, report] = reportName.split('-')
   const playerType = player === 'skater' ? 'player' : 'goalie'
-  const { sortKeys } = colConfig[`${playerType}ReportData`][report].season
-  const statArray = sortKeys.map(
-    stat => `{"property":"${stat}","direction":"DESC"}`
-  )
-  return `[${statArray.join(',')}]`
+  if (colConfig) {
+    const sortKeys =
+      colConfig[`${playerType}ReportData`][report].season.sortKeys
+    const statArray = sortKeys.map(
+      stat => `{"property":"${stat}","direction":"DESC"}`
+    )
+    return `[${statArray.join(',')}]`
+  } else {
+    return `[{"property":"${player}FullName","direction":"ASC_CI"}]`
+  }
 }
 
 // const getPositionFilteredStats = stats => {
