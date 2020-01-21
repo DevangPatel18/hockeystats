@@ -27,6 +27,7 @@ import {
 import { getCurrentSeasonId } from '../../helper/dateHelpers'
 import franchises from '../../helper/franchises'
 import countries from '../../helper/countries'
+import { skaterReportTypes, goalieReportTypes } from '../../helper/reportTypes'
 
 const currentSeasonYearEnd = getCurrentSeasonId().slice(4)
 
@@ -135,10 +136,18 @@ class StatsFilterPanel extends Component {
               name="reportName"
             >
               <optgroup label="Skaters">
-                <option value="skater-summary">Summary</option>
+                {skaterReportTypes.map(obj => (
+                  <option key={obj.report} value={obj.report}>
+                    {obj.title}
+                  </option>
+                ))}
               </optgroup>
               <optgroup label="Goalies">
-                <option value="goalie-summary">Summary</option>
+                {goalieReportTypes.map(obj => (
+                  <option key={obj.report} value={obj.report}>
+                    {obj.title}
+                  </option>
+                ))}
               </optgroup>
             </NativeSelect>
           </FormControl>
