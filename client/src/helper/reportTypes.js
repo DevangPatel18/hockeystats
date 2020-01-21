@@ -1,0 +1,31 @@
+export const skaterReportTypes = [
+  { report: 'skater-summary', title: 'Summary' },
+  { report: 'skater-bios', title: 'Bio' },
+  { report: 'skater-faceoffpercentages', title: 'Faceoff %' },
+  { report: 'skater-faceoffwins', title: 'Faceoff Wins/Losses' },
+  { report: 'skater-goalsForAgainst', title: 'Goals For/Against' },
+  { report: 'skater-realtime', title: 'Misc' },
+  { report: 'skater-penalties', title: 'Penalties' },
+  { report: 'skater-penaltykill', title: 'Penalty Kill' },
+  { report: 'skater-penaltyShots', title: 'Penalty Shots' },
+  { report: 'skater-powerplay', title: 'Power Player' },
+  { report: 'skater-puckPossessions', title: 'Puck Possession' },
+  { report: 'skater-summaryshooting', title: 'SAT Counts' },
+  { report: 'skater-percentages', title: 'SAT %' },
+  { report: 'skater-scoringRates', title: 'Scoring/60' },
+  { report: 'skater-scoringpergame', title: 'Scoring/GP' },
+  { report: 'skater-shootout', title: 'Shootout' },
+  { report: 'skater-shottype', title: 'Shots by Type' },
+  { report: 'skater-timeonice', title: 'Time on Ice' },
+]
+
+export const goalieReportTypes = [
+  { report: 'goalie-summary', title: 'Summary' },
+  { report: 'goalie-advanced', title: 'Advanced' },
+  { report: 'goalie-bios', title: 'Bio' },
+  { report: 'goalie-daysrest', title: 'Days Rest' },
+  { report: 'goalie-penaltyShots', title: 'Penalty Shots' },
+  { report: 'goalie-savesByStrength', title: 'Saves by Strength' },
+  { report: 'goalie-shootout', title: 'Shootout' },
+  { report: 'goalie-startedVsRelieved', title: 'Started vs Relieved' },
+]
