@@ -134,8 +134,12 @@ class StatsFilterPanel extends Component {
               input={<Input name="reportName" id="reportName" />}
               name="reportName"
             >
-              <option value="skater-summary">Skaters</option>
-              <option value="goalie-summary">Goaltenders</option>
+              <optgroup label="Skaters">
+                <option value="skater-summary">Summary</option>
+              </optgroup>
+              <optgroup label="Goalies">
+                <option value="goalie-summary">Summary</option>
+              </optgroup>
             </NativeSelect>
           </FormControl>
           <FormControlLabel
