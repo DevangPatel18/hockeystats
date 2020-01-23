@@ -1,4 +1,5 @@
 import store from '../store'
+import statAttributes from './statAttributes'
 
 export const seasonCol = [
   { title: 'Season', id: 'seasonId' },
@@ -116,25 +117,23 @@ export const getSorting = (order, orderBy) => {
 export const generateCols = data => {
   if (!data.length) return skaterStatsCol
   const { playerType, reportType } = store.getState().playerData
+  const { colConfig } = store.getState().tableSettings
 
-  const dataColumns = Object.keys(data[0])
-  const seasonIdindex = dataColumns.indexOf('seasonId')
-  let playerStatsCol
+  const statsList = Object.keys(data[0])
+  const seasonIdindex = statsList.indexOf('seasonId')
+  const reportKey = `${playerType === 'skater' ? 'player' : 'goalie'}ReportData`
+  let playerStatsCol =
+    colConfig[reportKey]?.[reportType]?.season?.resultFilters ||
+    statsList.filter(
+      stat =>
+        !['seasonId', 'teamAbbrevs', 'playerId'].includes(stat) &&
+        stat.slice(-4) !== 'Name'
+    )
 
-  switch (`${playerType}${reportType}`) {
-    case 'skatersummary':
-      playerStatsCol = skaterStatsCol
-      break
-    case 'goaliesummary':
-      playerStatsCol = goalieStatsCol
-      break
-    default:
-      playerStatsCol = dataColumns
-      if (seasonIdindex > 0) {
-        playerStatsCol.splice(seasonIdindex, 1)
-      }
-      playerStatsCol = playerStatsCol.map(x => ({ title: x, id: x }))
-  }
+  playerStatsCol = playerStatsCol.map(x => ({
+    title: (statAttributes[x] && statAttributes[x].title) || x,
+    id: x,
+  }))
 
   const columns =
     seasonIdindex < 0
