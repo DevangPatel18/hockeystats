@@ -43,6 +43,9 @@ router.get('/playerstats', async (req, res, next) => {
     const baseFilters = `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`;
     const searchFilter =
       search && ` and ${playerType}FullName likeIgnoreCase "%${search}%"`;
+    const factCayenneExp = ['penaltyShots', 'shootout'].includes(reportType)
+      ? ''
+      : 'gamesPlayed>=1';
 
     let data = await axios
       .get(`https://api.nhle.com/stats/rest/en/${playerType}/${reportType}`, {
@@ -53,7 +56,7 @@ router.get('/playerstats', async (req, res, next) => {
           sort,
           start: page * rowsPerPage,
           limit: rowsPerPage,
-          factCayenneExp: 'gamesPlayed>=1',
+          factCayenneExp,
           cayenneExp: `${optionalFilters} ${baseFilters} ${searchFilter}`,
         },
       })
