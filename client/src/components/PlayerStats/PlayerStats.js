@@ -147,6 +147,11 @@ class PlayerStats extends Component {
   }
 
   handleSubmitQuery = async () => {
+    const { reportName } = this.props.tableSettings
+    const { playerType, reportType } = this.props.playerData
+    if (reportName !== `${playerType}-${reportType}`) {
+      await this.props.changeSort('desc', 'default')
+    }
     this.props.startLoad()
     const stats = await configure().then(api => fetchData(api))
     this.props.stopLoad()
