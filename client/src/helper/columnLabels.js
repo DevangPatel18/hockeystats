@@ -133,6 +133,7 @@ export const generateCols = data => {
   playerStatsCol = playerStatsCol.map(x => ({
     title: (statAttributes[x] && statAttributes[x].title) || x,
     id: x,
+    format: statAttributes[x] && statAttributes[x].format,
   }))
 
   const columns =
