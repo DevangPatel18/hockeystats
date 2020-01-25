@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { yearFormatter } from '../../../helper/columnLabels'
 import { generateCols } from '../../../helper/columnLabels'
 import { Table, TableBody, TableRow } from '@material-ui/core'
+import Tooltip from '@material-ui/core/Tooltip'
 import { TableCellStyled as TableCell } from '../../../components/styles/TableStyles'
 import statsSortedAsc from '../../../helper/statsSortedAsc'
 
@@ -111,7 +112,9 @@ const TableComparison = ({ selectedPlayers, data }) => {
           .map(colObj => (
             <TableRow key={colObj.title} hover={true}>
               <TableCell style={{ fontWeight: 'bolder', paddingLeft: '10px' }}>
-                {colObj.title}
+                <Tooltip title={colObj.id} placement="right">
+                  <span>{colObj.title}</span>
+                </Tooltip>
               </TableCell>
               {playersObj.map((obj, i) => (
                 <TableCell
