@@ -1,5 +1,12 @@
 import store from '../../store'
 
+const sortStatsASC = [
+  'goalsAgainstAverage',
+  'lastName',
+  'skaterFullName',
+  'goalieFullName',
+]
+
 export const fetchData = api => {
   const { filterTracked, colConfig, ...params } = store.getState().tableSettings
   const defaultSort = getDefaultSortParams()
@@ -55,7 +62,10 @@ const getDefaultSortParams = () => {
     const sortKeys =
       colConfig[`${playerType}ReportData`][report].season.sortKeys
     const statArray = sortKeys.map(
-      stat => `{"property":"${stat}","direction":"DESC"}`
+      stat =>
+        `{"property":"${stat}","direction":"${
+          sortStatsASC.includes(stat) ? 'ASC_CI' : 'DESC'
+        }"}`
     )
     return `[${statArray.join(',')}]`
   } else {
