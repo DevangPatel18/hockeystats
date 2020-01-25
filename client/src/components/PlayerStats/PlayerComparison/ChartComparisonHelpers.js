@@ -13,7 +13,9 @@ export async function getGameLogData(api) {
   const gameLogCollection = await Promise.all(
     playerIds.map(playerArr => getPlayerDataFunction(api, playerArr))
   )
-  return isAggregate ? gameLogCollection.flat() : gameLogCollection
+  return isAggregate
+    ? gameLogCollection.map(playerSeasonsData => playerSeasonsData.flat())
+    : gameLogCollection
 }
 
 export function getPlayerSeasonData(api, playerArr) {

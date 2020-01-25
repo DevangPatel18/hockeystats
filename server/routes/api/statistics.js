@@ -25,13 +25,14 @@ router.get('/playerstats', async (req, res, next) => {
       countryFilter,
       search,
       playerPositionCode,
+      defaultSort,
     } = req.query;
 
     const [playerType, reportType] = reportName.split('-');
     let gameTypeId = playoffs === 'true' ? 3 : 2;
     const sort =
       orderBy === 'default'
-        ? statsSortObj[playerType + reportType]
+        ? defaultSort
         : `[{"property": "${orderBy}", "direction":"${order.toUpperCase()}"}]`;
     const optionalFilters = getOptionalFilters({
       teamFilter,
@@ -42,6 +43,9 @@ router.get('/playerstats', async (req, res, next) => {
     const baseFilters = `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`;
     const searchFilter =
       search && ` and ${playerType}FullName likeIgnoreCase "%${search}%"`;
+    const factCayenneExp = ['penaltyShots', 'shootout'].includes(reportType)
+      ? ''
+      : 'gamesPlayed>=1';
 
     let data = await axios
       .get(`https://api.nhle.com/stats/rest/en/${playerType}/${reportType}`, {
@@ -52,7 +56,7 @@ router.get('/playerstats', async (req, res, next) => {
           sort,
           start: page * rowsPerPage,
           limit: rowsPerPage,
-          factCayenneExp: 'gamesPlayed>=1',
+          factCayenneExp,
           cayenneExp: `${optionalFilters} ${baseFilters} ${searchFilter}`,
         },
       })
@@ -131,5 +135,18 @@ router.get(
     }
   }
 );
+
+// Retrieve stat column configuration
+router.get('/columnConfig', async (req, res, next) => {
+  try {
+    const columnConfig = await axios
+      .get('https://api.nhle.com/stats/rest/en/config')
+      .then(res => res.data);
+
+    return res.status(200).json(columnConfig);
+  } catch (err) {
+    return next(err);
+  }
+});
 
 module.exports = router;

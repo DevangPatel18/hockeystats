@@ -1,5 +1,12 @@
-import { CHANGE_YEARS, CHANGE_FIELD, CHANGE_SORT, TOGGLE_SWITCH } from './types'
+import {
+  CHANGE_YEARS,
+  CHANGE_FIELD,
+  CHANGE_SORT,
+  TOGGLE_SWITCH,
+  LOAD_COLUMN_CONFIG,
+} from './types'
 import store from '../store'
+import API from '../utils/api'
 
 export const changeSeason = (name, year) => dispatch => {
   const { yearEnd } = store.getState().tableSettings
@@ -39,3 +46,10 @@ export const toggleSwitch = name => dispatch => {
     name,
   })
 }
+
+export const loadColumnConfig = () => async dispatch =>
+  await API.get('/api/statistics/columnConfig')
+    .then(res => {
+      dispatch({ type: LOAD_COLUMN_CONFIG, colConfig: res.data })
+    })
+    .catch(err => console.log(err))

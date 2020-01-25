@@ -6,6 +6,7 @@ import {
   VictoryStack,
   VictoryArea,
   VictoryAxis,
+  VictoryLabel,
   VictoryVoronoiContainer,
 } from 'victory'
 import chartTheme from '../../helper/chartTheme'
@@ -67,7 +68,7 @@ class StackedPointsChart extends Component {
 
     if (goals.length < 1) return ''
     return (
-      <div>
+      <div style={{ padding: '0 1rem' }}>
         <VictoryChart
           theme={theme}
           containerComponent={
@@ -90,6 +91,21 @@ class StackedPointsChart extends Component {
             }}
           />
           <VictoryAxis dependentAxis crossAxis />
+          <VictoryLabel
+            angle="-90"
+            text={'Points'}
+            textAnchor="middle"
+            style={{ fontWeight: 'bolder' }}
+            x={10}
+            y={chartHeight / 2 - 25}
+          />
+          <VictoryLabel
+            text={'Season'}
+            textAnchor="middle"
+            style={{ fontWeight: 'bolder' }}
+            x={chartWidth / 2}
+            y={chartHeight - 10}
+          />
         </VictoryChart>
       </div>
     )

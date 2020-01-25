@@ -58,7 +58,7 @@ const TableData = props => {
 
   return (
     <div style={{ overflowX: 'auto' }}>
-      <Table >
+      <Table>
         <TableHead>
           <TableRow style={{ borderColor: 'none', height: '35px' }}>
             <TableCell
@@ -82,7 +82,7 @@ const TableData = props => {
             {columns.map(col => (
               <TableCell
                 align="center"
-                key={col.title}
+                key={col.id}
                 style={{
                   color: 'white',
                   whiteSpace: 'nowrap',
@@ -192,7 +192,7 @@ const TableData = props => {
                 )
                 .map(col => (
                   <TableCell
-                    key={`${row.playerId}-${col.title}`}
+                    key={`${row.playerId}-${col.id}`}
                     style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
                     align="center"
                   >

@@ -53,6 +53,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "babel-preset-gatsby": "^0.2.27",
     "prettier": "^1.18.2"
   },
   "repository": {

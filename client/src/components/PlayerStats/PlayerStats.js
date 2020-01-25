@@ -5,7 +5,11 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import configure from '../../utils/configLocalforage'
 import * as statActions from '../../actions/statActions'
-import { changeField, changeSort } from '../../actions/tableSettingsActions'
+import {
+  changeField,
+  changeSort,
+  loadColumnConfig,
+} from '../../actions/tableSettingsActions'
 import { submitQuery } from '../../actions/playerDataActions'
 import handleTable from './handleTableData'
 import StatsFilterPanel from './StatsFilterPanel'
@@ -32,9 +36,11 @@ class PlayerStats extends Component {
     this._isMounted = false
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     this._isMounted = true
-    this.submitQuery()
+
+    await this.props.loadColumnConfig()
+    this.handleSubmitQuery()
 
     if (!this.props.auth.isAuthenticated) {
       window.addEventListener(
@@ -80,7 +86,7 @@ class PlayerStats extends Component {
 
   handleChangePage = async (event, page) => {
     await this.props.changeField('page', page)
-    this.submitQuery()
+    this.handleSubmitQuery()
   }
 
   handleRowClick = ({ currentTarget }) => {
@@ -115,7 +121,7 @@ class PlayerStats extends Component {
 
   handleChangeRowsPerPage = async event => {
     await this.props.changeField('rowsPerPage', parseInt(event.target.value))
-    this.submitQuery()
+    this.handleSubmitQuery()
   }
 
   handleRequestSort = async ({ currentTarget }) => {
@@ -129,7 +135,7 @@ class PlayerStats extends Component {
     }
 
     await this.props.changeSort(newOrder, newOrderBy)
-    this.submitQuery()
+    this.handleSubmitQuery()
   }
 
   handleModalOpen = () => {
@@ -140,7 +146,12 @@ class PlayerStats extends Component {
     this.setState({ modal: false })
   }
 
-  submitQuery = async () => {
+  handleSubmitQuery = async () => {
+    const { reportName } = this.props.tableSettings
+    const { playerType, reportType } = this.props.playerData
+    if (reportName !== `${playerType}-${reportType}`) {
+      await this.props.changeSort('desc', 'default')
+    }
     this.props.startLoad()
     const stats = await configure().then(api => fetchData(api))
     this.props.stopLoad()
@@ -189,7 +200,7 @@ class PlayerStats extends Component {
         <h1>Player Statistics</h1>
         <StatsFilterPanel
           handleRowFilter={this.handleRowFilter}
-          submitQuery={this.submitQuery}
+          handleSubmitQuery={this.handleSubmitQuery}
           handleModalOpen={this.handleModalOpen}
         />
         <PlayerTags
@@ -265,5 +276,6 @@ export default connect(
     changeField,
     changeSort,
     submitQuery,
+    loadColumnConfig,
   }
 )(PlayerStats)

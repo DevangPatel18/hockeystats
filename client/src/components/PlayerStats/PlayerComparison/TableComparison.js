@@ -3,7 +3,9 @@ import PropTypes from 'prop-types'
 import { yearFormatter } from '../../../helper/columnLabels'
 import { generateCols } from '../../../helper/columnLabels'
 import { Table, TableBody, TableRow } from '@material-ui/core'
+import Tooltip from '@material-ui/core/Tooltip'
 import { TableCellStyled as TableCell } from '../../../components/styles/TableStyles'
+import statsSortedAsc from '../../../helper/statsSortedAsc'
 
 const cellBackground = (obj, i) => {
   if (obj.max.includes(i)) {
@@ -69,7 +71,7 @@ const TableComparison = ({ selectedPlayers, data }) => {
         }
 
         if (maxObj.val !== minObj.val) {
-          minMax[attr.id] = attr.sortReverse
+          minMax[attr.id] = statsSortedAsc.includes(attr.id)
             ? { max: minObj.list, min: maxObj.list }
             : { max: maxObj.list, min: minObj.list }
         }
@@ -108,12 +110,11 @@ const TableComparison = ({ selectedPlayers, data }) => {
               !['seasonId', 'teamAbbrevs'].includes(colObj.id)
           )
           .map(colObj => (
-            <TableRow
-              key={colObj.title}
-              hover={true}
-            >
+            <TableRow key={colObj.title} hover={true}>
               <TableCell style={{ fontWeight: 'bolder', paddingLeft: '10px' }}>
-                {colObj.title}
+                <Tooltip title={colObj.id} placement="right">
+                  <span>{colObj.title}</span>
+                </Tooltip>
               </TableCell>
               {playersObj.map((obj, i) => (
                 <TableCell

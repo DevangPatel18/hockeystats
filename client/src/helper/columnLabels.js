@@ -1,4 +1,5 @@
 import store from '../store'
+import statAttributes from './statAttributes'
 
 export const seasonCol = [
   { title: 'Season', id: 'seasonId' },
@@ -115,16 +116,31 @@ export const getSorting = (order, orderBy) => {
 
 export const generateCols = data => {
   if (!data.length) return skaterStatsCol
-  const { playerType } = store.getState().playerData
+  const { playerType, reportType } = store.getState().playerData
+  const { colConfig } = store.getState().tableSettings
 
-  const aggregateTable = !Object.keys(data[0]).includes('seasonId')
-  const isSkaters = playerType === 'skater'
+  const statsList = Object.keys(data[0])
+  const seasonIdindex = statsList.indexOf('seasonId')
+  const reportKey = `${playerType === 'skater' ? 'player' : 'goalie'}ReportData`
+  const columnKey = reportType === 'bios' ? 'displayItems' : 'resultFilters'
+  let playerStatsCol =
+    colConfig[reportKey]?.[reportType]?.season?.[columnKey] || statsList
+  playerStatsCol = playerStatsCol.filter(
+    stat =>
+      !['seasonId', 'teamAbbrevs', 'playerId'].includes(stat) &&
+      stat.slice(-4) !== 'Name'
+  )
 
-  const playerStatsCol = isSkaters ? skaterStatsCol : goalieStatsCol
+  playerStatsCol = playerStatsCol.map(x => ({
+    title: (statAttributes[x] && statAttributes[x].title) || x,
+    id: x,
+    format: statAttributes[x] && statAttributes[x].format,
+  }))
 
-  const columns = aggregateTable
-    ? [].concat(playerStatsCol)
-    : [].concat(seasonCol, playerStatsCol)
+  const columns =
+    seasonIdindex < 0
+      ? [].concat(playerStatsCol)
+      : [].concat(seasonCol, playerStatsCol)
 
   return columns
 }

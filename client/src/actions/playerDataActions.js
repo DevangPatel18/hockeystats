@@ -11,5 +11,6 @@ export const submitQuery = stats => dispatch => {
     countries: getCountries(stats.data),
     dataType: playoffs ? 'playoffs' : 'regular',
     playerType: reportName.split('-')[0],
+    reportType: reportName.split('-')[1],
   })
 }

@@ -4,6 +4,7 @@ import { getCurrentSeasonId } from '../helper/dateHelpers'
 const currentSeason = getCurrentSeasonId()
 
 const initialState = {
+  colConfig: null,
   yearStart: currentSeason,
   yearEnd: currentSeason,
   reportName: 'skater-summary',
@@ -43,6 +44,11 @@ export default function(state = initialState, action) {
       return {
         ...state,
         [action.name]: !state[action.name],
+      }
+    case types.LOAD_COLUMN_CONFIG:
+      return {
+        ...state,
+        colConfig: action.colConfig,
       }
     default:
       return state

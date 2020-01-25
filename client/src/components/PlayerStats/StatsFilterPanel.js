@@ -27,6 +27,7 @@ import {
 import { getCurrentSeasonId } from '../../helper/dateHelpers'
 import franchises from '../../helper/franchises'
 import countries from '../../helper/countries'
+import { skaterReportTypes, goalieReportTypes } from '../../helper/reportTypes'
 
 const currentSeasonYearEnd = getCurrentSeasonId().slice(4)
 
@@ -64,7 +65,7 @@ class StatsFilterPanel extends Component {
   )
 
   render() {
-    const { handleRowFilter, submitQuery, handleModalOpen } = this.props
+    const { handleSubmitQuery, handleModalOpen } = this.props
 
     const {
       yearStart,
@@ -134,8 +135,20 @@ class StatsFilterPanel extends Component {
               input={<Input name="reportName" id="reportName" />}
               name="reportName"
             >
-              <option value="skater-summary">Skaters</option>
-              <option value="goalie-summary">Goaltenders</option>
+              <optgroup label="Skaters">
+                {skaterReportTypes.map(obj => (
+                  <option key={obj.report} value={obj.report}>
+                    {obj.title}
+                  </option>
+                ))}
+              </optgroup>
+              <optgroup label="Goalies">
+                {goalieReportTypes.map(obj => (
+                  <option key={obj.report} value={obj.report}>
+                    {obj.title}
+                  </option>
+                ))}
+              </optgroup>
             </NativeSelect>
           </FormControl>
           <FormControlLabel
@@ -226,7 +239,7 @@ class StatsFilterPanel extends Component {
           <Button
             color="primary"
             variant="contained"
-            onClick={submitQuery}
+            onClick={handleSubmitQuery}
             style={{ marginBottom: '1rem' }}
           >
             generate data
@@ -259,7 +272,7 @@ class StatsFilterPanel extends Component {
 
 StatsFilterPanel.propTypes = {
   handleRowFilter: PropTypes.func.isRequired,
-  submitQuery: PropTypes.func.isRequired,
+  handleSubmitQuery: PropTypes.func.isRequired,
   handleModalOpen: PropTypes.func.isRequired,
 }
 
