@@ -201,7 +201,7 @@ export default {
   usatPercentageBehind: { title: 'USAT% Behind', format: formatPercent },
   usatPrecentageClose: { title: 'USAT% Close', format: formatPercent },
   zoneStartPct5v5: { title: 'OZ%', format: formatPercent },
-  shootingPct5v5: { title: 'On-Ice S%', format: formatPercent },
+  shootingPct5v5: { title: 'S%', format: formatPercent },
   skaterSavePct5v5: { title: 'On-Ice Sv%', format: formatPercent },
   skaterShootingPlusSavePct5v5: {
     title: 'On-Ice S%+Sv%',
