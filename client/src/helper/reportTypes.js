@@ -8,7 +8,7 @@ export const skaterReportTypes = [
   { report: 'skater-penalties', title: 'Penalties' },
   { report: 'skater-penaltykill', title: 'Penalty Kill' },
   { report: 'skater-penaltyShots', title: 'Penalty Shots' },
-  { report: 'skater-powerplay', title: 'Power Player' },
+  { report: 'skater-powerplay', title: 'Power Play' },
   { report: 'skater-puckPossessions', title: 'Puck Possession' },
   { report: 'skater-summaryshooting', title: 'SAT Counts' },
   { report: 'skater-percentages', title: 'SAT %' },
