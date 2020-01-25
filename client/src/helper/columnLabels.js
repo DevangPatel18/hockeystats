@@ -122,13 +122,14 @@ export const generateCols = data => {
   const statsList = Object.keys(data[0])
   const seasonIdindex = statsList.indexOf('seasonId')
   const reportKey = `${playerType === 'skater' ? 'player' : 'goalie'}ReportData`
+  const columnKey = reportType === 'bios' ? 'displayItems' : 'resultFilters'
   let playerStatsCol =
-    colConfig[reportKey]?.[reportType]?.season?.resultFilters ||
-    statsList.filter(
-      stat =>
-        !['seasonId', 'teamAbbrevs', 'playerId'].includes(stat) &&
-        stat.slice(-4) !== 'Name'
-    )
+    colConfig[reportKey]?.[reportType]?.season?.[columnKey] || statsList
+  playerStatsCol = playerStatsCol.filter(
+    stat =>
+      !['seasonId', 'teamAbbrevs', 'playerId'].includes(stat) &&
+      stat.slice(-4) !== 'Name'
+  )
 
   playerStatsCol = playerStatsCol.map(x => ({
     title: (statAttributes[x] && statAttributes[x].title) || x,
