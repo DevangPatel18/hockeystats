@@ -9,12 +9,12 @@ const sortStatsASC = [
 
 export const fetchData = api => {
   const { filterTracked, colConfig, ...params } = store.getState().tableSettings
-  const defaultSort = JSON.stringify(getDefaultSortParams())
+  const sort = JSON.stringify(getSortParams())
   return api
     .request({
       method: 'get',
       url: '/api/statistics/playerstats',
-      params: { ...params, defaultSort },
+      params: { ...params, sort },
     })
     .then(res => res.data)
     .catch(err => {
@@ -52,6 +52,14 @@ export const getCountries = stats =>
 export const getFilteredStats = stats => {
   let dataDisplay = getStarredFilteredStats(stats)
   return dataDisplay
+}
+
+const getSortParams = () => {
+  const { orderBy, order } = store.getState().tableSettings
+  if (orderBy === 'default') {
+    return getDefaultSortParams()
+  }
+  return [{ property: orderBy, direction: order.toUpperCase() }]
 }
 
 const getDefaultSortParams = () => {

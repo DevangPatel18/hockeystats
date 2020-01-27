@@ -19,21 +19,15 @@ router.get('/playerstats', async (req, res, next) => {
       playoffs,
       page,
       rowsPerPage,
-      order,
-      orderBy,
       teamFilter,
       countryFilter,
       search,
       playerPositionCode,
-      defaultSort,
+      sort,
     } = req.query;
 
     const [playerType, reportType] = reportName.split('-');
     let gameTypeId = playoffs === 'true' ? 3 : 2;
-    const sort =
-      orderBy === 'default'
-        ? defaultSort
-        : `[{"property": "${orderBy}", "direction":"${order.toUpperCase()}"}]`;
     const optionalFilters = getOptionalFilters({
       teamFilter,
       countryFilter,
