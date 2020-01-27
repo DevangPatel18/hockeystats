@@ -54,7 +54,7 @@ export const getFilteredStats = stats => {
   return dataDisplay
 }
 
-const getSortParams = () => {
+export const getSortParams = () => {
   const { orderBy, order } = store.getState().tableSettings
   if (orderBy === 'default') {
     return getDefaultSortParams()
