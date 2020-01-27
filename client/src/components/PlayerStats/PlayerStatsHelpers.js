@@ -9,7 +9,7 @@ const sortStatsASC = [
 
 export const fetchData = api => {
   const { filterTracked, colConfig, ...params } = store.getState().tableSettings
-  const defaultSort = getDefaultSortParams()
+  const defaultSort = JSON.stringify(getDefaultSortParams())
   return api
     .request({
       method: 'get',
@@ -58,19 +58,16 @@ const getDefaultSortParams = () => {
   const { reportName, colConfig } = store.getState().tableSettings
   const [player, report] = reportName.split('-')
   const playerType = player === 'skater' ? 'player' : 'goalie'
-  if (colConfig) {
-    const sortKeys =
-      colConfig[`${playerType}ReportData`][report].season.sortKeys
-    const statArray = sortKeys.map(
-      stat =>
-        `{"property":"${stat}","direction":"${
-          sortStatsASC.includes(stat) ? 'ASC_CI' : 'DESC'
-        }"}`
-    )
-    return `[${statArray.join(',')}]`
-  } else {
-    return `[{"property":"${player}FullName","direction":"ASC_CI"}]`
-  }
+  return (
+    colConfig?.[`${playerType}ReportData`]?.[report]?.season?.sortKeys
+      ?.map(stat => ({
+        property: stat,
+        direction: sortStatsASC.includes(stat) ? 'ASC_CI' : 'DESC',
+      }))
+      .reduce((acc, statObj) => [...acc, statObj], []) || [
+      { property: `${player}FullName`, direction: 'ASC_CI' },
+    ]
+  )
 }
 
 // const getPositionFilteredStats = stats => {
