@@ -1,4 +1,5 @@
-import { withStyles, TableCell } from '@material-ui/core'
+import { withStyles, TableCell, TableSortLabel } from '@material-ui/core'
+import styled from 'styled-components'
 
 export const TableCellStyled = withStyles({
   root: {
@@ -7,3 +8,9 @@ export const TableCellStyled = withStyles({
     padding: '0 0.75rem',
   },
 })(TableCell)
+
+export const TableSortLabelStyled = styled(TableSortLabel)`
+  &&&&& svg {
+    color: white;
+  }
+`

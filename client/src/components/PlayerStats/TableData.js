@@ -8,7 +8,6 @@ import {
   IconButton,
   TableBody,
   TableRow,
-  TableSortLabel,
 } from '@material-ui/core'
 import { Star, StarBorder, TableChart } from '@material-ui/icons'
 import { amber, grey } from '@material-ui/core/colors'
@@ -19,7 +18,10 @@ import {
   generateCols,
 } from '../../helper/columnLabels'
 import Tooltip from '@material-ui/core/Tooltip'
-import { TableCellStyled as TableCell } from '../styles/TableStyles'
+import {
+  TableCellStyled as TableCell,
+  TableSortLabelStyled as TableSortLabel,
+} from '../styles/TableStyles'
 import { openPlayerModal } from '../../actions/statActions'
 
 const styles = {
