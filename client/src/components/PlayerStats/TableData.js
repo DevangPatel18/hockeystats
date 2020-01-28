@@ -48,6 +48,7 @@ const TableData = props => {
     handleRequestSort,
     openPlayerModal,
     handleStarClick,
+    playerData,
   } = props
 
   const aggregateTable = !(dataDisplay[0]
@@ -55,6 +56,7 @@ const TableData = props => {
     : false)
 
   const columns = generateCols(dataDisplay)
+  const { sort } = playerData
 
   return (
     <div style={{ overflowX: 'auto' }}>
@@ -90,7 +92,9 @@ const TableData = props => {
                   letterSpacing: '1px',
                   background: '#6d6d6d',
                 }}
-                sortDirection={orderBy === col.id ? order : false}
+                sortDirection={
+                  sort[col.id] ? sort[col.id].toLowerCase() : false
+                }
               >
                 <Tooltip
                   title={col.id}
@@ -98,8 +102,10 @@ const TableData = props => {
                   enterDelay={300}
                 >
                   <TableSortLabel
-                    active={orderBy === col.id}
-                    direction={order}
+                    active={['DESC', 'ASC'].includes(sort[col.id])}
+                    direction={
+                      (sort[col.id] && sort[col.id].toLowerCase()) || 'desc'
+                    }
                     id={col.id}
                     onClick={handleRequestSort}
                     style={{
@@ -216,15 +222,20 @@ TableData.propTypes = {
   orderBy: PropTypes.string,
   rowsPerPage: PropTypes.number.isRequired,
   selectedPlayers: PropTypes.array.isRequired,
+  playerData: PropTypes.object.isRequired,
   handleRowClick: PropTypes.func.isRequired,
   updateTrackedPlayers: PropTypes.func.isRequired,
   handleRequestSort: PropTypes.func.isRequired,
   openPlayerModal: PropTypes.func.isRequired,
 }
 
+const mapStateToProps = state => ({
+  playerData: state.playerData,
+})
+
 export default withStyles(styles)(
   connect(
-    null,
+    mapStateToProps,
     { openPlayerModal }
   )(TableData)
 )
