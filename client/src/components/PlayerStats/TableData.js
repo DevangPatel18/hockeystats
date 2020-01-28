@@ -59,6 +59,7 @@ const TableData = props => {
 
   const columns = generateCols(dataDisplay)
   const { sort } = playerData
+  const sortArray = Object.keys(sort)
 
   return (
     <div style={{ overflowX: 'auto' }}>
@@ -201,7 +202,14 @@ const TableData = props => {
                 .map(col => (
                   <TableCell
                     key={`${row.playerId}-${col.id}`}
-                    style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
+                    style={{
+                      whiteSpace: 'nowrap',
+                      padding: '3px 12px',
+                      background: sortArray.includes(col.id)
+                        ? `rgba(63, 81, 181, ${0.5 -
+                            0.1 * sortArray.indexOf(col.id)})`
+                        : '',
+                    }}
                     align="center"
                   >
                     {col.format && row[col.id]
