@@ -5,7 +5,7 @@ import TableData from './TableData'
 
 export default function(dataDisplay) {
   const { selectedPlayers } = this.state
-  const { rowsPerPage, page, order, orderBy } = this.props.tableSettings
+  const { rowsPerPage, page } = this.props.tableSettings
   const { dataLoad, trackedPlayers } = this.props.stats
   const { total } = this.props.playerData
 
@@ -34,8 +34,6 @@ export default function(dataDisplay) {
         <TableData
           dataDisplay={dataDisplay}
           page={page}
-          order={order}
-          orderBy={orderBy}
           rowsPerPage={rowsPerPage}
           selectedPlayers={selectedPlayers}
           trackedPlayers={trackedPlayers}

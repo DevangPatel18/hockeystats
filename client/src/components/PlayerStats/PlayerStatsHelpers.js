@@ -8,13 +8,18 @@ const sortStatsASC = [
 ]
 
 export const fetchData = api => {
-  const { filterTracked, colConfig, ...params } = store.getState().tableSettings
-  const sort = JSON.stringify(getSortParams())
+  const {
+    filterTracked,
+    colConfig,
+    sort,
+    ...params
+  } = store.getState().tableSettings
+
   return api
     .request({
       method: 'get',
       url: '/api/statistics/playerstats',
-      params: { ...params, sort },
+      params: { ...params, sort: JSON.stringify(sort) },
     })
     .then(res => res.data)
     .catch(err => {
@@ -62,7 +67,7 @@ export const getSortParams = () => {
   return [{ property: orderBy, direction: order.toUpperCase() }]
 }
 
-const getDefaultSortParams = () => {
+export const getDefaultSortParams = () => {
   const { reportName, colConfig } = store.getState().tableSettings
   const [player, report] = reportName.split('-')
   const playerType = player === 'skater' ? 'player' : 'goalie'

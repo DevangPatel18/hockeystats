@@ -1,17 +1,14 @@
 import { SUBMIT_QUERY } from './types'
-import {
-  getCountries,
-  getSortParams,
-} from '../components/PlayerStats/PlayerStatsHelpers'
+import { getCountries } from '../components/PlayerStats/PlayerStatsHelpers'
 import store from '../store'
 
 export const submitQuery = stats => dispatch => {
-  const { playoffs, reportName } = store.getState().tableSettings
+  const { playoffs, reportName, sort } = store.getState().tableSettings
   dispatch({
     type: SUBMIT_QUERY,
     stats: stats.data,
     total: stats.total,
-    sort: getSortParams().reduce(
+    sortObj: sort.reduce(
       (acc, { property, direction }) => ({ ...acc, [property]: direction }),
       {}
     ),

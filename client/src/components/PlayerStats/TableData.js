@@ -40,8 +40,6 @@ const TableData = props => {
   const {
     dataDisplay,
     page,
-    order,
-    orderBy,
     rowsPerPage,
     selectedPlayers,
     handleRowClick,
@@ -58,8 +56,8 @@ const TableData = props => {
     : false)
 
   const columns = generateCols(dataDisplay)
-  const { sort } = playerData
-  const sortArray = Object.keys(sort)
+  const { sortObj } = playerData
+  const sortArray = Object.keys(sortObj)
 
   return (
     <div style={{ overflowX: 'auto' }}>
@@ -80,7 +78,6 @@ const TableData = props => {
                 letterSpacing: '1px',
                 background: '#6d6d6d',
               }}
-              sortDirection={orderBy === columns[0].id ? order : false}
             >
               Name
             </TableCell>
@@ -96,7 +93,7 @@ const TableData = props => {
                   background: '#6d6d6d',
                 }}
                 sortDirection={
-                  sort[col.id] ? sort[col.id].toLowerCase() : false
+                  sortObj[col.id] ? sortObj[col.id].toLowerCase() : false
                 }
               >
                 <Tooltip
@@ -105,9 +102,10 @@ const TableData = props => {
                   enterDelay={300}
                 >
                   <TableSortLabel
-                    active={['DESC', 'ASC'].includes(sort[col.id])}
+                    active={['DESC', 'ASC'].includes(sortObj[col.id])}
                     direction={
-                      (sort[col.id] && sort[col.id].toLowerCase()) || 'desc'
+                      (sortObj[col.id] && sortObj[col.id].toLowerCase()) ||
+                      'desc'
                     }
                     id={col.id}
                     onClick={handleRequestSort}
@@ -228,8 +226,6 @@ const TableData = props => {
 TableData.propTypes = {
   dataDisplay: PropTypes.array.isRequired,
   page: PropTypes.number.isRequired,
-  order: PropTypes.string,
-  orderBy: PropTypes.string,
   rowsPerPage: PropTypes.number.isRequired,
   selectedPlayers: PropTypes.array.isRequired,
   playerData: PropTypes.object.isRequired,

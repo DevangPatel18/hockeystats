@@ -5,9 +5,9 @@ const initialState = {
   teams: '',
   countries: '',
   dataType: '',
-  sort: [],
-  playerType: 'skater',
-  reportType: 'summary',
+  sortObj: {},
+  playerType: '',
+  reportType: '',
   total: 0,
 }
 
@@ -18,7 +18,7 @@ export default function(state = initialState, action) {
         ...state,
         stats: action.stats,
         total: action.total,
-        sort: action.sort,
+        sortObj: action.sortObj,
         countries: ['all', ...action.countries],
         dataType: action.dataType,
         playerType: action.playerType,

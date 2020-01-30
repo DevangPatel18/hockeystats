@@ -16,7 +16,11 @@ import StatsFilterPanel from './StatsFilterPanel'
 import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
-import { fetchData, getFilteredStats } from './PlayerStatsHelpers'
+import {
+  fetchData,
+  getFilteredStats,
+  getDefaultSortParams,
+} from './PlayerStatsHelpers'
 import { TransitionUp } from '../../helper/transitions'
 
 // Marking event handler as 'passive' in response to console violations
@@ -126,15 +130,18 @@ class PlayerStats extends Component {
 
   handleRequestSort = async ({ currentTarget }) => {
     if (['track', 'gameLogs'].includes(currentTarget.id)) return
-    const { order, orderBy } = this.props.tableSettings
-    const newOrderBy = currentTarget.id
-    let newOrder = 'desc'
+    const { sort } = this.props.tableSettings
+    const { property, direction } = sort[0]
+    const newProperty = currentTarget.id
+    let newDirection = 'DESC'
 
-    if (newOrderBy === orderBy && order === 'desc') {
-      newOrder = 'asc'
+    if (newProperty === property && direction === 'DESC') {
+      newDirection = 'ASC'
     }
 
-    await this.props.changeSort(newOrder, newOrderBy)
+    await this.props.changeSort([
+      { property: newProperty, direction: newDirection },
+    ])
     this.handleSubmitQuery()
   }
 
@@ -150,7 +157,7 @@ class PlayerStats extends Component {
     const { reportName } = this.props.tableSettings
     const { playerType, reportType } = this.props.playerData
     if (reportName !== `${playerType}-${reportType}`) {
-      await this.props.changeSort('desc', 'default')
+      await this.props.changeSort(getDefaultSortParams())
     }
     this.props.startLoad()
     const stats = await configure().then(api => fetchData(api))

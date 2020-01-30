@@ -17,8 +17,7 @@ const initialState = {
   countryFilter: 'all',
   page: 0,
   rowsPerPage: 10,
-  order: 'desc',
-  orderBy: 'default',
+  sort: [],
 }
 
 export default function(state = initialState, action) {
@@ -37,8 +36,7 @@ export default function(state = initialState, action) {
     case types.CHANGE_SORT:
       return {
         ...state,
-        order: action.order,
-        orderBy: action.orderBy,
+        sort: action.sort,
       }
     case types.TOGGLE_SWITCH:
       return {

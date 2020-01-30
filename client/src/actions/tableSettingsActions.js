@@ -32,11 +32,10 @@ export const changeField = (name, value) => dispatch => {
   })
 }
 
-export const changeSort = (order, orderBy) => dispatch => {
+export const changeSort = sort => dispatch => {
   dispatch({
     type: CHANGE_SORT,
-    order,
-    orderBy,
+    sort,
   })
 }
 
