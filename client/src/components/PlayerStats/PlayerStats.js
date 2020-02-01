@@ -128,20 +128,38 @@ class PlayerStats extends Component {
     this.handleSubmitQuery()
   }
 
-  handleRequestSort = async ({ currentTarget }) => {
-    if (['track', 'gameLogs'].includes(currentTarget.id)) return
+  handleRequestSort = async event => {
+    const clickedStat = event.currentTarget.id
+    if (['track', 'gameLogs'].includes(clickedStat)) return
     const { sort } = this.props.tableSettings
-    const { property, direction } = sort[0]
-    const newProperty = currentTarget.id
-    let newDirection = 'DESC'
 
-    if (newProperty === property && direction === 'DESC') {
-      newDirection = 'ASC'
+    let newSort
+    if (event.ctrlKey) {
+      const sortStatArray = sort.map(({ property }) => property)
+      const indexOfClickedStat = sortStatArray.indexOf(clickedStat)
+      if (indexOfClickedStat > -1) {
+        const oldDirection = sort[indexOfClickedStat].direction
+        const newDirection = oldDirection === 'DESC' ? 'ASC' : 'DESC'
+        newSort = sort.slice()
+        newSort.splice(indexOfClickedStat, 1, {
+          property: clickedStat,
+          direction: newDirection,
+        })
+      } else {
+        newSort = [...sort, { property: clickedStat, direction: 'DESC' }]
+      }
+    } else {
+      const { property, direction } = sort[0]
+      const newProperty = clickedStat
+      let newDirection = 'DESC'
+
+      if (newProperty === property && direction === 'DESC') {
+        newDirection = 'ASC'
+      }
+
+      newSort = [{ property: newProperty, direction: newDirection }]
     }
-
-    await this.props.changeSort([
-      { property: newProperty, direction: newDirection },
-    ])
+    await this.props.changeSort(newSort)
     this.handleSubmitQuery()
   }
 
