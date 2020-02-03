@@ -78,6 +78,9 @@ class StatsFilterPanel extends Component {
       playerPositionCode,
       countryFilter,
       teamFilter,
+      opponentFilter,
+      gameResult,
+      location,
     } = this.props.tableSettings
 
     const yearCutoff = parseInt(yearStart.slice(0, 4), 10)
@@ -227,6 +230,46 @@ class StatsFilterPanel extends Component {
             }
             label="Tracked Players Only"
           />
+          <FormControlStyles>
+            <InputLabel htmlFor="opponentFilter">Opponent</InputLabel>
+            <NativeSelect
+              value={opponentFilter}
+              onChange={this.handleChange('opponentFilter')}
+              inputProps={{ name: 'opponentFilter', id: 'opponentFilter' }}
+            >
+              <option value={'all'}>All teams</option>
+              {franchises.map(team => (
+                <option key={team.id} value={team.id}>
+                  {team.fullName}
+                </option>
+              ))}
+            </NativeSelect>
+          </FormControlStyles>
+          <FormControlStyles>
+            <InputLabel htmlFor="gameResult">Game result</InputLabel>
+            <NativeSelect
+              value={gameResult}
+              onChange={this.handleChange('gameResult')}
+              inputProps={{ name: 'gameResult', id: 'gameResult' }}
+            >
+              <option value={'all'}>All Results</option>
+              <option value={'W'}>Win</option>
+              <option value={'L'}>Loss</option>
+              <option value={'O'}>Overtime Loss</option>
+            </NativeSelect>
+          </FormControlStyles>
+          <FormControlStyles>
+            <InputLabel htmlFor="location">Game location</InputLabel>
+            <NativeSelect
+              value={location}
+              onChange={this.handleChange('location')}
+              inputProps={{ name: 'location', id: 'location' }}
+            >
+              <option value={'all'}>Home + Road</option>
+              <option value={'H'}>Home</option>
+              <option value={'R'}>Road</option>
+            </NativeSelect>
+          </FormControlStyles>
         </StatsPanel>
         <div
           style={{
