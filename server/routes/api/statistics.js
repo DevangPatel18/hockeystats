@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const {
-  statsSortObj,
   addPlayerName,
   getOptionalFilters,
 } = require('../../helper/statisticsHelpers');
@@ -19,21 +18,13 @@ router.get('/playerstats', async (req, res, next) => {
       playoffs,
       page,
       rowsPerPage,
-      teamFilter,
-      countryFilter,
       search,
-      playerPositionCode,
       sort,
     } = req.query;
 
     const [playerType, reportType] = reportName.split('-');
     let gameTypeId = playoffs === 'true' ? 3 : 2;
-    const optionalFilters = getOptionalFilters({
-      teamFilter,
-      countryFilter,
-      playerType,
-      playerPositionCode,
-    });
+    const optionalFilters = getOptionalFilters({ ...req.query, playerType });
     const baseFilters = `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`;
     const searchFilter =
       search && ` and ${playerType}FullName likeIgnoreCase "%${search}%"`;
