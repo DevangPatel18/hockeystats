@@ -36,4 +36,6 @@ const configure = async () => {
   })
 }
 
-export default configure
+const statApi = configure()
+
+export default statApi

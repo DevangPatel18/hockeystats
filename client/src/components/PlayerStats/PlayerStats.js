@@ -3,7 +3,7 @@ import { Link } from 'gatsby'
 import { Dialog, Button } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import configure from '../../utils/configLocalforage'
+import statApi from '../../utils/configLocalforage'
 import * as statActions from '../../actions/statActions'
 import {
   changeField,
@@ -178,7 +178,7 @@ class PlayerStats extends Component {
       await this.props.changeSort(getDefaultSortParams())
     }
     this.props.startLoad()
-    const stats = await configure().then(api => fetchData(api))
+    const stats = await statApi.then(api => fetchData(api))
     this.props.stopLoad()
     if (!stats) return
 
