@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { closePlayerModal } from '../../actions/statActions'
 import { AppBar, IconButton, Toolbar } from '@material-ui/core/'
 import CloseIcon from '@material-ui/icons/Close'
-import StackedPointsChart from './StackedPointsChart'
+import SeasonsCharts from './SeasonsCharts'
 import PointsPieChart from './PointsPieChart'
 
 class PlayerOverview extends Component {
@@ -26,7 +26,7 @@ class PlayerOverview extends Component {
             <div style={{ margin: '0 auto' }}>{stats.playerObj.fullName}</div>
           </Toolbar>
         </AppBar>
-        <StackedPointsChart />
+        <SeasonsCharts />
         <div style={{ width: '48vw' }}>
           <PointsPieChart />
         </div>

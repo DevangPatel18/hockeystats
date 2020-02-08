@@ -11,7 +11,7 @@ import {
 } from 'victory'
 import chartTheme from '../../helper/chartTheme'
 
-class StackedPointsChart extends Component {
+class SeasonsCharts extends Component {
   state = {
     chartWidth: window.innerWidth - (window.innerWidth % 100),
     chartHeight: window.innerHeight * 0.6 - ((window.innerHeight * 0.6) % 100),
@@ -112,7 +112,7 @@ class StackedPointsChart extends Component {
   }
 }
 
-StackedPointsChart.propTypes = {
+SeasonsCharts.propTypes = {
   stats: PropTypes.object.isRequired,
 }
 
@@ -120,4 +120,4 @@ const mapStateToProps = state => ({
   stats: state.stats,
 })
 
-export default connect(mapStateToProps)(StackedPointsChart)
+export default connect(mapStateToProps)(SeasonsCharts)
