@@ -5,6 +5,7 @@ import {
   VictoryChart,
   VictoryStack,
   VictoryArea,
+  VictoryBar,
   VictoryAxis,
   VictoryLabel,
   VictoryVoronoiContainer,
@@ -17,6 +18,7 @@ class SeasonsCharts extends Component {
     chartHeight: window.innerHeight * 0.6 - ((window.innerHeight * 0.6) % 100),
     goals: [],
     assists: [],
+    plusMinus: [],
   }
 
   componentDidMount() {
@@ -27,20 +29,23 @@ class SeasonsCharts extends Component {
 
     let assists = []
     let goals = []
+    let plusMinus = []
 
     let tempYear = ''
     playerStats.forEach(obj => {
       if (obj.season === tempYear) {
         assists[assists.length - 1].y += obj.stat.assists
         goals[goals.length - 1].y += obj.stat.goals
+        plusMinus[plusMinus.length - 1].y += obj.stat.plusMinus
       } else {
         assists.push({ x: obj.season, y: obj.stat.assists })
         goals.push({ x: obj.season, y: obj.stat.goals })
+        plusMinus.push({ x: obj.season, y: obj.stat.plusMinus })
         tempYear = obj.season
       }
     })
 
-    this.setState({ assists, goals })
+    this.setState({ assists, goals, plusMinus })
 
     window.addEventListener('resize', this.handleChartResize)
   }
@@ -63,50 +68,91 @@ class SeasonsCharts extends Component {
   }
 
   render() {
-    const { chartWidth, chartHeight, goals, assists } = this.state
+    const { chartWidth, chartHeight, goals, assists, plusMinus } = this.state
     const theme = chartTheme(false, chartWidth, chartHeight)
 
     if (goals.length < 1) return ''
     return (
       <div style={{ padding: '0 1rem' }}>
-        <VictoryChart
-          theme={theme}
-          containerComponent={
-            <VictoryVoronoiContainer
-              voronoiDimension="x"
-              labels={({ childName, _y }) => `${childName}: ${_y}`}
+        {goals.length > 0 && (
+          <VictoryChart
+            theme={theme}
+            containerComponent={
+              <VictoryVoronoiContainer
+                voronoiDimension="x"
+                labels={({ childName, _y }) => `${childName}: ${_y}`}
+              />
+            }
+          >
+            <VictoryStack colorScale="warm">
+              <VictoryArea data={assists} name="assists" />
+              <VictoryArea data={goals} name="goals" />
+            </VictoryStack>
+            <VictoryAxis
+              crossAxis
+              style={{
+                label: 'Label',
+                axisLabel: { padding: 0, angle: 35 },
+                tickLabels: { padding: 0, angle: 35 },
+              }}
             />
-          }
-        >
-          <VictoryStack colorScale="warm">
-            <VictoryArea data={assists} name="assists" />
-            <VictoryArea data={goals} name="goals" />
-          </VictoryStack>
-          <VictoryAxis
-            crossAxis
-            style={{
-              label: 'Label',
-              axisLabel: { padding: 0, angle: 35 },
-              tickLabels: { padding: 0, angle: 35 },
-            }}
-          />
-          <VictoryAxis dependentAxis crossAxis />
-          <VictoryLabel
-            angle="-90"
-            text={'Points'}
-            textAnchor="middle"
-            style={{ fontWeight: 'bolder' }}
-            x={10}
-            y={chartHeight / 2 - 25}
-          />
-          <VictoryLabel
-            text={'Season'}
-            textAnchor="middle"
-            style={{ fontWeight: 'bolder' }}
-            x={chartWidth / 2}
-            y={chartHeight - 10}
-          />
-        </VictoryChart>
+            <VictoryAxis dependentAxis crossAxis />
+            <VictoryLabel
+              angle="-90"
+              text={'Points'}
+              textAnchor="middle"
+              style={{ fontWeight: 'bolder' }}
+              x={10}
+              y={chartHeight / 2 - 25}
+            />
+            <VictoryLabel
+              text={'Season'}
+              textAnchor="middle"
+              style={{ fontWeight: 'bolder' }}
+              x={chartWidth / 2}
+              y={chartHeight - 10}
+            />
+          </VictoryChart>
+        )}
+
+        {plusMinus.length > 0 && (
+          <VictoryChart theme={theme}>
+            <VictoryBar
+              data={plusMinus}
+              style={{
+                data: { fill: 'lightblue' },
+                labels: {
+                  fontWeight: 'bolder',
+                },
+              }}
+              labels={({ y }) => y}
+            />
+            <VictoryAxis
+              crossAxis
+              style={{
+                label: 'Label',
+                axisLabel: { padding: 0, angle: 35 },
+                tickLabels: { padding: 0, angle: 35 },
+              }}
+            />
+            <VictoryAxis dependentAxis crossAxis />
+            <VictoryLabel
+              angle="-90"
+              text={'Plus/Minus'}
+              textAnchor="middle"
+              style={{ fontWeight: 'bolder' }}
+              x={10}
+              y={chartHeight / 2 - 25}
+            />
+            <VictoryLabel
+              text={'Season'}
+              textAnchor="middle"
+              style={{ fontWeight: 'bolder' }}
+              x={chartWidth / 2}
+              y={chartHeight - 10}
+            />
+          </VictoryChart>
+        )}
       </div>
     )
   }
