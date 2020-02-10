@@ -4,6 +4,15 @@ import { connect } from 'react-redux'
 import { VictoryPie } from 'victory'
 import { Slider } from '@material-ui/core'
 
+const colorScheme = [
+  '#324666',
+  '#4E6487',
+  '#8392AB',
+  '#7CA6B5',
+  '#A8C4CD',
+  '#D3E1E6',
+]
+
 class PointsPieChart extends Component {
   state = {
     seasonID: '',
@@ -100,7 +109,7 @@ class PointsPieChart extends Component {
         <svg viewBox={`0 0 ${size} ${size}`}>
           <VictoryPie
             standalone={false}
-            colorScale={'blue'}
+            colorScale={colorScheme}
             width={size}
             height={size}
             data={pointData[year]}
