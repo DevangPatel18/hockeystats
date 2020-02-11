@@ -104,6 +104,7 @@ class PointsPieChart extends Component {
     const { pointData, marks, year } = this.state
     const size = 400
     if (Object.values(pointData).length === 0) return ''
+    const pointTotal = pointData[year].reduce((a, b) => a + b.y, 0)
     return (
       <div>
         <svg viewBox={`0 0 ${size} ${size}`}>
@@ -116,12 +117,19 @@ class PointsPieChart extends Component {
             labelPosition="centroid"
             style={{ labels: { fontSize: 12, padding: 8 } }}
             animate={{ duration: 200 }}
+            innerRadius={size / 7}
           />
+          <text x="50%" y="44%" dominantBaseline="middle" textAnchor="middle">
+            {year}
+          </text>
+          <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle">
+            {pointTotal}
+          </text>
+          <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle">
+            points
+          </text>
         </svg>
         <div style={{ width: '60%', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ marginBottom: '1rem' }}>
-            <span>{year}</span>
-          </div>
           <Slider
             marks={marks}
             defaultValue={100}
