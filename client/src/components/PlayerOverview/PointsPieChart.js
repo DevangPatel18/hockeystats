@@ -13,6 +13,12 @@ const colorScheme = [
   '#D3E1E6',
 ]
 
+const formatYear = year => {
+  const yearText = [...year]
+  yearText.splice(4, 0, '-')
+  return yearText
+}
+
 class PointsPieChart extends Component {
   state = {
     seasonID: '',
@@ -106,7 +112,7 @@ class PointsPieChart extends Component {
     if (Object.values(pointData).length === 0) return ''
     const pointTotal = pointData[year].reduce((a, b) => a + b.y, 0)
     return (
-      <div>
+      <div style={{ width: '500px' }}>
         <svg viewBox={`0 0 ${size} ${size}`}>
           <VictoryPie
             standalone={false}
@@ -120,7 +126,7 @@ class PointsPieChart extends Component {
             innerRadius={size / 7}
           />
           <text x="50%" y="44%" dominantBaseline="middle" textAnchor="middle">
-            {year}
+            {formatYear(year)}
           </text>
           <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle">
             {pointTotal}

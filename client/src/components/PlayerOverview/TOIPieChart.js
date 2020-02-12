@@ -113,7 +113,7 @@ class TOIPieChart extends Component {
     const { totalTOI, pointData, marks, year } = this.state
     if (Object.values(pointData).length === 0) return ''
     return (
-      <div>
+      <div style={{ width: '500px' }}>
         <svg viewBox={`0 0 ${SVGSIZE} ${SVGSIZE}`}>
           <VictoryPie
             standalone={false}

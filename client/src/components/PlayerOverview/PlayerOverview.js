@@ -6,6 +6,7 @@ import { AppBar, IconButton, Toolbar } from '@material-ui/core/'
 import CloseIcon from '@material-ui/icons/Close'
 import SeasonsCharts from './SeasonsCharts'
 import PointsPieChart from './PointsPieChart'
+import TOIPieChart from './TOIPieChart'
 
 class PlayerOverview extends Component {
   render() {
@@ -27,8 +28,15 @@ class PlayerOverview extends Component {
           </Toolbar>
         </AppBar>
         <SeasonsCharts />
-        <div style={{ width: '48vw' }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}
+        >
           <PointsPieChart />
+          <TOIPieChart />
         </div>
       </div>
     )
