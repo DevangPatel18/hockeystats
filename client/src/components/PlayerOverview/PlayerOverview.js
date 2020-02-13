@@ -4,13 +4,24 @@ import { connect } from 'react-redux'
 import { closePlayerModal } from '../../actions/statActions'
 import { AppBar, IconButton, Toolbar } from '@material-ui/core/'
 import CloseIcon from '@material-ui/icons/Close'
-import SeasonsCharts from './SeasonsCharts'
-import PointsPieChart from './PointsPieChart'
-import TOIPieChart from './TOIPieChart'
+import SkaterCharts from './SkaterCharts'
+import GoalieCharts from './GoalieCharts'
 
 class PlayerOverview extends Component {
   render() {
     const { stats, closePlayerModal } = this.props
+
+    const playerPosition = stats?.playerObj?.primaryPosition?.code
+
+    let charts
+
+    if (playerPosition === 'G') {
+      charts = <GoalieCharts />
+    } else if (['C', 'L', 'R', 'D'].includes(playerPosition)) {
+      charts = <SkaterCharts />
+    } else {
+      charts = <div>Invalid player position: {playerPosition}</div>
+    }
 
     return (
       <div>
@@ -27,17 +38,7 @@ class PlayerOverview extends Component {
             <div style={{ margin: '0 auto' }}>{stats.playerObj.fullName}</div>
           </Toolbar>
         </AppBar>
-        <SeasonsCharts />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexWrap: 'wrap',
-          }}
-        >
-          <PointsPieChart />
-          <TOIPieChart />
-        </div>
+        {charts}
       </div>
     )
   }
