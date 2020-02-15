@@ -5,6 +5,7 @@ import {
   VictoryChart,
   VictoryGroup,
   VictoryBar,
+  VictoryLine,
   VictoryAxis,
   VictoryLabel,
   VictoryVoronoiContainer,
@@ -17,6 +18,9 @@ class GoalieSeasonsCharts extends Component {
     chartHeight: window.innerHeight * 0.6 - ((window.innerHeight * 0.6) % 100),
     wins: [],
     losses: [],
+    evSavePct: [],
+    ppSavePct: [],
+    shSavePct: [],
   }
 
   componentDidMount() {
@@ -99,7 +103,15 @@ class GoalieSeasonsCharts extends Component {
   }
 
   render() {
-    const { chartWidth, chartHeight, wins, losses } = this.state
+    const {
+      chartWidth,
+      chartHeight,
+      wins,
+      losses,
+      evSavePct,
+      ppSavePct,
+      shSavePct,
+    } = this.state
     const theme = chartTheme(false, chartWidth, chartHeight)
 
     if (wins.length < 1) return ''
@@ -143,6 +155,56 @@ class GoalieSeasonsCharts extends Component {
             y={chartHeight - 10}
           />
         </VictoryChart>
+
+        {[...evSavePct, ...ppSavePct, ...shSavePct].length > 1 && (
+          <VictoryChart
+            theme={theme}
+            containerComponent={
+              <VictoryVoronoiContainer
+                voronoiDimension="x"
+                labels={({ childName, _y }) =>
+                  `${childName.substring(0, 2)}: ${_y.toFixed(3)}`
+                }
+              />
+            }
+          >
+            <VictoryLine data={evSavePct} name="evSavePct" />
+            <VictoryLine
+              data={ppSavePct}
+              style={{ data: { stroke: 'red' } }}
+              name="ppSavePct"
+            />
+            <VictoryLine
+              data={shSavePct}
+              style={{ data: { stroke: 'blue' } }}
+              name="shSavePct"
+            />
+            <VictoryAxis
+              crossAxis
+              style={{
+                label: 'Label',
+                axisLabel: { padding: 0, angle: 35 },
+                tickLabels: { padding: 0, angle: 35 },
+              }}
+            />
+            <VictoryAxis dependentAxis crossAxis />
+            <VictoryLabel
+              angle="-90"
+              text={'Percentage'}
+              textAnchor="middle"
+              style={{ fontWeight: 'bolder' }}
+              x={10}
+              y={chartHeight / 2 - 25}
+            />
+            <VictoryLabel
+              text={'Season'}
+              textAnchor="middle"
+              style={{ fontWeight: 'bolder' }}
+              x={chartWidth / 2}
+              y={chartHeight - 10}
+            />
+          </VictoryChart>
+        )}
       </div>
     )
   }
