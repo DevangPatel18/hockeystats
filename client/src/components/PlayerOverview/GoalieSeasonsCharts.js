@@ -26,7 +26,15 @@ class GoalieSeasonsCharts extends Component {
     )
 
     const goalieStats = {}
-    const attributes = ['wins', 'losses']
+    const newAttributes = [
+      'evenShots',
+      'evenSaves',
+      'powerPlayShots',
+      'powerPlaySaves',
+      'shortHandedShots',
+      'shortHandedSaves',
+    ]
+    const attributes = ['wins', 'losses', ...newAttributes]
     attributes.forEach(attribute => {
       goalieStats[attribute] = []
     })
@@ -35,19 +43,38 @@ class GoalieSeasonsCharts extends Component {
     playerStats.forEach(obj => {
       if (obj.season === tempYear) {
         attributes.forEach(attribute => {
-          goalieStats[attribute][goalieStats[attribute].length - 1].y +=
-            obj.stat[attribute]
+          if (!newAttributes.includes(attribute) || obj.season >= 19971998)
+            goalieStats[attribute][goalieStats[attribute].length - 1].y +=
+              obj.stat[attribute]
         })
       } else {
         attributes.forEach(attribute => {
-          goalieStats[attribute].push({
-            x: obj.season,
-            y: obj.stat[attribute],
-          })
+          if (!newAttributes.includes(attribute) || obj.season >= 19971998)
+            goalieStats[attribute].push({
+              x: obj.season,
+              y: obj.stat[attribute] || 0,
+            })
         })
         tempYear = obj.season
       }
     })
+
+    goalieStats.evSavePct = goalieStats.evenShots.map(({ x, y }, idx) => ({
+      x,
+      y: y < 1 ? 0 : goalieStats.evenSaves[idx].y / y,
+    }))
+
+    goalieStats.ppSavePct = goalieStats.powerPlayShots.map(({ x, y }, idx) => ({
+      x,
+      y: y < 1 ? 0 : goalieStats.powerPlaySaves[idx].y / y,
+    }))
+
+    goalieStats.shSavePct = goalieStats.shortHandedShots.map(
+      ({ x, y }, idx) => ({
+        x,
+        y: y < 1 ? 0 : goalieStats.shortHandedSaves[idx].y / y,
+      })
+    )
 
     this.setState({ ...goalieStats })
 
