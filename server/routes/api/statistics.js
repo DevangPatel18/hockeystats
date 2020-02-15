@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const {
-  statsSortObj,
   addPlayerName,
   getOptionalFilters,
 } = require('../../helper/statisticsHelpers');
@@ -10,7 +9,6 @@ const {
 // Retrieve dataset
 router.get('/playerstats', async (req, res, next) => {
   try {
-    console.log('Requesting data from api...');
     const {
       isAggregate,
       reportName,
@@ -19,21 +17,14 @@ router.get('/playerstats', async (req, res, next) => {
       playoffs,
       page,
       rowsPerPage,
-      teamFilter,
-      countryFilter,
       search,
-      playerPositionCode,
       sort,
     } = req.query;
+    console.log(`Requesting ${reportName} data from api - ${Date()}`);
 
     const [playerType, reportType] = reportName.split('-');
     let gameTypeId = playoffs === 'true' ? 3 : 2;
-    const optionalFilters = getOptionalFilters({
-      teamFilter,
-      countryFilter,
-      playerType,
-      playerPositionCode,
-    });
+    const optionalFilters = getOptionalFilters({ ...req.query, playerType });
     const baseFilters = `gameTypeId=${gameTypeId} and seasonId>=${yearStart} and seasonId<=${yearEnd}`;
     const searchFilter =
       search && ` and ${playerType}FullName likeIgnoreCase "%${search}%"`;
@@ -76,6 +67,8 @@ router.get('/players/:playerId', async (req, res, next) => {
       )
       .then(res => res.data.people[0]);
 
+    console.log(`Requesting playerID - ${playerId} data from api - ${Date()}`);
+
     return res.status(200).json(playerData);
   } catch (err) {
     return next(err);
@@ -88,6 +81,9 @@ router.get(
   async (req, res, next) => {
     try {
       const { playerId, seasonId, dataType } = req.params;
+      console.log(
+        `Retrieving gamelog for ${playerId}, ${seasonId}, ${dataType} - ${Date()}`
+      );
       const statType = dataType === 'regular' ? 'gameLog' : 'playoffGameLog';
 
       const playerData = await axios
@@ -112,6 +108,9 @@ router.get(
   async (req, res, next) => {
     try {
       const { teamId, startDate, endDate } = req.params;
+      console.log(
+        `Request teamId: ${teamId} schedule for range [${startDate} - ${endDate}] - ${Date()}`
+      );
 
       const teamSchedule = await axios
         .get(`https://statsapi.web.nhl.com/api/v1/schedule`, {
@@ -136,6 +135,7 @@ router.get('/columnConfig', async (req, res, next) => {
     const columnConfig = await axios
       .get('https://api.nhle.com/stats/rest/en/config')
       .then(res => res.data);
+    console.log(`Request columnConfig - ${Date()}`);
 
     return res.status(200).json(columnConfig);
   } catch (err) {

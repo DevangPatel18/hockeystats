@@ -11,18 +11,32 @@ exports.addPlayerName = function(playerType, playerList) {
   }
 };
 
-exports.getOptionalFilters = function(args) {
-  const { teamFilter, countryFilter, playerType, playerPositionCode } = args;
+exports.getOptionalFilters = function(queryParams) {
+  const {
+    teamFilter,
+    countryFilter,
+    playerType,
+    playerPositionCode,
+    opponentFilter,
+    gameResult,
+    location,
+  } = queryParams;
   const team = teamFilter === 'all' ? '' : `franchiseId=${teamFilter}`;
   const country =
     countryFilter === 'all' ? '' : `nationalityCode="${countryFilter}"`;
   const position =
-    playerType === 'goalie' || playerPositionCode === 'all'
+    playerType === 'goalie' || playerPositionCode === 'LRCD'
       ? ''
       : `(${playerPositionCode
           .split('')
           .map(char => `positionCode="${char}"`)
           .join(' or ')})`;
-  let optionalFilters = [team, country, position].filter(x => x).join(' and ');
+  const opponent =
+    opponentFilter === 'all' ? '' : `opponentFranchiseId=${opponentFilter}`;
+  const decision = gameResult === 'all' ? '' : `decision="${gameResult}"`;
+  const homeRoad = location === 'all' ? '' : `homeRoad="${location}"`;
+  let optionalFilters = [team, country, position, opponent, decision, homeRoad]
+    .filter(x => x)
+    .join(' and ');
   return optionalFilters ? optionalFilters + ' and' : '';
 };

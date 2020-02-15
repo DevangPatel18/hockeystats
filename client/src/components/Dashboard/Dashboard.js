@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'gatsby'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import configure from '../../utils/configLocalforage'
+import statApi from '../../utils/configLocalforage'
 import DashboardProfiles from './DashboardProfiles'
 import { CircularProgress, Button, Dialog } from '@material-ui/core/'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
@@ -24,7 +24,7 @@ class Dashboard extends Component {
     this._isMounted = true
 
     if (trackedPlayers.length) {
-      await configure().then(async api => {
+      await statApi.then(async api => {
         const trackedPlayerData = await Promise.all(
           trackedPlayers.map(obj =>
             api

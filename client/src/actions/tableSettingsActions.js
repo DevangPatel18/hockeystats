@@ -6,7 +6,7 @@ import {
   LOAD_COLUMN_CONFIG,
 } from './types'
 import store from '../store'
-import API from '../utils/api'
+import statApi from '../utils/configLocalforage'
 
 export const changeSeason = (name, year) => dispatch => {
   const { yearEnd } = store.getState().tableSettings
@@ -32,11 +32,10 @@ export const changeField = (name, value) => dispatch => {
   })
 }
 
-export const changeSort = (order, orderBy) => dispatch => {
+export const changeSort = sort => dispatch => {
   dispatch({
     type: CHANGE_SORT,
-    order,
-    orderBy,
+    sort,
   })
 }
 
@@ -48,8 +47,11 @@ export const toggleSwitch = name => dispatch => {
 }
 
 export const loadColumnConfig = () => async dispatch =>
-  await API.get('/api/statistics/columnConfig')
-    .then(res => {
-      dispatch({ type: LOAD_COLUMN_CONFIG, colConfig: res.data })
+  await statApi
+    .then(async api => {
+      const colConfig = await api
+        .get('/api/statistics/columnConfig')
+        .then(res => res.data)
+      dispatch({ type: LOAD_COLUMN_CONFIG, colConfig })
     })
     .catch(err => console.log(err))

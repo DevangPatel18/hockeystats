@@ -4,14 +4,9 @@ import { connect } from 'react-redux'
 import { VictoryPie } from 'victory'
 import { Slider } from '@material-ui/core'
 
-const colorScheme = [
-  '#324666',
-  '#4E6487',
-  '#8392AB',
-  '#7CA6B5',
-  '#A8C4CD',
-  '#D3E1E6',
-]
+const colorScheme = ['#324666', '#8392AB', '#A8C4CD']
+
+const SVGSIZE = 400
 
 const formatYear = year => {
   const yearText = [...year]
@@ -19,10 +14,22 @@ const formatYear = year => {
   return yearText
 }
 
-class PointsPieChart extends Component {
+const stringToSeconds = (string = '0:0') => {
+  const [mins, secs] = string.split(':')
+  return parseInt(mins) * 60 + parseInt(secs)
+}
+
+const secondsToString = (seconds = 0) => {
+  const modSecs = seconds % 60
+  const min = (seconds - modSecs) / 60
+  return `${min < 10 ? '0' : ''}${min}:${modSecs < 10 ? '0' : ''}${modSecs}`
+}
+
+class TOIPieChart extends Component {
   state = {
     seasonID: '',
     pointData: {},
+    totalTOI: {},
     marks: [],
   }
 
@@ -33,39 +40,35 @@ class PointsPieChart extends Component {
     )
 
     let pointData = {}
+    let totalTOI = {}
 
     let tempYear = ''
     playerStats.forEach(obj => {
       const {
-        powerPlayPoints,
-        powerPlayGoals,
-        shortHandedPoints,
-        shortHandedGoals,
-        assists,
-        goals,
+        timeOnIce,
+        powerPlayTimeOnIce,
+        evenTimeOnIce,
+        shortHandedTimeOnIce,
       } = obj.stat
-      const ppAssists = powerPlayPoints - powerPlayGoals
-      const shAssists = shortHandedPoints - shortHandedGoals
-      const evAssists = assists - ppAssists - shAssists
-      const evGoals = goals - powerPlayGoals - shortHandedGoals
+
+      const TOIsec = stringToSeconds(timeOnIce)
+      const ppTOIsec = stringToSeconds(powerPlayTimeOnIce)
+      const evTOIsec = stringToSeconds(evenTimeOnIce)
+      const shTOIsec = stringToSeconds(shortHandedTimeOnIce)
 
       if (obj.season === tempYear) {
+        totalTOI[obj.season] = totalTOI[obj.season] + TOIsec
         pointData[obj.season] = {
-          evGoals: pointData[obj.season].evGoals + evGoals,
-          evAssists: pointData[obj.season].evAssists + evAssists,
-          ppGoals: pointData[obj.season].ppGoals + powerPlayGoals,
-          ppAssists: pointData[obj.season].ppAssists + ppAssists,
-          shGoals: pointData[obj.season].shGoals + shortHandedGoals,
-          shAssists: pointData[obj.season].shAssists + shAssists,
+          ppTOI: pointData[obj.season].ppTOI + ppTOIsec,
+          evTOI: pointData[obj.season].evTOI + evTOIsec,
+          shTOI: pointData[obj.season].shTOI + shTOIsec,
         }
       } else {
+        totalTOI[obj.season] = TOIsec
         pointData[obj.season] = {
-          evGoals,
-          ppGoals: powerPlayGoals,
-          shGoals: shortHandedGoals,
-          evAssists,
-          ppAssists,
-          shAssists,
+          ppTOI: ppTOIsec,
+          evTOI: evTOIsec,
+          shTOI: shTOIsec,
         }
         tempYear = obj.season
       }
@@ -73,19 +76,18 @@ class PointsPieChart extends Component {
 
     for (let seasonID in pointData) {
       let seasonObj = pointData[seasonID]
+      const { ppTOI, evTOI, shTOI } = seasonObj
+      totalTOI[seasonID] = secondsToString(totalTOI[seasonID])
       pointData[seasonID] = [
-        { x: `EVG: ${seasonObj.evGoals}`, y: seasonObj.evGoals },
-        { x: `PPG: ${seasonObj.ppGoals}`, y: seasonObj.ppGoals },
-        { x: `SHG: ${seasonObj.shGoals}`, y: seasonObj.shGoals },
-        { x: `EVA: ${seasonObj.evAssists}`, y: seasonObj.evAssists },
-        { x: `PPA: ${seasonObj.ppAssists}`, y: seasonObj.ppAssists },
-        { x: `SHA: ${seasonObj.shAssists}`, y: seasonObj.shAssists },
+        { x: 'PP', y: ppTOI },
+        { x: 'EV', y: evTOI },
+        { x: 'SH', y: shTOI },
       ]
     }
 
     const seasonIDs = Object.keys(pointData)
     const numOfSeasons = seasonIDs.length
-    const marks = seasonIDs.map((seasonID, i) => ({
+    const marks = seasonIDs.map((_, i) => ({
       value: Math.floor((i / (numOfSeasons - 1)) * 100),
       label: '',
     }))
@@ -93,6 +95,7 @@ class PointsPieChart extends Component {
     marks[numOfSeasons - 1].label = seasonIDs[numOfSeasons - 1]
 
     this.setState({
+      totalTOI,
       pointData,
       marks,
       seasonIDs,
@@ -100,39 +103,38 @@ class PointsPieChart extends Component {
     })
   }
 
-  handleSlider = (event, index) => {
+  handleSlider = (_, index) => {
     const { seasonIDs } = this.state
     const year = seasonIDs[Math.ceil((index / 100) * (seasonIDs.length - 1))]
     this.setState({ year })
   }
 
   render() {
-    const { pointData, marks, year } = this.state
-    const size = 400
+    const { totalTOI, pointData, marks, year } = this.state
     if (Object.values(pointData).length === 0) return ''
-    const pointTotal = pointData[year].reduce((a, b) => a + b.y, 0)
     return (
       <div style={{ width: '500px' }}>
-        <svg viewBox={`0 0 ${size} ${size}`}>
+        <svg viewBox={`0 0 ${SVGSIZE} ${SVGSIZE}`}>
           <VictoryPie
             standalone={false}
             colorScale={colorScheme}
-            width={size}
-            height={size}
+            width={SVGSIZE}
+            height={SVGSIZE}
             data={pointData[year]}
             labelPosition="centroid"
-            style={{ labels: { fontSize: 12, padding: 8 } }}
+            style={{ labels: { fontSize: 12, padding: 13 } }}
             animate={{ duration: 200 }}
-            innerRadius={size / 7}
+            innerRadius={SVGSIZE / 7}
+            labels={({ x, y }) => `${x}: ${secondsToString(y)}`}
           />
           <text x="50%" y="44%" dominantBaseline="middle" textAnchor="middle">
             {formatYear(year)}
           </text>
           <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle">
-            {pointTotal}
+            {totalTOI[year]}
           </text>
           <text x="50%" y="56%" dominantBaseline="middle" textAnchor="middle">
-            points
+            TOI
           </text>
         </svg>
         <div style={{ width: '60%', margin: '0 auto', textAlign: 'center' }}>
@@ -150,7 +152,7 @@ class PointsPieChart extends Component {
   }
 }
 
-PointsPieChart.propTypes = {
+TOIPieChart.propTypes = {
   stats: PropTypes.object.isRequired,
 }
 
@@ -158,4 +160,4 @@ const mapStateToProps = state => ({
   stats: state.stats,
 })
 
-export default connect(mapStateToProps)(PointsPieChart)
+export default connect(mapStateToProps)(TOIPieChart)

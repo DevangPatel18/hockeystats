@@ -15,7 +15,7 @@ import { DatePicker } from '@material-ui/pickers'
 import chroma from 'chroma-js'
 import { isMobile } from 'react-device-detect'
 import styled from 'styled-components'
-import configure from '../../../utils/configLocalforage'
+import statApi from '../../../utils/configLocalforage'
 import { startLoad, stopLoad } from '../../../actions/statActions'
 import StatsChart from './StatsChart'
 import * as cch from './ChartComparisonHelpers'
@@ -80,7 +80,7 @@ class ChartComparison extends Component {
     this._isMounted = true
     if (selectedPlayers.length) {
       this.props.startLoad()
-      await configure().then(async api => {
+      await statApi.then(async api => {
         const gameLogCollection = await this.getGameLogData(api)
         const statOptions = this.getStatOptions(gameLogCollection)
         const playerData = this.getPlayerData(gameLogCollection)

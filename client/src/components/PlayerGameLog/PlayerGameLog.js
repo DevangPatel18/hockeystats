@@ -15,7 +15,7 @@ import {
   Tooltip,
 } from '@material-ui/core/'
 import CloseIcon from '@material-ui/icons/Close'
-import configure from '../../utils/configLocalforage'
+import statApi from '../../utils/configLocalforage'
 import { closePlayerModal } from '../../actions/statActions'
 import { yearFormatter, gameLogTableColumns } from '../../helper/columnLabels'
 import {
@@ -57,7 +57,7 @@ class PlayerGameLog extends Component {
   }
 
   async componentDidMount() {
-    configure().then(async api => {
+    statApi.then(async api => {
       const playerGameLogData = await getPlayerGameLogData(api)
       const teamIntervals = getTeamIntervals(playerGameLogData)
       const teamSchedule = await getTeamSchedule(api, teamIntervals)

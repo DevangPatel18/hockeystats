@@ -29,8 +29,13 @@ const configure = async () => {
     cache: {
       maxAge: 12 * 60 * 60 * 1000,
       store, // Pass 'localforage' store to 'axios-cache-adapter'
+      exclude: {
+        query: false,
+      },
     },
   })
 }
 
-export default configure
+const statApi = configure()
+
+export default statApi

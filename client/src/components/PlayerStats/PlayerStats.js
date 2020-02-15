@@ -3,7 +3,7 @@ import { Link } from 'gatsby'
 import { Dialog, Button } from '@material-ui/core'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import configure from '../../utils/configLocalforage'
+import statApi from '../../utils/configLocalforage'
 import * as statActions from '../../actions/statActions'
 import {
   changeField,
@@ -16,7 +16,11 @@ import StatsFilterPanel from './StatsFilterPanel'
 import PlayerComparison from './PlayerComparison/PlayerComparison'
 import PlayerTags from './PlayerTags'
 import PlayerGameLog from '../PlayerGameLog/PlayerGameLog'
-import { fetchData, getFilteredStats } from './PlayerStatsHelpers'
+import {
+  fetchData,
+  getFilteredStats,
+  getDefaultSortParams,
+} from './PlayerStatsHelpers'
 import { TransitionUp } from '../../helper/transitions'
 
 // Marking event handler as 'passive' in response to console violations
@@ -124,17 +128,38 @@ class PlayerStats extends Component {
     this.handleSubmitQuery()
   }
 
-  handleRequestSort = async ({ currentTarget }) => {
-    if (['track', 'gameLogs'].includes(currentTarget.id)) return
-    const { order, orderBy } = this.props.tableSettings
-    const newOrderBy = currentTarget.id
-    let newOrder = 'desc'
+  handleRequestSort = async event => {
+    const clickedStat = event.currentTarget.id
+    if (['track', 'gameLogs'].includes(clickedStat)) return
+    const { sort } = this.props.tableSettings
 
-    if (newOrderBy === orderBy && order === 'desc') {
-      newOrder = 'asc'
+    let newSort
+    if (event.ctrlKey) {
+      const sortStatArray = sort.map(({ property }) => property)
+      const indexOfClickedStat = sortStatArray.indexOf(clickedStat)
+      if (indexOfClickedStat > -1) {
+        const oldDirection = sort[indexOfClickedStat].direction
+        const newDirection = oldDirection === 'DESC' ? 'ASC' : 'DESC'
+        newSort = sort.slice()
+        newSort.splice(indexOfClickedStat, 1, {
+          property: clickedStat,
+          direction: newDirection,
+        })
+      } else {
+        newSort = [...sort, { property: clickedStat, direction: 'DESC' }]
+      }
+    } else {
+      const { property, direction } = sort[0]
+      const newProperty = clickedStat
+      let newDirection = 'DESC'
+
+      if (newProperty === property && direction === 'DESC') {
+        newDirection = 'ASC'
+      }
+
+      newSort = [{ property: newProperty, direction: newDirection }]
     }
-
-    await this.props.changeSort(newOrder, newOrderBy)
+    await this.props.changeSort(newSort)
     this.handleSubmitQuery()
   }
 
@@ -150,10 +175,10 @@ class PlayerStats extends Component {
     const { reportName } = this.props.tableSettings
     const { playerType, reportType } = this.props.playerData
     if (reportName !== `${playerType}-${reportType}`) {
-      await this.props.changeSort('desc', 'default')
+      await this.props.changeSort(getDefaultSortParams())
     }
     this.props.startLoad()
-    const stats = await configure().then(api => fetchData(api))
+    const stats = await statApi.then(api => fetchData(api))
     this.props.stopLoad()
     if (!stats) return
 

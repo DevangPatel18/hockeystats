@@ -15,10 +15,12 @@ const initialState = {
   playerPositionCode: 'LRCD',
   teamFilter: 'all',
   countryFilter: 'all',
+  opponentFilter: 'all',
+  gameResult: 'all',
+  location: 'all',
   page: 0,
   rowsPerPage: 10,
-  order: 'desc',
-  orderBy: 'default',
+  sort: [],
 }
 
 export default function(state = initialState, action) {
@@ -37,8 +39,7 @@ export default function(state = initialState, action) {
     case types.CHANGE_SORT:
       return {
         ...state,
-        order: action.order,
-        orderBy: action.orderBy,
+        sort: action.sort,
       }
     case types.TOGGLE_SWITCH:
       return {

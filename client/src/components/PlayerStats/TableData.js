@@ -8,7 +8,6 @@ import {
   IconButton,
   TableBody,
   TableRow,
-  TableSortLabel,
 } from '@material-ui/core'
 import { Star, StarBorder, TableChart } from '@material-ui/icons'
 import { amber, grey } from '@material-ui/core/colors'
@@ -19,7 +18,10 @@ import {
   generateCols,
 } from '../../helper/columnLabels'
 import Tooltip from '@material-ui/core/Tooltip'
-import { TableCellStyled as TableCell } from '../styles/TableStyles'
+import {
+  TableCellStyled as TableCell,
+  TableSortLabelStyled as TableSortLabel,
+} from '../styles/TableStyles'
 import { openPlayerModal } from '../../actions/statActions'
 
 const styles = {
@@ -38,8 +40,6 @@ const TableData = props => {
   const {
     dataDisplay,
     page,
-    order,
-    orderBy,
     rowsPerPage,
     selectedPlayers,
     handleRowClick,
@@ -48,6 +48,7 @@ const TableData = props => {
     handleRequestSort,
     openPlayerModal,
     handleStarClick,
+    playerData,
   } = props
 
   const aggregateTable = !(dataDisplay[0]
@@ -55,6 +56,8 @@ const TableData = props => {
     : false)
 
   const columns = generateCols(dataDisplay)
+  const { sortObj } = playerData
+  const sortArray = Object.keys(sortObj)
 
   return (
     <div style={{ overflowX: 'auto' }}>
@@ -75,7 +78,6 @@ const TableData = props => {
                 letterSpacing: '1px',
                 background: '#6d6d6d',
               }}
-              sortDirection={orderBy === columns[0].id ? order : false}
             >
               Name
             </TableCell>
@@ -90,7 +92,9 @@ const TableData = props => {
                   letterSpacing: '1px',
                   background: '#6d6d6d',
                 }}
-                sortDirection={orderBy === col.id ? order : false}
+                sortDirection={
+                  sortObj[col.id] ? sortObj[col.id].toLowerCase() : false
+                }
               >
                 <Tooltip
                   title={col.id}
@@ -98,8 +102,11 @@ const TableData = props => {
                   enterDelay={300}
                 >
                   <TableSortLabel
-                    active={orderBy === col.id}
-                    direction={order}
+                    active={['DESC', 'ASC'].includes(sortObj[col.id])}
+                    direction={
+                      (sortObj[col.id] && sortObj[col.id].toLowerCase()) ||
+                      'desc'
+                    }
                     id={col.id}
                     onClick={handleRequestSort}
                     style={{
@@ -193,7 +200,14 @@ const TableData = props => {
                 .map(col => (
                   <TableCell
                     key={`${row.playerId}-${col.id}`}
-                    style={{ whiteSpace: 'nowrap', padding: '3px 12px' }}
+                    style={{
+                      whiteSpace: 'nowrap',
+                      padding: '3px 12px',
+                      background: sortArray.includes(col.id)
+                        ? `rgba(63, 81, 181, ${0.5 -
+                            0.1 * sortArray.indexOf(col.id)})`
+                        : '',
+                    }}
                     align="center"
                   >
                     {col.format && row[col.id]
@@ -212,19 +226,22 @@ const TableData = props => {
 TableData.propTypes = {
   dataDisplay: PropTypes.array.isRequired,
   page: PropTypes.number.isRequired,
-  order: PropTypes.string,
-  orderBy: PropTypes.string,
   rowsPerPage: PropTypes.number.isRequired,
   selectedPlayers: PropTypes.array.isRequired,
+  playerData: PropTypes.object.isRequired,
   handleRowClick: PropTypes.func.isRequired,
   updateTrackedPlayers: PropTypes.func.isRequired,
   handleRequestSort: PropTypes.func.isRequired,
   openPlayerModal: PropTypes.func.isRequired,
 }
 
+const mapStateToProps = state => ({
+  playerData: state.playerData,
+})
+
 export default withStyles(styles)(
   connect(
-    null,
+    mapStateToProps,
     { openPlayerModal }
   )(TableData)
 )
