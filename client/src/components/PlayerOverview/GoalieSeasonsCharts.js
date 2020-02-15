@@ -25,22 +25,31 @@ class GoalieSeasonsCharts extends Component {
       obj => obj.league.id === 133
     )
 
-    let wins = []
-    let losses = []
+    const goalieStats = {}
+    const attributes = ['wins', 'losses']
+    attributes.forEach(attribute => {
+      goalieStats[attribute] = []
+    })
 
     let tempYear = ''
     playerStats.forEach(obj => {
       if (obj.season === tempYear) {
-        wins[wins.length - 1].y += obj.stat.wins
-        losses[losses.length - 1].y += obj.stat.losses
+        attributes.forEach(attribute => {
+          goalieStats[attribute][goalieStats[attribute].length - 1].y +=
+            obj.stat[attribute]
+        })
       } else {
-        wins.push({ x: obj.season, y: obj.stat.wins })
-        losses.push({ x: obj.season, y: obj.stat.losses })
+        attributes.forEach(attribute => {
+          goalieStats[attribute].push({
+            x: obj.season,
+            y: obj.stat[attribute],
+          })
+        })
         tempYear = obj.season
       }
     })
 
-    this.setState({ wins, losses })
+    this.setState({ ...goalieStats })
 
     window.addEventListener('resize', this.handleChartResize)
   }
