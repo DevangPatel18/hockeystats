@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import { VictoryPie } from 'victory'
 import { Slider } from '@material-ui/core'
 
+const statKeys = ['EVG', 'EVA', 'PPG', 'PPA', 'SHG', 'SHA']
+
 const colorScheme = [
   '#324666',
   '#4E6487',
@@ -22,7 +24,7 @@ const formatYear = year => {
 class PointsPieChart extends Component {
   state = {
     seasonID: '',
-    pointData: {},
+    chartData: {},
     marks: [],
   }
 
@@ -32,60 +34,44 @@ class PointsPieChart extends Component {
       obj => obj.league.id === 133
     )
 
-    let pointData = {}
+    let chartData = {}
+    let data = {}
+    let year = ''
 
-    let tempYear = ''
-    playerStats.forEach(obj => {
-      const {
-        powerPlayPoints,
-        powerPlayGoals,
-        shortHandedPoints,
-        shortHandedGoals,
-        assists,
-        goals,
-      } = obj.stat
-      const ppAssists = powerPlayPoints - powerPlayGoals
-      const shAssists = shortHandedPoints - shortHandedGoals
-      const evAssists = assists - ppAssists - shAssists
-      const evGoals = goals - powerPlayGoals - shortHandedGoals
+    playerStats.forEach(({ stat, season }) => {
+      data.PPA = stat.powerPlayPoints - stat.powerPlayGoals
+      data.SHA = stat.shortHandedPoints - stat.shortHandedGoals
+      data.EVA = stat.assists - data.PPA - data.SHA
+      data.EVG = stat.goals - stat.powerPlayGoals - stat.shortHandedGoals
+      data.PPG = stat.powerPlayGoals
+      data.SHG = stat.shortHandedGoals
 
-      if (obj.season === tempYear) {
-        pointData[obj.season] = {
-          evGoals: pointData[obj.season].evGoals + evGoals,
-          evAssists: pointData[obj.season].evAssists + evAssists,
-          ppGoals: pointData[obj.season].ppGoals + powerPlayGoals,
-          ppAssists: pointData[obj.season].ppAssists + ppAssists,
-          shGoals: pointData[obj.season].shGoals + shortHandedGoals,
-          shAssists: pointData[obj.season].shAssists + shAssists,
-        }
+      if (season === year) {
+        statKeys.forEach(stat => {
+          chartData[season] = {
+            [stat]: chartData[season][stat] + data[stat],
+            ...chartData[season],
+          }
+        })
       } else {
-        pointData[obj.season] = {
-          evGoals,
-          ppGoals: powerPlayGoals,
-          shGoals: shortHandedGoals,
-          evAssists,
-          ppAssists,
-          shAssists,
-        }
-        tempYear = obj.season
+        statKeys.forEach(stat => {
+          chartData[season] = { [stat]: data[stat], ...chartData[season] }
+        })
+        year = season
       }
     })
 
-    for (let seasonID in pointData) {
-      let seasonObj = pointData[seasonID]
-      pointData[seasonID] = [
-        { x: `EVG: ${seasonObj.evGoals}`, y: seasonObj.evGoals },
-        { x: `PPG: ${seasonObj.ppGoals}`, y: seasonObj.ppGoals },
-        { x: `SHG: ${seasonObj.shGoals}`, y: seasonObj.shGoals },
-        { x: `EVA: ${seasonObj.evAssists}`, y: seasonObj.evAssists },
-        { x: `PPA: ${seasonObj.ppAssists}`, y: seasonObj.ppAssists },
-        { x: `SHA: ${seasonObj.shAssists}`, y: seasonObj.shAssists },
-      ]
+    for (let seasonID in chartData) {
+      let seasonObj = chartData[seasonID]
+      chartData[seasonID] = statKeys.map(stat => ({
+        x: `${stat}: ${seasonObj[stat]}`,
+        y: seasonObj[stat],
+      }))
     }
 
-    const seasonIDs = Object.keys(pointData)
+    const seasonIDs = Object.keys(chartData)
     const numOfSeasons = seasonIDs.length
-    const marks = seasonIDs.map((seasonID, i) => ({
+    const marks = seasonIDs.map((_, i) => ({
       value: Math.floor((i / (numOfSeasons - 1)) * 100),
       label: '',
     }))
@@ -93,7 +79,7 @@ class PointsPieChart extends Component {
     marks[numOfSeasons - 1].label = seasonIDs[numOfSeasons - 1]
 
     this.setState({
-      pointData,
+      chartData,
       marks,
       seasonIDs,
       year: seasonIDs[numOfSeasons - 1],
@@ -107,10 +93,10 @@ class PointsPieChart extends Component {
   }
 
   render() {
-    const { pointData, marks, year } = this.state
+    const { chartData, marks, year } = this.state
     const size = 400
-    if (Object.values(pointData).length === 0) return ''
-    const pointTotal = pointData[year].reduce((a, b) => a + b.y, 0)
+    if (Object.values(chartData).length === 0) return ''
+    const pointTotal = chartData[year].reduce((a, b) => a + b.y, 0)
     return (
       <div style={{ width: '500px' }}>
         <svg viewBox={`0 0 ${size} ${size}`}>
@@ -119,7 +105,7 @@ class PointsPieChart extends Component {
             colorScale={colorScheme}
             width={size}
             height={size}
-            data={pointData[year]}
+            data={chartData[year]}
             labelPosition="centroid"
             style={{ labels: { fontSize: 12, padding: 8 } }}
             animate={{ duration: 200 }}
