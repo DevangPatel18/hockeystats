@@ -92,6 +92,8 @@ class PointsPieChart extends Component {
     this.setState({ year })
   }
 
+  handleLabel = ({ x, y }) => (y !== 0 ? x : '')
+
   render() {
     const { chartData, marks, year } = this.state
     const size = 400
@@ -106,6 +108,7 @@ class PointsPieChart extends Component {
             width={size}
             height={size}
             data={chartData[year]}
+            labels={this.handleLabel}
             labelPosition="centroid"
             style={{ labels: { fontSize: 12, padding: 8 } }}
             animate={{ duration: 200 }}
