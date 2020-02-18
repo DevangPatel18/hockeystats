@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { VictoryPie } from 'victory'
 import { Slider } from '@material-ui/core'
 
-const statKeys = ['EVG', 'EVA', 'PPG', 'PPA', 'SHG', 'SHA']
+const statKeys = ['EVG', 'PPG', 'SHG', 'EVA', 'PPA', 'SHA']
 
 const colorScheme = [
   '#324666',
