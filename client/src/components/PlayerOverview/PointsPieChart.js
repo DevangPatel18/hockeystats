@@ -47,27 +47,15 @@ class PointsPieChart extends Component {
       data.SHG = stat.shortHandedGoals
 
       if (season === year) {
-        statKeys.forEach(stat => {
-          chartData[season] = {
-            [stat]: chartData[season][stat] + data[stat],
-            ...chartData[season],
-          }
-        })
+        chartData[season] = statKeys.map((stat, idx) => ({
+          x: stat,
+          y: chartData[season][idx].y + data[stat],
+        }))
       } else {
-        statKeys.forEach(stat => {
-          chartData[season] = { [stat]: data[stat], ...chartData[season] }
-        })
+        chartData[season] = statKeys.map(stat => ({ x: stat, y: data[stat] }))
         year = season
       }
     })
-
-    for (let seasonID in chartData) {
-      let seasonObj = chartData[seasonID]
-      chartData[seasonID] = statKeys.map(stat => ({
-        x: `${stat}: ${seasonObj[stat]}`,
-        y: seasonObj[stat],
-      }))
-    }
 
     const seasonIDs = Object.keys(chartData)
     const numOfSeasons = seasonIDs.length
@@ -92,7 +80,7 @@ class PointsPieChart extends Component {
     this.setState({ year })
   }
 
-  handleLabel = ({ x, y }) => (y !== 0 ? x : '')
+  handleLabel = ({ x, y }) => (y !== 0 ? `${x}: ${y}` : '')
 
   render() {
     const { chartData, marks, year } = this.state
