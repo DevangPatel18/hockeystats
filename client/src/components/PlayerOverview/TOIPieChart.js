@@ -4,6 +4,8 @@ import { connect } from 'react-redux'
 import { VictoryPie } from 'victory'
 import { Slider } from '@material-ui/core'
 
+const statKeys = ['EV', 'PP', 'SH']
+
 const colorScheme = ['#324666', '#8392AB', '#A8C4CD']
 
 const SVGSIZE = 400
@@ -28,7 +30,7 @@ const secondsToString = (seconds = 0) => {
 class TOIPieChart extends Component {
   state = {
     seasonID: '',
-    pointData: {},
+    chartData: {},
     totalTOI: {},
     marks: [],
   }
@@ -39,53 +41,38 @@ class TOIPieChart extends Component {
       obj => obj.league.id === 133
     )
 
-    let pointData = {}
+    let chartData = {}
     let totalTOI = {}
+    let tempData = {}
+    let year = ''
 
-    let tempYear = ''
-    playerStats.forEach(obj => {
-      const {
-        timeOnIce,
-        powerPlayTimeOnIce,
-        evenTimeOnIce,
-        shortHandedTimeOnIce,
-      } = obj.stat
+    playerStats.forEach(({ stat, season }) => {
+      const TOIsec = stringToSeconds(stat.timeOnIce)
+      tempData.EV = stringToSeconds(stat.evenTimeOnIce)
+      tempData.PP = stringToSeconds(stat.powerPlayTimeOnIce)
+      tempData.SH = stringToSeconds(stat.shortHandedTimeOnIce)
 
-      const TOIsec = stringToSeconds(timeOnIce)
-      const ppTOIsec = stringToSeconds(powerPlayTimeOnIce)
-      const evTOIsec = stringToSeconds(evenTimeOnIce)
-      const shTOIsec = stringToSeconds(shortHandedTimeOnIce)
-
-      if (obj.season === tempYear) {
-        totalTOI[obj.season] = totalTOI[obj.season] + TOIsec
-        pointData[obj.season] = {
-          ppTOI: pointData[obj.season].ppTOI + ppTOIsec,
-          evTOI: pointData[obj.season].evTOI + evTOIsec,
-          shTOI: pointData[obj.season].shTOI + shTOIsec,
-        }
+      if (season === year) {
+        totalTOI[season] = totalTOI[season] + TOIsec
+        chartData[season] = statKeys.map((stat, idx) => ({
+          x: stat,
+          y: chartData[season][idx].y + tempData[stat],
+        }))
       } else {
-        totalTOI[obj.season] = TOIsec
-        pointData[obj.season] = {
-          ppTOI: ppTOIsec,
-          evTOI: evTOIsec,
-          shTOI: shTOIsec,
-        }
-        tempYear = obj.season
+        totalTOI[season] = TOIsec
+        chartData[season] = statKeys.map(stat => ({
+          x: stat,
+          y: tempData[stat],
+        }))
+        year = season
       }
     })
 
-    for (let seasonID in pointData) {
-      let seasonObj = pointData[seasonID]
-      const { ppTOI, evTOI, shTOI } = seasonObj
+    for (let seasonID in chartData) {
       totalTOI[seasonID] = secondsToString(totalTOI[seasonID])
-      pointData[seasonID] = [
-        { x: 'PP', y: ppTOI },
-        { x: 'EV', y: evTOI },
-        { x: 'SH', y: shTOI },
-      ]
     }
 
-    const seasonIDs = Object.keys(pointData)
+    const seasonIDs = Object.keys(chartData)
     const numOfSeasons = seasonIDs.length
     const marks = seasonIDs.map((_, i) => ({
       value: Math.floor((i / (numOfSeasons - 1)) * 100),
@@ -96,7 +83,7 @@ class TOIPieChart extends Component {
 
     this.setState({
       totalTOI,
-      pointData,
+      chartData,
       marks,
       seasonIDs,
       year: seasonIDs[numOfSeasons - 1],
@@ -112,8 +99,8 @@ class TOIPieChart extends Component {
   handleLabel = ({ x, y }) => (y !== 0 ? `${x}: ${secondsToString(y)}` : '')
 
   render() {
-    const { totalTOI, pointData, marks, year } = this.state
-    if (Object.values(pointData).length === 0) return ''
+    const { totalTOI, chartData, marks, year } = this.state
+    if (Object.values(chartData).length === 0) return ''
     return (
       <div style={{ width: '500px' }}>
         <svg viewBox={`0 0 ${SVGSIZE} ${SVGSIZE}`}>
@@ -122,7 +109,7 @@ class TOIPieChart extends Component {
             colorScale={colorScheme}
             width={SVGSIZE}
             height={SVGSIZE}
-            data={pointData[year]}
+            data={chartData[year]}
             labelPosition="centroid"
             style={{ labels: { fontSize: 12, padding: 13 } }}
             animate={{ duration: 200 }}
