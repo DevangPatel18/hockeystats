@@ -109,6 +109,8 @@ class TOIPieChart extends Component {
     this.setState({ year })
   }
 
+  handleLabel = ({ x, y }) => (y !== 0 ? `${x}: ${secondsToString(y)}` : '')
+
   render() {
     const { totalTOI, pointData, marks, year } = this.state
     if (Object.values(pointData).length === 0) return ''
@@ -125,7 +127,7 @@ class TOIPieChart extends Component {
             style={{ labels: { fontSize: 12, padding: 13 } }}
             animate={{ duration: 200 }}
             innerRadius={SVGSIZE / 7}
-            labels={({ x, y }) => `${x}: ${secondsToString(y)}`}
+            labels={this.handleLabel}
           />
           <text x="50%" y="44%" dominantBaseline="middle" textAnchor="middle">
             {formatYear(year)}
