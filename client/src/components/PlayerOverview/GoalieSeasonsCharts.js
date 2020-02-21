@@ -21,6 +21,7 @@ class GoalieSeasonsCharts extends Component {
     evSavePct: [],
     ppSavePct: [],
     shSavePct: [],
+    ovSavePct: [],
   }
 
   componentDidMount() {
@@ -37,6 +38,8 @@ class GoalieSeasonsCharts extends Component {
       'powerPlaySaves',
       'shortHandedShots',
       'shortHandedSaves',
+      'shotsAgainst',
+      'saves',
     ]
     const attributes = ['wins', 'losses', ...newAttributes]
     attributes.forEach(attribute => {
@@ -80,6 +83,11 @@ class GoalieSeasonsCharts extends Component {
       })
     )
 
+    goalieStats.ovSavePct = goalieStats.shotsAgainst.map(({ x, y }, idx) => ({
+      x,
+      y: y < 1 ? 0 : goalieStats.saves[idx].y / y,
+    }))
+
     this.setState({ ...goalieStats })
 
     window.addEventListener('resize', this.handleChartResize)
@@ -111,6 +119,7 @@ class GoalieSeasonsCharts extends Component {
       evSavePct,
       ppSavePct,
       shSavePct,
+      ovSavePct,
     } = this.state
     const theme = chartTheme(false, chartWidth, chartHeight)
 
@@ -168,7 +177,12 @@ class GoalieSeasonsCharts extends Component {
               />
             }
           >
-            <VictoryLine data={evSavePct} name="evSavePct" />
+            <VictoryLine data={ovSavePct} name="ovSavePct" />
+            <VictoryLine
+              data={evSavePct}
+              style={{ data: { stroke: 'orange' } }}
+              name="evSavePct"
+            />
             <VictoryLine
               data={ppSavePct}
               style={{ data: { stroke: 'red' } }}
