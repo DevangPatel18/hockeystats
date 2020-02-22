@@ -9,7 +9,9 @@ import {
   VictoryAxis,
   VictoryLabel,
   VictoryVoronoiContainer,
+  VictoryLegend,
 } from 'victory'
+import { isMobile } from 'react-device-detect'
 import chartTheme from '../../helper/chartTheme'
 
 class GoalieSeasonsCharts extends Component {
@@ -135,6 +137,15 @@ class GoalieSeasonsCharts extends Component {
             />
           }
         >
+          <VictoryLegend
+            x={isMobile ? chartWidth - 170 : chartWidth - 150}
+            y={isMobile ? 0 : 30}
+            orientation={isMobile ? 'horizontal' : 'vertical'}
+            gutter={20}
+            colorScale={'qualitative'}
+            data={[{ name: 'Wins' }, { name: 'Losses' }]}
+            style={{ labels: { fontSize: isMobile ? 10 : 12 } }}
+          />
           <VictoryGroup offset={20} colorScale={'qualitative'}>
             <VictoryBar data={wins} name="wins" />
             <VictoryBar data={losses} name="losses" />
@@ -177,6 +188,19 @@ class GoalieSeasonsCharts extends Component {
               />
             }
           >
+            <VictoryLegend
+              x={isMobile ? chartWidth - 380 : chartWidth - 160}
+              y={isMobile ? 0 : 30}
+              orientation={isMobile ? 'horizontal' : 'vertical'}
+              gutter={20}
+              data={[
+                { name: 'Overall' },
+                { name: 'Evenstrength', symbol: { fill: 'orange' } },
+                { name: 'Powerplay', symbol: { fill: 'red' } },
+                { name: 'Shorthanded', symbol: { fill: 'blue' } },
+              ]}
+              style={{ labels: { fontSize: isMobile ? 10 : 12 } }}
+            />
             <VictoryLine data={ovSavePct} name="ovSavePct" />
             <VictoryLine
               data={evSavePct}
