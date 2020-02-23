@@ -40,10 +40,14 @@ class GoalieSeasonsCharts extends Component {
       'powerPlaySaves',
       'shortHandedShots',
       'shortHandedSaves',
+    ]
+    const attributes = [
+      'wins',
+      'losses',
       'shotsAgainst',
       'saves',
+      ...newAttributes,
     ]
-    const attributes = ['wins', 'losses', ...newAttributes]
     attributes.forEach(attribute => {
       goalieStats[attribute] = []
     })
