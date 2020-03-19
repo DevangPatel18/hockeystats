@@ -177,9 +177,9 @@ class PlayerStats extends Component {
     if (reportName !== `${playerType}-${reportType}`) {
       await this.props.changeSort(getDefaultSortParams())
     }
-    this.props.startLoad()
+    this.props.setLoadStatus(true)
     const stats = await statApi.then(api => fetchData(api))
-    this.props.stopLoad()
+    this.props.setLoadStatus(false)
     if (!stats) return
 
     if (stats && this._isMounted) {
@@ -273,8 +273,7 @@ PlayerStats.propTypes = {
   getPlayerList: PropTypes.func.isRequired,
   addPlayerList: PropTypes.func.isRequired,
   removePlayerList: PropTypes.func.isRequired,
-  startLoad: PropTypes.func.isRequired,
-  stopLoad: PropTypes.func.isRequired,
+  setLoadStatus: PropTypes.func.isRequired,
   changeField: PropTypes.func.isRequired,
   changeSort: PropTypes.func.isRequired,
   submitQuery: PropTypes.func.isRequired,
@@ -296,8 +295,7 @@ export default connect(
     getPlayerList: statActions.getPlayerList,
     addPlayerList: statActions.addPlayerList,
     removePlayerList: statActions.removePlayerList,
-    startLoad: statActions.startLoad,
-    stopLoad: statActions.stopLoad,
+    setLoadStatus: statActions.setLoadStatus,
     changeField,
     changeSort,
     submitQuery,

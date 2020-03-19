@@ -3,10 +3,9 @@ import {
   GET_PLAYER_LIST,
   ADD_PLAYER,
   REMOVE_PLAYER,
-  DATA_LOADING,
-  DATA_LOADED,
   OPEN_MODAL,
   CLOSE_MODAL,
+  SET_LOAD_STATUS,
 } from './types'
 
 export const getPlayerList = userId => dispatch => {
@@ -61,12 +60,8 @@ export const removePlayerList = userData => dispatch => {
   }
 }
 
-export const startLoad = event => dispatch => {
-  dispatch({ type: DATA_LOADING })
-}
-
-export const stopLoad = event => dispatch => {
-  dispatch({ type: DATA_LOADED })
+export const setLoadStatus = status => dispatch => {
+  dispatch({ type: SET_LOAD_STATUS, payload: { status } })
 }
 
 export const openPlayerModal = (modal, playerObj) => dispatch => {

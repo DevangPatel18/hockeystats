@@ -2,11 +2,10 @@ import {
   GET_PLAYER_LIST,
   ADD_PLAYER,
   REMOVE_PLAYER,
-  DATA_LOADING,
-  DATA_LOADED,
   CLEAR_PLAYER_LIST,
   OPEN_MODAL,
   CLOSE_MODAL,
+  SET_LOAD_STATUS,
 } from '../actions/types'
 const initialState = {
   trackedPlayers: [],
@@ -50,15 +49,10 @@ export default function(state = initialState, action) {
         ...state,
         trackedPlayers,
       }
-    case DATA_LOADING:
+    case SET_LOAD_STATUS:
       return {
         ...state,
-        dataLoad: true,
-      }
-    case DATA_LOADED:
-      return {
-        ...state,
-        dataLoad: false,
+        dataLoad: action.payload.status,
       }
     case OPEN_MODAL:
       return {
